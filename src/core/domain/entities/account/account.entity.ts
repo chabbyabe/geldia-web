@@ -10,15 +10,15 @@ export interface IAccount extends IFormAccount,IBaseAPIModel, IBaseDataModelEnti
 export default class AccountEntity {
   id: number;
   name: string;
-  icon?: string;  
-  color?: string;
-  balance?: number;
+  icon: string | null;  
+  color: string | null;
+  balance: number;
   countInAssets: boolean;
   isDefault: boolean;
   isShared: boolean;
-  notes?: string;
-  user?: IUser;
-  sharedUsers?: IUser[];
+  notes: string | null;
+  user: IUser | null;
+  sharedUsers: IUser[];
   hasTransactions: boolean;
   createdAt: string;
   updatedAt: string | null;
@@ -27,14 +27,14 @@ export default class AccountEntity {
   constructor(model: IAccount) {
     this.id = model.id;
     this.name = model.name;
-    this.icon = model.icon ?? undefined;
+    this.icon = model.icon ?? null;
     this.color = model.color ?? '#006CD1';
-    this.balance = model.balance ?? undefined;
+    this.balance = 0;
     this.countInAssets = model.countInAssets ?? false;
     this.isDefault = model.isDefault;
     this.isShared = model.isShared;
-    this.notes = model.notes ?? undefined;
-    this.user = model.user ?? undefined;
+    this.notes = model.notes ?? null;
+    this.user = model.user ?? null;
     this.sharedUsers = model.sharedUsers ?? [];
     this.hasTransactions = model.hasTransactions;
     this.createdAt = model.createdAt ?? "2022-01-01T00:00:00.000Z";
