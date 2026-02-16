@@ -24,12 +24,13 @@
     "redux-persist-transform-encrypt": "^5.1.1",
     "ts-case-convert": "^2.0.7",
     "typescript": "^4.9.5",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "yup": "^1.7.1"
   },
   "scripts": {
     "start": "craco start",
     "build": "craco build",
-    "test": "craco test"
+    "test": "craco test --passWithNoTests"
   },
   "eslintConfig": {
     "extends": [
