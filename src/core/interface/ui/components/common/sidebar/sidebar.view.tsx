@@ -8,6 +8,7 @@ import MuiDrawer from '@mui/material/Drawer';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import DashboardIcon from '@mui/icons-material/Dashboard';
 import React from 'react';
 
 export interface ISidebarViewModel {
@@ -55,7 +56,14 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 export const SidebarView: React.FC<ISidebarViewModel> = (props) => {
 
-  const mainList : SidebarItem[] = [];
+  const mainList : SidebarItem[] = [
+    {
+      name: "Dashboard",
+      isCurrentPage: props.currentPage === "Dashboard",
+      icon: <DashboardIcon />,
+      navigatePath: '/dashboard'
+    }
+  ];
 
   return (
     <Drawer variant="permanent" open={props.sidebarOpen}>
@@ -75,7 +83,7 @@ export const SidebarView: React.FC<ISidebarViewModel> = (props) => {
       <Divider />
       <List component="nav">
 
-      {mainList?.map((element: SidebarItem) => (
+      {mainList.map((element: SidebarItem) => (
         <React.Fragment key={element.name}>
           <ListItemButton
             sx={{
