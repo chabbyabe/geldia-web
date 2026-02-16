@@ -1,0 +1,1 @@
+Manage and persist the application's state in React.
