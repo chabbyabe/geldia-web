@@ -1,4 +1,5 @@
-import { Avatar, Box, Button, Container, CssBaseline, Grid, Link, TextField, ThemeProvider, Typography } from '@mui/material';
+import { Avatar, Box, Button, Container, CssBaseline, Link, TextField, ThemeProvider, Typography } from '@mui/material';
+import Grid from '@mui/material/Grid';
 import { defaultTheme } from '@interface/ui/components/common/theme/app-theme.styles';
 import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { useFormik } from 'formik';
@@ -75,7 +76,7 @@ const LoginView: React.FC<ILoginViewModel> = (props) => {
 
                <form onSubmit={formik.handleSubmit} style={{ marginTop: '10px' }}>
                   <Grid container spacing={2}>
-                     <Grid item xs={12}>
+                     <Grid size={12}>
                         <TextField
                            required
                            fullWidth
@@ -90,7 +91,7 @@ const LoginView: React.FC<ILoginViewModel> = (props) => {
                            helperText={formik.touched.username && formik.errors.username}
                         />
                      </Grid>
-                     <Grid item xs={12}>
+                     <Grid size={12}>
                         <TextField
                            required
                            fullWidth
@@ -116,7 +117,7 @@ const LoginView: React.FC<ILoginViewModel> = (props) => {
                      Log In
                   </Button>
                   <Grid container>
-                     <Grid item>
+                     <Grid>
                         <Link href="/signup" variant="body2">
                            {"Don't have an account? Sign Up"}
                         </Link>
