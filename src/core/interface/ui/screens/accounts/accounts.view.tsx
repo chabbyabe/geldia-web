@@ -7,8 +7,6 @@ export interface IAccountsViewModel {
 }
 
 const AccountsView: React.FC<IAccountsViewModel> = (props) => {
-
-
   return (
     <BaseLayoutContainer currentPage={PAGE_NAMES.ACCOUNTS}> 
     </BaseLayoutContainer >

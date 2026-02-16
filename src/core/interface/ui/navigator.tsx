@@ -6,10 +6,11 @@ import {
 } from 'react-router-dom'
 
 import { useAppSelector } from '@interface/presenters/store/hooks'
+import { PAGE_URLS } from '@interface/presenters/constants'
 import { DashboardContainer } from '@screens/dashboard/dashboard.container'
 import { LoginContainer } from '@screens/login/login.container'
 import { SignupContainer } from '@screens/signup/signup.container'
-import { PAGE_URLS } from '@interface/presenters/constants'
+import { AccountsContainer } from '@screens/accounts/accounts.container'
 
 export const Navigator = () => {
   const currentUser = useAppSelector(state => state.authState.user);
@@ -27,6 +28,7 @@ export const Navigator = () => {
       <Routes>
         <Route path='/' element={<PrivateRoute element={<LoginContainer />} />} />
         <Route path={PAGE_URLS.DASHBOARD} element={<AlreadyLoggedInRoute element={<DashboardContainer />} />} />
+        <Route path={PAGE_URLS.ACCOUNTS} element={<AlreadyLoggedInRoute element={<AccountsContainer />} />} />
         <Route path={PAGE_URLS.SIGNUP} element={<PrivateRoute element={<SignupContainer />} />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
