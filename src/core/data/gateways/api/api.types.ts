@@ -1,10 +1,14 @@
 /**
  * Contains all the interfaces for the API responses
  */
-
-
 export interface IBaseAPIModel {
   id: number
+}
+
+export interface ITimestampsModel {
+  created_at: string
+  updated_at: string
+  deleted_at?: string | null
 }
 
 export interface ApiDataResponseModel<T> {
@@ -44,4 +48,18 @@ export interface IUserWithAccessTokenModel extends IBaseAPIModel {
 
 export interface ILogoutResponseModel {
   detail: string
+}
+
+export interface IAccountModel extends IBaseAPIModel, ITimestampsModel {
+  name: string
+  icon?: string,
+  color?: string,
+  balance: number,
+  count_in_assets: boolean,
+  is_default: boolean,
+  is_shared: boolean,
+  notes: string,
+  user: IUserModel,
+  shared_users: IUserModel[],
+  has_transactions: boolean
 }
