@@ -1,13 +1,18 @@
-export const PAGE_NAMES = {
-  LOGIN : 'Login',
-  SIGNUP: 'Signup',
-  DASHBOARD: 'Dashboard',
-  ACCOUNTS: 'Accounts'
-}
-
-export const PAGE_URLS = {
-  LOGIN: '/login',
-  SIGNUP: '/signup',
-  DASHBOARD: '/dashboard',
-  ACCOUNTS: '/accounts'
+export const PAGES = {
+  LOGIN: {
+    label: 'Login',
+    path: '/login',
+  },
+  SIGNUP: {
+    label: 'Signup',
+    path: '/signup',
+  },
+  DASHBOARD: {
+    label: 'Dashboard',
+    path: '/dashboard',
+  },
+  ACCOUNTS: {
+    label: 'Accounts',
+    path: '/accounts',
+  },
 }

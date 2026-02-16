@@ -1,4 +1,4 @@
-import { PAGE_NAMES } from '@interface/presenters/constants';
+import { PAGES } from '@interface/presenters/constants';
 import { BaseLayoutContainer } from '@interface/ui/components/common/layouts/base-layout/base-layout.container';
 import React from 'react';
 
@@ -8,7 +8,7 @@ export interface IAccountsViewModel {
 
 const AccountsView: React.FC<IAccountsViewModel> = (props) => {
   return (
-    <BaseLayoutContainer currentPage={PAGE_NAMES.ACCOUNTS}> 
+    <BaseLayoutContainer currentPage={PAGES.ACCOUNTS.label}> 
     </BaseLayoutContainer >
   )
 }
