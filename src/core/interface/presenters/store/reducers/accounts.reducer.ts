@@ -6,14 +6,14 @@ import { IBasePagedListEntity } from "@base/core/domain/entities/base/base.paged
 
 interface IAccountState {
   accounts: IAccount[] | [],
-  currentAccount: IAccount | undefined
+  currentAccount: IAccount | null
   nextAccountsPage: string | null,
   pagination: IBasePagedListEntity
 }
 
 const initialState: IAccountState = {
   accounts: [],
-  currentAccount: undefined,
+  currentAccount: null,
   nextAccountsPage: null,
   pagination: {
     count: 0,
@@ -55,10 +55,10 @@ export const accountSlice = createSlice({
       state.pagination = (({ results, ...rest }) => rest)(action.payload);
     },
     setCurrentAccount(state, action: PayloadAction<number>) {
-      state.currentAccount = state.accounts.find(account => Number(account.id) === Number(action.payload));
+      state.currentAccount = state.accounts.find(account => Number(account.id) === Number(action.payload)) ?? null;
     },
     clearCurrentAccount(state) {
-      state.currentAccount = undefined;
+      state.currentAccount = null;
     },
     appendAccount(state, action: PayloadAction<IPagedAccountEntity>) {
       let accounts: IAccount[] = []
