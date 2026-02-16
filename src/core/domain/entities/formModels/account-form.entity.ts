@@ -11,4 +11,5 @@ export interface IFormAccount {
   notes: string | null
   user: IUser | null
   sharedUsers: IUser[] | null
+  sharedUserIds?: number[]
 }

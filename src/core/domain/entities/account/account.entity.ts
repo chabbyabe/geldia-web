@@ -29,7 +29,7 @@ export default class AccountEntity {
     this.name = model.name;
     this.icon = model.icon ?? null;
     this.color = model.color ?? '#006CD1';
-    this.balance = 0;
+    this.balance = model.balance ?? 0;
     this.countInAssets = model.countInAssets ?? false;
     this.isDefault = model.isDefault;
     this.isShared = model.isShared;

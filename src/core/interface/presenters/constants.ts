@@ -16,3 +16,12 @@ export const PAGES = {
     path: '/accounts',
   },
 }
+
+export const ACCOUNT_COLORS : string[] = [
+  "#006CD1",
+  "#0053A3",
+  "#4DA3FF",
+  "#2EB872",
+  "#F5A524",
+  "#E5484D"
+];
