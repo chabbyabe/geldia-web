@@ -2,7 +2,7 @@
 
 The system will allow users to record income, expenses, and savings, categorize transactions, generate reports, and monitor financial trends over time. 
 
-It will be implemented as a web application.
+It will be implemented as a web and mobile application.
 
 The API codebase for this project is located [here](https://github.com/chabbyabe/geldia-web)
 
