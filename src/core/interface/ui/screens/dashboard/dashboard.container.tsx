@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import DashboardView from '@interface/ui/screens/dashboard/dashboard.view'
 
 export interface IDashboardContainerViewModel {
   children?: React.ReactNode

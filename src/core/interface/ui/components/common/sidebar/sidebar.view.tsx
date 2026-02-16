@@ -10,13 +10,13 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import DashboardIcon from '@mui/icons-material/Dashboard';
 import React from 'react';
+import { PAGE_NAMES, PAGE_URLS } from '@interface/presenters/constants';
 
 export interface ISidebarViewModel {
   onToggleSidebar: () => void
   sidebarOpen: boolean
   currentPage: string
   navigateTo: (path: string) => void
-  isLoading: boolean
 }
 
 type SidebarItem = {
@@ -58,10 +58,10 @@ export const SidebarView: React.FC<ISidebarViewModel> = (props) => {
 
   const mainList : SidebarItem[] = [
     {
-      name: "Dashboard",
-      isCurrentPage: props.currentPage === "Dashboard",
+      name: PAGE_NAMES.DASHBOARD,
+      isCurrentPage: props.currentPage === PAGE_NAMES.DASHBOARD,
       icon: <DashboardIcon />,
-      navigatePath: '/dashboard'
+      navigatePath: PAGE_URLS.DASHBOARD
     }
   ];
 
