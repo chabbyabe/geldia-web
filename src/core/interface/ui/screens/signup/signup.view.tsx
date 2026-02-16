@@ -6,6 +6,7 @@ import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import { FormRequestError } from '@domain/entities/formModels/errors.entity';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { PAGE_URLS } from '@interface/presenters/constants';
 
 
 export interface ISignupViewModel {
@@ -28,7 +29,7 @@ const SignupView: React.FC<ISignupViewModel> = (props) => {
          try {
             await props.handleSubmit(values)
             toast.success('Successfully Registered!')
-            navigate('/login');
+            navigate(PAGE_URLS.LOGIN);
             
          } catch (error) {
             if (error instanceof FormRequestError) {
