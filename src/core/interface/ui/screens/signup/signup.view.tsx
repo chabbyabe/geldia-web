@@ -77,7 +77,7 @@ const SignupView: React.FC<ISignupViewModel> = (props) => {
                </Typography>
                <form onSubmit={formik.handleSubmit} style={{ marginTop: '10px' }}>
                   <Grid container spacing={2}>
-                     <Grid item xs={12} sm={6}>
+                     <Grid size={{ xs: 12, sm: 6 }}>
                         <TextField
                            autoComplete="given-name"
                            name="firstName"
@@ -93,7 +93,7 @@ const SignupView: React.FC<ISignupViewModel> = (props) => {
                            helperText={formik.touched.firstName && formik.errors.firstName}
                         />
                      </Grid>
-                     <Grid item xs={12} sm={6}>
+                     <Grid size={{ xs: 12, sm: 6 }}>
                         <TextField
                            required
                            fullWidth
@@ -108,7 +108,7 @@ const SignupView: React.FC<ISignupViewModel> = (props) => {
                            helperText={formik.touched.lastName && formik.errors.lastName}
                         />
                      </Grid>
-                     <Grid item xs={12}>
+                     <Grid size={12}>
                         <TextField
                            required
                            fullWidth
@@ -123,7 +123,7 @@ const SignupView: React.FC<ISignupViewModel> = (props) => {
                            helperText={formik.touched.username && formik.errors.username}
                         />
                      </Grid>
-                     <Grid item xs={12}>
+                     <Grid size={12}>
                         <TextField
                            required
                            fullWidth
@@ -139,7 +139,7 @@ const SignupView: React.FC<ISignupViewModel> = (props) => {
                            helperText={formik.touched.password1 && formik.errors.password1}
                         />
                      </Grid>
-                     <Grid item xs={12}>
+                     <Grid size={12}>
                         <TextField
                            required
                            fullWidth
@@ -166,7 +166,7 @@ const SignupView: React.FC<ISignupViewModel> = (props) => {
                   </Button>
                </form>
                <Grid container justifyContent="flex-end">
-                  <Grid item>
+                  <Grid>
                      <Link href="/login" variant="body2">
                         Already have an account? Log in
                      </Link>
