@@ -14,12 +14,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 
 export interface IActionMenuViewModel {
   children?: React.ReactNode
-    handleOpen? : (event: MouseEvent<HTMLElement>) => void
-    handleClose? : () => void
+    handleOpen: (event: MouseEvent<HTMLElement>) => void
+    handleClose: () => void
     handleEditModal: () => void
     handleDeleteModal: () => void
-    open? : boolean | false
-    anchorEl? : HTMLElement | null
+    open: boolean | false
+    anchorEl: HTMLElement | null
 }
 
 const ActionMenuView: React.FC<IActionMenuViewModel> = (props) => {
@@ -31,7 +31,7 @@ const ActionMenuView: React.FC<IActionMenuViewModel> = (props) => {
 
       <Menu
         anchorEl={props.anchorEl}
-        open={props.open ?? false}
+        open={props.open}
         onClose={props.handleClose}
         anchorOrigin={{
           vertical: "bottom",

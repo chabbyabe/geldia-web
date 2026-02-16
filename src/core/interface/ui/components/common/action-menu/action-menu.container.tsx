@@ -41,6 +41,6 @@ export const ActionMenuContainer: React.FC<IActionMenuContainerModel> = (props) 
     handleEditModal={openEditModal}
     handleDeleteModal={openDeleteModal}
     open={open}
-    anchorEl={anchorEl ?? undefined} 
+    anchorEl={anchorEl} 
   />
 }
