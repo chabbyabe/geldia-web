@@ -1,0 +1,1 @@
+Store all assets use in the application
