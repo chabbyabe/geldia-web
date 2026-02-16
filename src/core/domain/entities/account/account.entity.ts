@@ -20,6 +20,9 @@ export default class AccountEntity {
   user?: IUser;
   sharedUsers?: IUser[];
   hasTransactions: boolean;
+  createdAt: string;
+  updatedAt: string | null;
+  deletedAt: string | null;
 
   constructor(model: IAccount) {
     this.id = model.id;
@@ -34,7 +37,9 @@ export default class AccountEntity {
     this.user = model.user ?? undefined;
     this.sharedUsers = model.sharedUsers ?? [];
     this.hasTransactions = model.hasTransactions;
-
+    this.createdAt = model.createdAt ?? "2022-01-01T00:00:00.000Z";
+    this.updatedAt = model.updatedAt ?? null;
+    this.deletedAt = model.deletedAt ?? null;
   }
 
   getCurrentValuesAsJSON(): IAccount {
@@ -60,6 +65,9 @@ export default class AccountEntity {
       },
       sharedUsers: [],
       hasTransactions: false,
+      createdAt: "2022-01-01T00:00:00.000Z",
+      updatedAt: null,
+      deletedAt: null,
       ...overrides
     });
   }

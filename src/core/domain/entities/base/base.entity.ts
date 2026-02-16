@@ -1,5 +1,5 @@
 export interface IBaseDataModelEntity {
-  createdAt?: string
-  updatedAt?: string
-  deletedAt?: string
+  createdAt: string 
+  updatedAt: string | null
+  deletedAt: string | null
 }

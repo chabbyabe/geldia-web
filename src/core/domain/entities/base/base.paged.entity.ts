@@ -10,7 +10,6 @@ export interface IPagedListEntity extends IBasePagedListEntity {
   results: any[]
 }
 
-/* eslint-disable  @typescript-eslint/no-explicit-any */
 export default class PagedListEntity<T> {
   results: T[] = []
   next = ''

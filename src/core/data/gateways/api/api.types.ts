@@ -7,8 +7,8 @@ export interface IBaseAPIModel {
 
 export interface ITimestampsModel {
   created_at: string
-  updated_at: string
-  deleted_at?: string | null
+  updated_at: string | null
+  deleted_at: string | null
 }
 
 export interface ApiDataResponseModel<T> {
@@ -52,8 +52,8 @@ export interface ILogoutResponseModel {
 
 export interface IAccountModel extends IBaseAPIModel, ITimestampsModel {
   name: string
-  icon?: string,
-  color?: string,
+  icon: string | null,
+  color: string | null,
   balance: number,
   count_in_assets: boolean,
   is_default: boolean,
