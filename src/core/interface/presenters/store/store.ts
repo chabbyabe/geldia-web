@@ -3,9 +3,13 @@ import { configureStore, ThunkAction, Action, combineReducers } from '@reduxjs/t
 import { persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER, } from 'redux-persist'
 import storage from 'redux-persist/lib/storage'
 import authReducer from '@interface/presenters/store/reducers/auth.reducer';
+import usersReducer from '@interface/presenters/store/reducers/users.reducer';
+import accountsReducer from '@interface/presenters/store/reducers/accounts.reducer';
 
 const reducer = combineReducers({
   authState: authReducer,
+  userState: usersReducer,
+  accountState: accountsReducer,
 });
 
 const persistConfig = {

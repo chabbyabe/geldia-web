@@ -12,6 +12,7 @@ export default class AuthApiGateway extends Api {
   async login(loginCredentials: IFormLogin): Promise<IUser> {
     try {
       const response = await this._loginUser(loginCredentials)
+      sessionStorage.setItem('accessToken', response.access);
       return this._mapUserFromResponse(response.user)
     } catch (error) {
       if (error instanceof BadRequest) {
@@ -32,6 +33,7 @@ export default class AuthApiGateway extends Api {
 
   async logout(): Promise<ILogoutResponseModel> {
     try {
+      sessionStorage.removeItem('accessToken');
       return await this._logoutUser()
     } catch (error) {
       throw error

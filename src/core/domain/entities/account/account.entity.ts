@@ -1,0 +1,75 @@
+import { IBaseAPIModel } from "@data/gateways/api/api.types";
+import { IFormAccount } from "@domain/entities/formModels/account-form.entity"
+import { IBaseDataModelEntity } from "@domain/entities/base/base.entity";
+import { IUser } from "@domain/entities/user/user.entity";
+
+export interface IAccount extends IFormAccount,IBaseAPIModel, IBaseDataModelEntity {
+  hasTransactions: boolean
+}
+
+export default class AccountEntity {
+  id: number;
+  name: string;
+  icon: string | null;  
+  color: string | null;
+  balance: number;
+  countInAssets: boolean;
+  isDefault: boolean;
+  isShared: boolean;
+  notes: string | null;
+  user: IUser | null;
+  sharedUsers: IUser[];
+  hasTransactions: boolean;
+  createdAt: string;
+  updatedAt: string | null;
+  deletedAt: string | null;
+
+  constructor(model: IAccount) {
+    this.id = model.id;
+    this.name = model.name;
+    this.icon = model.icon ?? null;
+    this.color = model.color ?? '#006CD1';
+    this.balance = model.balance ?? 0;
+    this.countInAssets = model.countInAssets ?? false;
+    this.isDefault = model.isDefault;
+    this.isShared = model.isShared;
+    this.notes = model.notes ?? null;
+    this.user = model.user ?? null;
+    this.sharedUsers = model.sharedUsers ?? [];
+    this.hasTransactions = model.hasTransactions;
+    this.createdAt = model.createdAt ?? "2022-01-01T00:00:00.000Z";
+    this.updatedAt = model.updatedAt ?? null;
+    this.deletedAt = model.deletedAt ?? null;
+  }
+
+  getCurrentValuesAsJSON(): IAccount {
+    return Object.assign({}, this);
+  }
+
+  static mock(overrides: Partial<IAccount> = {}): AccountEntity {
+    return new AccountEntity({
+      id: 1,
+      name: 'Test Channel',
+      icon: 'test@test.com',
+      color: '#006CD1',
+      balance: 12.0,
+      countInAssets: false,
+      isDefault: false,
+      isShared: false,
+      notes: 'Sample note',
+      user: {
+        id: 1,
+        username: 'JohnDoe23',
+        firstName: 'John',
+        lastName: 'Doe',
+      },
+      sharedUsers: [],
+      hasTransactions: false,
+      createdAt: "2022-01-01T00:00:00.000Z",
+      updatedAt: null,
+      deletedAt: null,
+      ...overrides
+    });
+  }
+}
+

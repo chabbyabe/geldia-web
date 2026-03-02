@@ -5,12 +5,15 @@ import Typography from '@mui/material/Typography';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
 import LogoutIcon from '@mui/icons-material/Logout';
+import { IUser } from '@base/core/domain/entities/user/user.entity';
+import { Avatar, Stack } from '@mui/material';
 
 export interface INavbarViewModel {
   onToggleSidebar: () => void
   sidebarOpen: boolean
   handleLogout: () => void
   currentPage: string
+  user?: IUser
 }
 
 const drawerWidth: number = 240;
@@ -66,7 +69,9 @@ export const NavbarView: React.FC<INavbarViewModel> = (props) => {
         >
           {props.currentPage}
         </Typography>
-
+        <Stack direction="row" alignItems="center" gap={2} sx={{ mx:5}}>
+          <Avatar alt={props.user?.username} /> {props.user?.username}
+        </Stack>
         <IconButton color="inherit" onClick={props.handleLogout}>
           <LogoutIcon /> </IconButton> 
       </Toolbar>

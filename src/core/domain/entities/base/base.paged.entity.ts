@@ -1,0 +1,30 @@
+export interface IBasePagedListEntity {
+  next: string | null
+  previous: string | null
+  count: number
+  currentPageNumber: number
+  totalPages: number
+}
+
+export interface IPagedListEntity extends IBasePagedListEntity {
+  results: any[]
+}
+
+export default class PagedListEntity<T> {
+  results: T[] = []
+  next = ''
+  previous = ''
+  currentPageNumber = 0
+  totalPages = 1
+  count = 0
+
+  constructor(model: IBasePagedListEntity | IPagedListEntity | null) {
+    if (model !== null) {
+      this.next = model.next ?? ''
+      this.previous = model.previous ?? ''
+      this.totalPages = model.totalPages
+      this.currentPageNumber = model.currentPageNumber
+      this.count = model.count
+    }
+  }
+}

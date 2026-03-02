@@ -7,7 +7,7 @@ import { IFormLogin } from '@domain/entities/formModels/signup-form.entity';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { FormRequestError } from '@domain/entities/formModels/errors.entity';
-import { PAGE_URLS } from '@interface/presenters/constants';
+import { PAGES } from '@interface/presenters/constants';
 
 export interface ILoginViewModel {
    children: React.ReactNode
@@ -26,7 +26,7 @@ const LoginView: React.FC<ILoginViewModel> = (props) => {
          try {
             await props.handleSubmit(values)
             toast.success('Successfully Login!')
-            navigate(PAGE_URLS.DASHBOARD);
+            navigate(PAGES.DASHBOARD.path);
          } catch (error) {
             if (error instanceof FormRequestError) {
                formik.setErrors(error.data);

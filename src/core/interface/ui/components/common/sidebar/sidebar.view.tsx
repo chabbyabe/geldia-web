@@ -1,3 +1,4 @@
+import React from 'react';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
@@ -8,9 +9,11 @@ import MuiDrawer from '@mui/material/Drawer';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import React from 'react';
-import { PAGE_NAMES, PAGE_URLS } from '@interface/presenters/constants';
+import { PAGES } from '@interface/presenters/constants';
+import {
+  Dashboard as DashboardIcon,
+  AccountBalanceWallet as AccountBalanceWalletIcon,
+} from "@mui/icons-material";
 
 export interface ISidebarViewModel {
   onToggleSidebar: () => void
@@ -24,6 +27,8 @@ type SidebarItem = {
   isCurrentPage: boolean;
   icon: React.ReactNode;
   navigatePath : string
+  hasDivider : boolean 
+
 };
 
 const drawerWidth: number = 240;
@@ -58,11 +63,19 @@ export const SidebarView: React.FC<ISidebarViewModel> = (props) => {
 
   const mainList : SidebarItem[] = [
     {
-      name: PAGE_NAMES.DASHBOARD,
-      isCurrentPage: props.currentPage === PAGE_NAMES.DASHBOARD,
+      name: PAGES.DASHBOARD.label,
+      isCurrentPage: props.currentPage === PAGES.DASHBOARD.label,
       icon: <DashboardIcon />,
-      navigatePath: PAGE_URLS.DASHBOARD
-    }
+      navigatePath: PAGES.DASHBOARD.path,
+      hasDivider: false
+    }, 
+    {
+      name: PAGES.ACCOUNTS.label,
+      isCurrentPage: props.currentPage === PAGES.ACCOUNTS.label,
+      icon: <AccountBalanceWalletIcon />,
+      navigatePath: PAGES.ACCOUNTS.path,
+      hasDivider: false,
+    },
   ];
 
   return (
@@ -97,11 +110,12 @@ export const SidebarView: React.FC<ISidebarViewModel> = (props) => {
             <ListItemIcon>{element.icon}</ListItemIcon>
             <ListItemText primary={element.name} />
           </ListItemButton>
-        </React.Fragment>
+          {element.hasDivider ? 
+          <Divider sx={{ my: 1 }} />
+          : null }
+
+        </React.Fragment>      
       ))}
-
-      <Divider sx={{ my: 1 }} />
-
       </List>
     </Drawer >
   )

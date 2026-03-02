@@ -1,4 +1,4 @@
-import { type ApiResponse, type ApisauceInstance, create } from 'apisauce'
+import { type ApiResponse, ApisauceInstance, create,  RequestTransform } from 'apisauce'
 import { type ApiConfig, API_CONFIG } from '@data/infra/api.config'
 import { getGeneralApiProblem } from '@data/infra/api.problem'
 import { API_WITH_CREDENTIALS } from '@base/config'
@@ -28,7 +28,18 @@ export class Api implements IApi {
       },
       withCredentials: API_WITH_CREDENTIALS
     })
+    const addAuthHeader: RequestTransform = (request) => {
+      const token = sessionStorage.getItem('accessToken');
+      if (token) {
+        request.headers = {
+          ...request.headers,
+          Authorization: `Bearer ${token}`,
+        };
+      }
+    };
+    this.apiSauce.addRequestTransform(addAuthHeader);
   }
+  
 
   async handleAPIResult<TApiResponseModel>(response: ApiResponse<unknown, unknown>): Promise<TApiResponseModel> {
     return response.data as TApiResponseModel;
