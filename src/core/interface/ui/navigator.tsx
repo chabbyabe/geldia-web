@@ -5,6 +5,7 @@ import {
   Navigate,
 } from 'react-router-dom'
 
+import { LoginContainer } from '@screens/login/login.container'
 import { SignupContainer } from '@screens/signup/signup.container'
 
 export const Navigator = () => {
@@ -15,6 +16,7 @@ export const Navigator = () => {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path='/' element={<PrivateRoute element={<LoginContainer />} />} />
         <Route path='/signup' element={<PrivateRoute element={<SignupContainer />} />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
