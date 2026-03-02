@@ -57,6 +57,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@faker-js/faker": "^8.4.1",
-    "axios-mock-adapter": "^1.22.0"
+    "axios-mock-adapter": "^1.22.0",
+    "tsconfig-paths": "^4.2.0"
   }
 }
