@@ -20,15 +20,33 @@ export const DEFAULT_TABLE_PAGE_SIZE = 20
 
 
 export const TRANSACTION_TYPE = {
-  INCOME: 1,
-  EXPENSES: 2,
-  TRANSFER: 3
+  INCOME: {
+    id: 1, // API id
+    name: "Income"
+  },
+  EXPENSES: {
+    id: 2,
+    name: "Expenses"
+  },
+  TRANSFER: {
+    id: 3,
+    name: "Transfer"
+  }
 }
 
 export const USER_ACTIONS = {
-  CREATE: 1,
-  UPDATE: 2,
-  DELETE: 3
+  CREATE: {
+    id: 1,
+    name: "Create"
+  },
+  UPDATE: {
+    id: 2,
+    name: "Update"
+  },
+  DELETE: {
+    id: 3,
+    name: "Delete"
+  }
 }
 
 export const ACCOUNT_COLORS: string[] = [
