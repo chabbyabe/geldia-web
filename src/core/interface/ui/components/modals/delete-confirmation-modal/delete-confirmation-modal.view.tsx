@@ -42,7 +42,7 @@ const DeleteConfirmationModalView: React.FC<IDeleteConfirmationModalView> = (pro
 
         <Formik
           initialValues={props.initialValues}
-          validationSchema={props.initialValues.hasConfirmation ? validationSchema: null}
+          validationSchema={props.initialValues.hasConfirmation ? validationSchema : null}
           onSubmit={async (_, { setSubmitting }) => {
             try {
               await props.onConfirm();
@@ -59,19 +59,23 @@ const DeleteConfirmationModalView: React.FC<IDeleteConfirmationModalView> = (pro
                 <Typography mb={2} color="error">
                   This action cannot be undone.
                 </Typography>
+                {props.initialValues.hasConfirmation && (
 
-                <Typography variant="body2" mb={1}>
-                  Type <strong>DELETE</strong> to confirm:
-                </Typography>
+                  <>
+                    <Typography variant="body2" mb={1}>
+                      Type <strong>DELETE</strong> to confirm:
+                    </Typography>
 
-                <TextField
-                  fullWidth
-                  name="confirmation"
-                  value={values.confirmation}
-                  onChange={handleChange}
-                  error={touched.confirmation && Boolean(errors.confirmation)}
-                  autoFocus
-                />
+                    <TextField
+                      fullWidth
+                      name="confirmation"
+                      value={values.confirmation}
+                      onChange={handleChange}
+                      error={touched.confirmation && Boolean(errors.confirmation)}
+                      autoFocus
+                    />
+                  </>
+                )}
               </DialogContent>
 
               <DialogActions>
