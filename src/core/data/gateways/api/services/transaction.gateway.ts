@@ -95,5 +95,24 @@ export default class TransactionApiGateway extends Api {
     return await this.delete(TRANSACTION_URL + `${transactionId}/`)
   }
 
+  // Get transactions form initial data 
+  async retrieveFormInitialData(): Promise<ITransactionInitial> {
+    try {
+      const response = await this._retrieveFormInitialData()
+      return this._mapInitialDataFromResponse(response)
+    } catch (error) {
+      if (error instanceof BadRequest) {
+        throw new FormRequestError(error.message, error.data)
+      }
+      throw error
+    }
+  }
 
+  private async _retrieveFormInitialData(): Promise<ITransactionFormInitialDataModel> {
+    return await this.get(`${TRANSACTION_URL}initial/list/`)
+  }
+
+  private _mapInitialDataFromResponse(response: ITransactionFormInitialDataModel): ITransactionInitial {
+    return mapTransactionFormInitialDataAttributes(response);
+  }
 }

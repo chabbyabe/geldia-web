@@ -1,8 +1,8 @@
 import { IPagedTransactionEntity } from "@domain/entities/transaction/paged.transaction.entity"
 import { store } from "@interface/presenters/store/store"
-import { initializeTransactions, setCurrentTransaction ,
-  addNewTransaction, updateTransaction, deleteTransaction
-} from "@interface/presenters/store/reducers/transactions.reducer"
+import { initializeTransactions, setCurrentTransaction, 
+  addNewTransaction, deleteTransaction, updateTransaction, retrieveFormInitialData } from "@interface/presenters/store/reducers/transactions.reducer"
+import { ITransactionInitial } from "@domain/entities/transaction/initial.entity"
 import { ITransactionSearchParams } from "@domain/entities/transaction/search.entity"
 import { ITransaction } from "@base/core/domain/entities/transaction/transaction.entity"
 
@@ -25,5 +25,8 @@ export default class TransactionRepository {
   }
   deleteTransaction() {
     store.dispatch(deleteTransaction())
+  }
+  retrieveFormInitialData(options: ITransactionInitial) {
+    store.dispatch(retrieveFormInitialData(options))
   }
 }

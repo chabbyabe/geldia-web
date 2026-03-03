@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { ITransactionInitial } from "@domain/entities/transaction/initial.entity";
 import { IPagedTransactionEntity } from "@domain/entities/transaction/paged.transaction.entity";
 import { IBasePagedListEntity } from "@domain/entities/base/base.paged.entity";
 import { ITransactionSearchParams } from "@domain/entities/transaction/search.entity";
@@ -10,6 +11,7 @@ interface ITransactionState {
   nextTransactionsPage: string | null,
   pagination: IBasePagedListEntity
   searchParams: ITransactionSearchParams,
+  options: ITransactionInitial
 }
 
 const initialState: ITransactionState = {
@@ -28,6 +30,14 @@ const initialState: ITransactionState = {
     search: '',
     ordering: '',
     filterModel: ''
+  },
+  options: {
+    categories: [],
+    places: [],
+    stores: [],
+    accounts: [],
+    transactionTypes: [],
+    tags: []
   }
 }
 
@@ -78,6 +88,14 @@ export const transactionSlice = createSlice({
       state.transactions = state.transactions.filter(transaction => transaction.id !== transactionId);
       state.currentTransaction = null;
     },
+    retrieveFormInitialData(state, action: PayloadAction<ITransactionInitial>) {
+      state.options.stores = action.payload.stores
+      state.options.places = action.payload.places
+      state.options.accounts = action.payload.accounts
+      state.options.categories = action.payload.categories
+      state.options.transactionTypes = action.payload.transactionTypes
+      state.options.tags = action.payload.tags      
+    }
   },
 })
 
@@ -87,7 +105,8 @@ export const {
   setCurrentTransaction,
   clearCurrentTransaction,
   addNewTransaction,
+  deleteTransaction,
   updateTransaction,
-  deleteTransaction
+  retrieveFormInitialData
 } = transactionSlice.actions
 export default transactionSlice.reducer
