@@ -1,5 +1,4 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { ITransactionInitial } from "@domain/entities/transaction/initial.entity";
 import { IPagedTransactionEntity } from "@domain/entities/transaction/paged.transaction.entity";
 import { IBasePagedListEntity } from "@domain/entities/base/base.paged.entity";
 import { ITransactionSearchParams } from "@domain/entities/transaction/search.entity";
@@ -63,6 +62,11 @@ export const transactionSlice = createSlice({
     clearCurrentTransaction(state) {
       state.currentTransaction = null;
     },
+    addNewTransaction(state, action: PayloadAction<ITransaction>) {
+      const newTransaction = action.payload
+      state.transactions = [newTransaction,...state.transactions]
+    },
+
   },
 })
 
@@ -71,5 +75,6 @@ export const {
   initializeTransactions,
   setCurrentTransaction,
   clearCurrentTransaction,
+  addNewTransaction
 } = transactionSlice.actions
 export default transactionSlice.reducer

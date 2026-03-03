@@ -3,8 +3,11 @@ import { Api } from '@data/infra/api.base'
 import { TRANSACTION_URL } from '@data/gateways/api/constants'
 import { BadRequest } from '@data/infra/api.error'
 import { FormRequestError } from '@domain/entities/formModels/errors.entity'
-import { mapPagedTransactionAttributes } from './mappers/transaction.mappers'
+import { IFormTransaction } from '@domain/entities/formModels/transaction-form.entity'
+import TransactionEntity, { ITransaction } from '@domain/entities/transaction/transaction.entity'
+import { mapPagedTransactionAttributes, mapTransactionAttributes } from './mappers/transaction.mappers'
 import PagedTransactionEntity, { IPagedTransactionEntity } from '@domain/entities/transaction/paged.transaction.entity'
+import { mapErrorAttributes } from './mappers/error.mappers'
 import { ITransactionSearchParams } from '@domain/entities/transaction/search.entity'
 
 export default class TransactionApiGateway extends Api {
@@ -30,4 +33,42 @@ export default class TransactionApiGateway extends Api {
     const transactions = new PagedTransactionEntity(mapPagedTransactionAttributes(response))
     return transactions.getCurrentValuesAsJSON()
   }
+
+  // Set retrieve selected transaction (For transaction edit)
+  async getTransaction(transactionId?: number): Promise<ITransaction> {
+    try {
+      const response = await this._getTransaction(transactionId)
+      return this._mapTransactionFromResponse(response)
+    } catch (error) {
+      throw error
+    }
+  }
+
+  private async _getTransaction(transactionId?: number): Promise<ITransactionModel>{
+      return await this.get(TRANSACTION_URL + `${transactionId}/`)
+  }
+
+    // Create a new transaction
+  async createTransaction(transactionDetail: IFormTransaction): Promise<ITransaction> {
+    try {
+      const response = await this._createTransaction(transactionDetail)
+      return this._mapTransactionFromResponse(response)
+    } catch (error) {
+      if (error instanceof BadRequest) {
+        const errorData = mapErrorAttributes(error.data)
+        throw new FormRequestError(error.message, errorData)
+      }
+      throw error
+    }
+  }
+
+  private _mapTransactionFromResponse(response: ITransactionModel): ITransaction {
+    const transaction = new TransactionEntity(mapTransactionAttributes(response))
+    return transaction.getCurrentValuesAsJSON()
+  }
+
+  private async _createTransaction(transactionDetail: IFormTransaction) : Promise<ITransactionModel> {
+    return await this.post(TRANSACTION_URL, transactionDetail)
+  }
+
 }
