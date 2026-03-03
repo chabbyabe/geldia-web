@@ -48,10 +48,9 @@ const AccountsView: React.FC<IAccountsViewModel> = (props) => {
 
       <Container maxWidth={false} sx={{ mt: 4, mb: 4 }}>
         <Stack direction="row" alignItems="center" justifyContent="space-between" flexWrap="wrap" gap={2}>
-          <Button variant="contained" size="large" onClick={handleClickOpen}>
-            <AddIcon /> Add Account
+          <Button variant="contained" startIcon={<AddIcon />} size="large"
+            onClick={handleClickOpen}>Add Account
           </Button>
-
           <Box sx={{ display: "flex", justifyContent: "center" }}>
             <Pagination
               count={props.pagination.totalPages}
@@ -110,16 +109,16 @@ const AccountsView: React.FC<IAccountsViewModel> = (props) => {
                       </Box>
 
                       <Stack flexBasis="row" gap={1} flexWrap="wrap">
-                      {account.countInAssets && (
-                        <Chip icon={<AccountBalance />} label="Count in Assets" size="small" />
-                      )}
-                      {account.isShared && (
-                        <AvatarGroup max={4}>
-                          {account.sharedUsers?.map((user: IUser) => (
-                            <Avatar key={`avatar-${user.id}-${account.id}`} alt={`${user.firstName} ${user.lastName}`} src="/static/images/avatar/1.jpg" />
-                          ))}
-                        </AvatarGroup>
-                      )}
+                        {account.countInAssets && (
+                          <Chip icon={<AccountBalance />} label="Count in Assets" size="small" />
+                        )}
+                        {account.isShared && (
+                          <AvatarGroup max={4}>
+                            {account.sharedUsers?.map((user: IUser) => (
+                              <Avatar key={`avatar-${user.id}-${account.id}`} alt={`${user.firstName} ${user.lastName}`} src="/static/images/avatar/1.jpg" />
+                            ))}
+                          </AvatarGroup>
+                        )}
                       </Stack>
                     </Box>
                   </Stack>
