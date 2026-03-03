@@ -49,15 +49,6 @@ export const USER_ACTIONS = {
   }
 }
 
-export const ACCOUNT_COLORS: string[] = [
-  "#006CD1",
-  "#0053A3",
-  "#4DA3FF",
-  "#2EB872",
-  "#F5A524",
-  "#E5484D"
-];
-
 export const DATE_RANGES = {
   WEEK : "Week",
   MONTH : "Month",
