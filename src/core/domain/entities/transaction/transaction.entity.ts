@@ -36,6 +36,9 @@ export interface ITransaction extends IBaseAPIModel, IBaseDataModelEntity {
   notes: string | null
   netAmount: number | null
   grossAmount: number | null
+  formattedAmount: string | null
+  formattedNetAmount: string | null
+  formattedGrossAmount: string | null
   debitMonthYear: string | null
   externalTransactionId: number | null
   pairTransaction: IAccountSimple | null
@@ -69,6 +72,9 @@ export default class TransactionEntity {
   notes: string | null
   netAmount: number | null
   grossAmount: number | null
+  formattedAmount: string | null
+  formattedNetAmount: string | null
+  formattedGrossAmount: string | null
   debitMonthYear: string | null
   externalTransactionId: number | null
   pairTransaction: IAccountSimple | null
@@ -94,6 +100,9 @@ export default class TransactionEntity {
     this.amount = model.amount
     this.netAmount = model.netAmount
     this.grossAmount = model.grossAmount
+    this.formattedAmount = model.formattedAmount
+    this.formattedNetAmount = model.formattedNetAmount
+    this.formattedGrossAmount = model.formattedGrossAmount
     this.debitMonthYear = model.debitMonthYear
     this.externalTransactionId = model.externalTransactionId
     this.pairTransaction = model.pairTransaction
@@ -119,6 +128,9 @@ export default class TransactionEntity {
       amount: 1000.0,
       netAmount: 1000.0,
       grossAmount: 1000.0,
+      formattedAmount: "1000.00",
+      formattedNetAmount: "1000.00",
+      formattedGrossAmount: "1000.00",
       debitMonthYear: "2023-05-04",
       user: {
         id: 1,
