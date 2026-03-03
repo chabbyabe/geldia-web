@@ -105,6 +105,9 @@ export interface ITransactionModel extends IBaseAPIModel, ITimestampsModel {
   notes: string
   net_amount: number
   gross_amount: number
+  formatted_amount: string
+  formatted_net_amount: string
+  formatted_gross_amount: string
   debit_month_year: string
   external_transaction_id: number
   pair_transaction: IAccountSimpleModel
