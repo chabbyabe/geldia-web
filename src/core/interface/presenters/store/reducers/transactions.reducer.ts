@@ -1,4 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
+import { ITransactionInitial } from "@domain/entities/transaction/initial.entity";
 import { IPagedTransactionEntity } from "@domain/entities/transaction/paged.transaction.entity";
 import { IBasePagedListEntity } from "@domain/entities/base/base.paged.entity";
 import { ITransactionSearchParams } from "@domain/entities/transaction/search.entity";
@@ -6,9 +7,9 @@ import { ITransaction } from "@domain/entities/transaction/transaction.entity";
 
 interface ITransactionState {
   transactions: ITransaction[] | [],
-  pagination: IBasePagedListEntity
   currentTransaction: ITransaction | null
   nextTransactionsPage: string | null,
+  pagination: IBasePagedListEntity
   searchParams: ITransactionSearchParams,
 }
 
@@ -28,7 +29,7 @@ const initialState: ITransactionState = {
     search: '',
     ordering: '',
     filterModel: ''
-  },
+  }
 }
 
 export const transactionSlice = createSlice({
@@ -62,7 +63,6 @@ export const transactionSlice = createSlice({
     clearCurrentTransaction(state) {
       state.currentTransaction = null;
     },
-    
   },
 })
 
