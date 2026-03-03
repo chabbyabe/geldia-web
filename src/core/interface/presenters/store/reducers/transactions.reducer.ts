@@ -67,6 +67,17 @@ export const transactionSlice = createSlice({
       state.transactions = [newTransaction,...state.transactions]
     },
 
+    updateTransaction(state, action: PayloadAction<ITransaction>) {
+      const updatedTransaction = action.payload;
+      state.transactions = state.transactions.map(transaction =>
+        transaction.id === updatedTransaction.id ? updatedTransaction : transaction
+      );
+    },
+    deleteTransaction(state) {
+      const transactionId = state.currentTransaction?.id;
+      state.transactions = state.transactions.filter(transaction => transaction.id !== transactionId);
+      state.currentTransaction = null;
+    },
   },
 })
 
@@ -75,6 +86,8 @@ export const {
   initializeTransactions,
   setCurrentTransaction,
   clearCurrentTransaction,
-  addNewTransaction
+  addNewTransaction,
+  updateTransaction,
+  deleteTransaction
 } = transactionSlice.actions
 export default transactionSlice.reducer

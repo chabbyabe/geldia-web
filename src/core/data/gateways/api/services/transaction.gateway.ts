@@ -1,13 +1,14 @@
-import { ITransactionModel, IPagedAPIViewModel } from '@data/gateways/api/api.types'
+import { ITransactionModel, IPagedAPIViewModel, ITransactionFormInitialDataModel } from '@data/gateways/api/api.types'
 import { Api } from '@data/infra/api.base'
 import { TRANSACTION_URL } from '@data/gateways/api/constants'
 import { BadRequest } from '@data/infra/api.error'
 import { FormRequestError } from '@domain/entities/formModels/errors.entity'
 import { IFormTransaction } from '@domain/entities/formModels/transaction-form.entity'
 import TransactionEntity, { ITransaction } from '@domain/entities/transaction/transaction.entity'
-import { mapPagedTransactionAttributes, mapTransactionAttributes } from './mappers/transaction.mappers'
+import { mapPagedTransactionAttributes, mapTransactionAttributes, mapTransactionFormInitialDataAttributes } from './mappers/transaction.mappers'
 import PagedTransactionEntity, { IPagedTransactionEntity } from '@domain/entities/transaction/paged.transaction.entity'
 import { mapErrorAttributes } from './mappers/error.mappers'
+import { ITransactionInitial } from '@domain/entities/transaction/initial.entity'
 import { ITransactionSearchParams } from '@domain/entities/transaction/search.entity'
 
 export default class TransactionApiGateway extends Api {
@@ -88,4 +89,11 @@ export default class TransactionApiGateway extends Api {
   private async _updateTransaction(id: number,transactionDetail: IFormTransaction) : Promise<ITransactionModel> {
     return await this.patch(TRANSACTION_URL + `${id}/`, transactionDetail)
   }
+
+  // Delete transaction
+  async deleteTransaction(transactionId: number) : Promise<void> {
+    return await this.delete(TRANSACTION_URL + `${transactionId}/`)
+  }
+
+
 }
