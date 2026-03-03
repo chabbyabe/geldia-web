@@ -71,4 +71,21 @@ export default class TransactionApiGateway extends Api {
     return await this.post(TRANSACTION_URL, transactionDetail)
   }
 
+  // Update transaction
+  async updateTransaction(id: number, transactionDetail: IFormTransaction): Promise<ITransaction> {
+    try {
+      const response = await this._updateTransaction(id, transactionDetail)
+      return this._mapTransactionFromResponse(response)
+    } catch (error) {
+      if (error instanceof BadRequest) {
+        const errorData = mapErrorAttributes(error.data)
+        throw new FormRequestError(error.message, errorData)
+      }
+      throw error
+    }
+  }
+
+  private async _updateTransaction(id: number,transactionDetail: IFormTransaction) : Promise<ITransactionModel> {
+    return await this.patch(TRANSACTION_URL + `${id}/`, transactionDetail)
+  }
 }

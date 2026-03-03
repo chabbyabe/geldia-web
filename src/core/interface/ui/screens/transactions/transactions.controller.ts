@@ -10,6 +10,7 @@ import TransactionRepository from "@data/gateways/api/services/transaction.repos
 import RetrieveTransactionsUseCase from "@domain/usecases/transactions/retrieve-transactions.usecase"
 import GetTransactionUseCase from "@domain/usecases/transactions/get-transaction.usecase"
 import CreateTransactionUseCase from "@domain/usecases/transactions/create-transaction.usecase"
+import UpdateTransactionUseCase from "@base/core/domain/usecases/transactions/update-transactions.usecase"
 
 export default class TransactionsController {
 
@@ -17,6 +18,7 @@ export default class TransactionsController {
   private readonly retrieveAccountUseCase: retrieveAccountsUseCase
   private readonly getTransactionUseCase: GetTransactionUseCase
   private readonly createTransactionUseCase: CreateTransactionUseCase
+  private readonly updateTransactionUseCase: UpdateTransactionUseCase
 
   constructor() {
     this.retrieveTransactionsUseCase = new RetrieveTransactionsUseCase(
@@ -32,6 +34,10 @@ export default class TransactionsController {
       new TransactionRepository()
     )
     this.createTransactionUseCase = new CreateTransactionUseCase(
+      new TransactionApiGateway(),
+      new TransactionRepository()
+    )
+    this.updateTransactionUseCase = new UpdateTransactionUseCase(
       new TransactionApiGateway(),
       new TransactionRepository()
     )
@@ -51,6 +57,11 @@ export default class TransactionsController {
 
   async createTransaction(data: IFormTransaction) {
     await this.createTransactionUseCase.execute(data)
+    await this.retrieveAccountUseCase.execute(true, 1)
+  }
+
+  async updateTransaction(id: number, data: IFormTransaction) {
+    await this.updateTransactionUseCase.execute(id, data)
     await this.retrieveAccountUseCase.execute(true, 1)
   }
 }
