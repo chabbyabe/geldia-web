@@ -1,10 +1,10 @@
 import { IAccount } from '@domain/entities/account/account.entity';
 import { IAccountModel, IPagedAPIViewModel } from '@data/gateways/api/api.types'
 import { IPagedAccountEntity } from '@domain/entities/account/paged.account.entity';
-import { toCamel } from 'snake-camel';
+import { objectToCamel } from 'ts-case-convert';
 
 export const mapAccountAttributes = (initialModel: IAccountModel) : IAccount => {
-  return toCamel(initialModel) as IAccount;
+  return objectToCamel(initialModel) as IAccount;
 }
 
 export const mapUserAccountAttributes = (initialModel: IPagedAPIViewModel<IAccountModel>): IPagedAccountEntity => {
@@ -12,7 +12,7 @@ export const mapUserAccountAttributes = (initialModel: IPagedAPIViewModel<IAccou
       ...mapAccountAttributes(result)
   }));
   return {
-    ...toCamel(initialModel),
+    ...objectToCamel(initialModel),
     results: accountList,
   } as IPagedAccountEntity;
 }
