@@ -13,6 +13,12 @@ export const USER_URL = `/ledger/users/`
 export const TRANSACTION_URL = `/ledger/transactions/`
 export const DASHBOARD_URL = `/ledger/dashboard/`
 
+export const API_URL = {
+  DASHBOARD : {
+    base : DASHBOARD_URL,
+  }
+}
+
 /**
  * PAGINATION CONSTANTS
  */
