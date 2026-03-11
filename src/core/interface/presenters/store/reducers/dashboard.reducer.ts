@@ -13,13 +13,13 @@ export const dashboardSlice = createSlice({
   name: 'dashboard',
   initialState,
   reducers: {
-    retrieveSummaryOverview(state, action: PayloadAction<ISummary[]>) {
+    setSummaryOverview(state, action: PayloadAction<ISummary[]>) {
       state.summaryOverview = [...action.payload]
     },
   },
 })
 
 export const {
-  retrieveSummaryOverview,
+  setSummaryOverview,
 } = dashboardSlice.actions
 export default dashboardSlice.reducer
