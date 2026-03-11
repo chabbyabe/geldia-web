@@ -13,6 +13,7 @@ import { PAGES } from '@interface/presenters/constants';
 import {
   Dashboard as DashboardIcon,
   AccountBalanceWallet as AccountBalanceWalletIcon,
+  ReceiptLong as ReceiptLongIcon,
 } from "@mui/icons-material";
 
 export interface ISidebarViewModel {
@@ -22,14 +23,37 @@ export interface ISidebarViewModel {
   navigateTo: (path: string) => void
 }
 
-type SidebarItem = {
-  name: string;
-  isCurrentPage: boolean;
-  icon: React.ReactNode;
-  navigatePath : string
-  hasDivider : boolean 
+interface ISidebarItem {
+  name: string
+  isCurrentPage: boolean
+  icon: React.ReactNode
+  navigatePath: string
+  hasDivider: boolean
+}
 
-};
+const menuList = (currentPage: string) : ISidebarItem[] => [
+  {
+    name: PAGES.DASHBOARD.label,
+    isCurrentPage: currentPage === PAGES.DASHBOARD.label,
+    icon: <DashboardIcon />,
+    navigatePath: PAGES.DASHBOARD.path,
+    hasDivider: false
+  },
+  {
+    name: PAGES.TRANSACTIONS.label,
+    isCurrentPage: currentPage === PAGES.TRANSACTIONS.label,
+    icon: <AccountBalanceWalletIcon />,
+    navigatePath: PAGES.TRANSACTIONS.path,
+    hasDivider: false,
+  },
+  {
+    name: PAGES.ACCOUNTS.label,
+    isCurrentPage: currentPage === PAGES.ACCOUNTS.label,
+    icon: <ReceiptLongIcon />,
+    navigatePath: PAGES.ACCOUNTS.path,
+    hasDivider: false,
+  },
+];
 
 const drawerWidth: number = 240;
 
@@ -61,22 +85,6 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 export const SidebarView: React.FC<ISidebarViewModel> = (props) => {
 
-  const mainList : SidebarItem[] = [
-    {
-      name: PAGES.DASHBOARD.label,
-      isCurrentPage: props.currentPage === PAGES.DASHBOARD.label,
-      icon: <DashboardIcon />,
-      navigatePath: PAGES.DASHBOARD.path,
-      hasDivider: false
-    }, 
-    {
-      name: PAGES.ACCOUNTS.label,
-      isCurrentPage: props.currentPage === PAGES.ACCOUNTS.label,
-      icon: <AccountBalanceWalletIcon />,
-      navigatePath: PAGES.ACCOUNTS.path,
-      hasDivider: false,
-    },
-  ];
 
   return (
     <Drawer variant="permanent" open={props.sidebarOpen}>
@@ -96,26 +104,26 @@ export const SidebarView: React.FC<ISidebarViewModel> = (props) => {
       <Divider />
       <List component="nav">
 
-      {mainList.map((element: SidebarItem) => (
-        <React.Fragment key={element.name}>
-          <ListItemButton
-            sx={{
-              backgroundColor: element.isCurrentPage
-                ? "bg-primary"
-                : "inherit",
-            }}
-            selected={element.isCurrentPage}
-            onClick={() => props.navigateTo(element.navigatePath)}
-          >
-            <ListItemIcon>{element.icon}</ListItemIcon>
-            <ListItemText primary={element.name} />
-          </ListItemButton>
-          {element.hasDivider ? 
-          <Divider sx={{ my: 1 }} />
-          : null }
+        {menuList(props.currentPage).map((element: ISidebarItem) => (
+          <React.Fragment key={element.name}>
+            <ListItemButton
+              sx={{
+                backgroundColor: element.isCurrentPage
+                  ? "bg-primary"
+                  : "inherit",
+              }}
+              selected={element.isCurrentPage}
+              onClick={() => props.navigateTo(element.navigatePath)}
+            >
+              <ListItemIcon>{element.icon}</ListItemIcon>
+              <ListItemText primary={element.name} />
+            </ListItemButton>
+            {element.hasDivider ?
+              <Divider sx={{ my: 1 }} />
+              : null}
 
-        </React.Fragment>      
-      ))}
+          </React.Fragment>
+        ))}
       </List>
     </Drawer >
   )

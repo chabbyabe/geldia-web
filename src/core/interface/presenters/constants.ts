@@ -15,6 +15,10 @@ export const PAGES = {
     label: 'Accounts',
     path: '/accounts',
   },
+  TRANSACTIONS: {
+    label: 'Transactions',
+    path: '/transactions',
+  },
 }
 
 export const ACCOUNT_COLORS : string[] = [

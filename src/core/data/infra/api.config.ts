@@ -1,4 +1,4 @@
-import { API_URL, BASE_URL } from "../../../config"
+import { API_URL, BASE_URL } from "@base/config";
 
 export interface ApiConfig {
   url: string
