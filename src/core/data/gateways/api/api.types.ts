@@ -127,3 +127,11 @@ export interface ITransactionFormInitialDataModel {
   transaction_types: ITransactionTypeModel[]
   tags: ITagSimpleModel[]
 }
+
+export interface ISummaryModel {
+  name: string
+  icon: string
+  color: string
+  amount: number
+  formatted_amount: string
+}
