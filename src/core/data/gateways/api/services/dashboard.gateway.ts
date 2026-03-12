@@ -42,6 +42,6 @@ export default class DashboardApiGateway extends Api {
   }
 
   private async _retrieveRecentTransactions(): Promise<ITransactionModel[]> {
-    return await this.get(`${DASHBOARD_URL}recent-transactions/`)
+    return await this.get(API_URL.DASHBOARD.recentTransactions)
   }
 }
