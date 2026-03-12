@@ -1,3 +1,10 @@
+import {
+  AccountBalanceWallet as AccountBalanceWalletIcon,
+  SwapHoriz as SwapHorizIcon,
+  Savings as SavingsIcon,
+  Payment as PaymentIcon,
+} from '@mui/icons-material';
+
 export const PAGES = {
   LOGIN: {
     label: 'Login',
@@ -29,3 +36,21 @@ export const ACCOUNT_COLORS : string[] = [
   "#F5A524",
   "#E5484D"
 ];
+
+export const SYSTEM_COLORS : Record<string, string> = {
+  "#006CD1" : "primary",
+  "#0053A3" : "secondary",
+  "#2EB872" : "success",
+  "#F5A524" : "warning",
+  "#E5484D" : "error",
+  "#4DA3FF" : "info"
+}
+
+export const ICON_MAP: Record<string, React.ElementType> = {
+  "Default" : AccountBalanceWalletIcon,
+  "Income": AccountBalanceWalletIcon,
+  "Expenses": PaymentIcon,
+  "Transfer": SwapHorizIcon,
+  "Savings": SavingsIcon,
+  "Payments" : PaymentIcon,
+};
