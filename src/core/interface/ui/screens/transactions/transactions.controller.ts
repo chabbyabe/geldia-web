@@ -12,7 +12,6 @@ import GetTransactionUseCase from "@domain/usecases/transactions/get-transaction
 import CreateTransactionUseCase from "@domain/usecases/transactions/create-transaction.usecase"
 import UpdateTransactionUseCase from "@base/core/domain/usecases/transactions/update-transactions.usecase"
 import DeleteTransactionUseCase from "@base/core/domain/usecases/transactions/delete-transaction.usecase"
-import RetrieveTransactionFormOptionsUseCase from "@base/core/domain/usecases/transactions/retrieve-form-options.usecase"
 
 export default class TransactionsController {
 
@@ -22,8 +21,6 @@ export default class TransactionsController {
   private readonly createTransactionUseCase: CreateTransactionUseCase
   private readonly updateTransactionUseCase: UpdateTransactionUseCase
   private readonly deleteTransactionUseCase: DeleteTransactionUseCase
-  private readonly retrieveFormOptionsUseCase: RetrieveTransactionFormOptionsUseCase
-
   constructor() {
     this.retrieveTransactionsUseCase = new RetrieveTransactionsUseCase(
       new TransactionApiGateway(),
@@ -46,10 +43,6 @@ export default class TransactionsController {
       new TransactionRepository()
     )
     this.deleteTransactionUseCase = new DeleteTransactionUseCase(
-      new TransactionApiGateway(),
-      new TransactionRepository()
-    )
-    this.retrieveFormOptionsUseCase = new RetrieveTransactionFormOptionsUseCase(
       new TransactionApiGateway(),
       new TransactionRepository()
     )
@@ -79,9 +72,5 @@ export default class TransactionsController {
 
  async deleteTransaction(transactionId: number) {
      await this.deleteTransactionUseCase.execute(transactionId)
-  }
-
-  async retrieveFormOptions() {
-    await this.retrieveFormOptionsUseCase.execute()
   }
 }
