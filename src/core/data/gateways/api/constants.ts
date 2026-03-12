@@ -16,6 +16,7 @@ export const DASHBOARD_URL = `/ledger/dashboard/`
 export const API_URL = {
   DASHBOARD : {
     base : DASHBOARD_URL,
+    summaryOverview : `${DASHBOARD_URL}summary-overview/`
   }
 }
 
