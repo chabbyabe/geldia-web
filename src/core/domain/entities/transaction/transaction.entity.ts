@@ -120,6 +120,10 @@ export default class TransactionEntity {
     return Object.assign({}, this);
   }
 
+  static fromArray(models: ITransaction[]): ITransaction[] {
+    return models.map(model => new TransactionEntity(model).getCurrentValuesAsJSON());
+  }
+  
   static mock(overrides: Partial<ITransaction> = {}): TransactionEntity {
     return new TransactionEntity({
       id: 1,
