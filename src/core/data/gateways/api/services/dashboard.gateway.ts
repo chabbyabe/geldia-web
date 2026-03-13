@@ -7,6 +7,8 @@ import { mapSummaryOverviewAttributes, mapRecentTransactionAttributes, mapCatego
 import { ICategoryOverviewModel, ISummaryModel, ITransactionModel } from '@data/gateways/api/api.types'
 import TransactionEntity, { ITransaction } from '@domain/entities/transaction/transaction.entity'
 import CategoryOverviewEntity, { ICategoryOverview } from '@domain/entities/dashboard/category-overview.entity'
+import { ICategoryOverviewFilterParams } from '@base/core/domain/entities/dashboard/filter.entity'
+import { toQueryString } from '@base/core/data/utils/query-string.utils'
 
 export default class DashboardApiGateway extends Api {
   async retrieveSummaryOverview(): Promise<ISummary[]> {
@@ -46,9 +48,9 @@ export default class DashboardApiGateway extends Api {
     return await this.get(API_URL.DASHBOARD.recentTransactions)
   }
 
-  async retrieveCategoryOverview(): Promise<ICategoryOverview[]> {
+  async retrieveCategoryOverview(params: ICategoryOverviewFilterParams): Promise<ICategoryOverview[]> {
     try {
-      const response = await this._retrieveCategoryOverview()
+      const response = await this._retrieveCategoryOverview(params)
       return this._mapCategoryOverviewFromResponse(response);
     } catch (error) {
       if (error instanceof BadRequest) {
@@ -58,8 +60,9 @@ export default class DashboardApiGateway extends Api {
     }
   }
 
-  private async _retrieveCategoryOverview(): Promise<ICategoryOverviewModel[]> {
-    return await this.get(API_URL.DASHBOARD.categoryOverview)
+  private async _retrieveCategoryOverview(params: ICategoryOverviewFilterParams): Promise<ICategoryOverviewModel[]> {
+    const filterParams = toQueryString(params)
+    return await this.get(`${API_URL.DASHBOARD.categoryOverview}?${filterParams}`)
   }
 
   private _mapCategoryOverviewFromResponse(response: ICategoryOverviewModel[]): ICategoryOverview[] {
