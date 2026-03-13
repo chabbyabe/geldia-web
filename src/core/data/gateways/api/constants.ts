@@ -17,7 +17,8 @@ export const API_URL = {
   DASHBOARD : {
     base : DASHBOARD_URL,
     summaryOverview : `${DASHBOARD_URL}summary-overview/`,
-    recentTransactions : `${DASHBOARD_URL}recent-transactions/`
+    recentTransactions : `${DASHBOARD_URL}recent-transactions/`,
+    categoryOverview : `${DASHBOARD_URL}category-overview/`
   }
 }
 
