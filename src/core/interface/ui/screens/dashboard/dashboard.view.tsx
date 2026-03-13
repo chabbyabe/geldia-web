@@ -1,12 +1,16 @@
 import { PAGES } from '@interface/presenters/constants';
 import { BaseLayoutContainer } from '@interface/ui/components/common/layouts/base-layout/base-layout.container';
 import { ISummary } from '@domain/entities/dashboard/summary-overview.entity';
-import { Grid } from '@mui/material';
+import { ITransaction } from '@domain/entities/transaction/transaction.entity';
+import { Button, Grid, Stack, Typography } from '@mui/material';
+import AddIcon from "@mui/icons-material/Add";
 import { SummaryCardContainer } from '@interface/ui/components/dashboard/summary-card/summary-card.container';
+import { TransactionCardContainer } from '@interface/ui/components/dashboard/transaction-card/transaction-card.container';
 
 export interface IDashboardViewModel {
   children?: React.ReactNode
   summaryOverview: ISummary[]
+  recentTransactions: ITransaction[]
 }
 
 const DashboardView: React.FC<IDashboardViewModel> = (props) => {
@@ -14,6 +18,26 @@ const DashboardView: React.FC<IDashboardViewModel> = (props) => {
     <BaseLayoutContainer currentPage={PAGES.DASHBOARD.label}>
       <Grid container spacing={3}>
         <SummaryCardContainer data={props.summaryOverview} />
+      </Grid>
+      <Grid container mt={3} flexGrow={1} spacing={4}>
+        <Grid flex={3} sx={{ sm: 12, md: 9 }}>
+        </Grid>
+        <Grid flex={2} sx={{ sm: 12, maxWidth: 400, minWidth: 400 }} flexWrap="wrap">
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            mb={2}
+          >
+            <Typography variant="h6" fontWeight="bold">
+              Recent Transactions
+            </Typography>
+            <Button variant="contained" startIcon={<AddIcon />}>
+              Transaction
+            </Button>
+          </Stack>
+          <TransactionCardContainer transactions={props.recentTransactions} />
+        </Grid>
       </Grid>
     </BaseLayoutContainer >
   )
