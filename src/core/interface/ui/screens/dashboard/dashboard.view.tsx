@@ -9,13 +9,11 @@ import { TransactionCardContainer } from '@interface/ui/components/dashboard/tra
 import { TransactionModalContainer } from '@interface/ui/components/modals/transaction-modal/transaction-modal.container';
 import { useState } from 'react';
 import { CategoryOverviewContainer } from '@interface/ui/components/dashboard/category-overview/category-overview.container';
-import { ICategoryOverview } from '@domain/entities/dashboard/category-overview.entity';
 
 export interface IDashboardViewModel {
   children?: React.ReactNode
   summaryOverview: ISummary[]
-  recentTransactions: ITransaction[]
-  categoryOverview: ICategoryOverview[]
+  recentTransactions: ITransaction[]  
 }
 
 const DashboardView: React.FC<IDashboardViewModel> = (props) => {
@@ -29,7 +27,7 @@ const DashboardView: React.FC<IDashboardViewModel> = (props) => {
         </Grid>
         <Grid container mt={3} flexGrow={1} spacing={4}>
           <Grid flex={3} sx={{ sm: 12, md: 9, minWidth: 350, maxWidth: 1400, width: "100%", minHeight: "800px" }}>
-             <CategoryOverviewContainer data={props.categoryOverview} />
+             <CategoryOverviewContainer />
           </Grid>
           <Grid flex={2} sx={{ sm: 12, maxWidth: 400, minWidth: 350 }} flexWrap="wrap">
             <Stack
