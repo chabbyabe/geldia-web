@@ -12,6 +12,9 @@ import GetTransactionUseCase from "@domain/usecases/transactions/get-transaction
 import CreateTransactionUseCase from "@domain/usecases/transactions/create-transaction.usecase"
 import UpdateTransactionUseCase from "@base/core/domain/usecases/transactions/update-transactions.usecase"
 import DeleteTransactionUseCase from "@base/core/domain/usecases/transactions/delete-transaction.usecase"
+import RetrieveRecentTransactionsUseCase from "@domain/usecases/dashboard/retrieve-recent-transactions.usecase"
+import DashboardApiGateway from "@data/gateways/api/services/dashboard.gateway"
+import DashboardRepository from "@data/gateways/api/services/dashboard.repository"
 
 export default class TransactionsController {
 
@@ -21,6 +24,7 @@ export default class TransactionsController {
   private readonly createTransactionUseCase: CreateTransactionUseCase
   private readonly updateTransactionUseCase: UpdateTransactionUseCase
   private readonly deleteTransactionUseCase: DeleteTransactionUseCase
+  private readonly retrieveRecentTransactionsUseCase: RetrieveRecentTransactionsUseCase
   constructor() {
     this.retrieveTransactionsUseCase = new RetrieveTransactionsUseCase(
       new TransactionApiGateway(),
@@ -46,6 +50,10 @@ export default class TransactionsController {
       new TransactionApiGateway(),
       new TransactionRepository()
     )
+    this.retrieveRecentTransactionsUseCase = new RetrieveRecentTransactionsUseCase(
+      new DashboardApiGateway(),
+      new DashboardRepository()
+    )
   }
 
   async retrieveTransactions(params : ITransactionSearchParams) {
@@ -62,6 +70,7 @@ export default class TransactionsController {
 
   async createTransaction(data: IFormTransaction) {
     await this.createTransactionUseCase.execute(data)
+    await this.retrieveRecentTransactionsUseCase.execute()
     await this.retrieveAccountUseCase.execute(true, 1)
   }
 
