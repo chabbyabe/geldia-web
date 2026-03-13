@@ -4,7 +4,8 @@ import {
   setSummaryOverview, setRecentTransactions, setCategoryOverview 
 } from "@interface/presenters/store/reducers/dashboard.reducer"
 import { store } from "@interface/presenters/store/store"
-import { ICategoryOverview } from "@base/core/domain/entities/dashboard/category-overview.entity"
+import { ICategoryOverview } from "@domain/entities/dashboard/category-overview.entity"
+import { ICategoryOverviewFilterParams } from "@domain/entities/dashboard/filter.entity"
 
 export default class DashboardRepository {
   retrieveSummaryOverview(summaries: ISummary[]) {
@@ -13,7 +14,7 @@ export default class DashboardRepository {
   retrieveRecentTransactions(transactions: ITransaction[]) {
     store.dispatch(setRecentTransactions(transactions))
   }
-  retrieveCategoryOverview(categories: ICategoryOverview[]) {
-    store.dispatch(setCategoryOverview(categories))
+  retrieveCategoryOverview(categories: ICategoryOverview[], params: ICategoryOverviewFilterParams) {
+    store.dispatch(setCategoryOverview({categories, params}))
   }
 }

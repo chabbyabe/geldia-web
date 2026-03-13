@@ -1,11 +1,12 @@
 import { ICategoryOverview } from '@domain/entities/dashboard/category-overview.entity'
+import { ICategoryOverviewFilterParams } from '@domain/entities/dashboard/filter.entity'
 
 export interface IRetrieveCategoryOverviewDataGateway {
-  retrieveCategoryOverview: () => Promise<ICategoryOverview[]>
+  retrieveCategoryOverview: (params: ICategoryOverviewFilterParams) => Promise<ICategoryOverview[]>
 }
 
 export interface IRetrieveCategoryOverviewRepository {
-  retrieveCategoryOverview: (categories: ICategoryOverview[]) => void
+  retrieveCategoryOverview: (categories: ICategoryOverview[], params: ICategoryOverviewFilterParams) => void
 }
 
 export default class RetrieveCategoryOverviewUseCase { 
@@ -15,8 +16,8 @@ export default class RetrieveCategoryOverviewUseCase {
     
   ) {
   }
-  async execute() {
-    const response = await this.dataGateway.retrieveCategoryOverview()
-    await this.dataRepository.retrieveCategoryOverview(response)
+  async execute(params: ICategoryOverviewFilterParams) {
+    const response = await this.dataGateway.retrieveCategoryOverview(params)
+    await this.dataRepository.retrieveCategoryOverview(response, params)
   }
 }
