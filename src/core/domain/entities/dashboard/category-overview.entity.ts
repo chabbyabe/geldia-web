@@ -25,12 +25,22 @@ export default class CategoryOverviewEntity {
   static mock(overrides: Partial<ICategoryOverview> = {}): CategoryOverviewEntity {
     const mockData: ICategoryOverview[] = [
       {
-        name: 'Test Summary',
+        name: 'Test Category 1',
         icon: 'Savings',
         color: '#006CD1',
         isParent: false,
         amount: 12.0,
         formattedAmount: '€12.00',
+        ...overrides
+      },
+      
+      {
+        name: 'Test Category 2',
+        icon: 'Transfer',
+        color: '#006CD1',
+        isParent: false,
+        amount: 10.0,
+        formattedAmount: '€10.00',
         ...overrides
       }
     ]
