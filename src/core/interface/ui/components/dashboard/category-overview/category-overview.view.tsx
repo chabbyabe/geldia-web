@@ -1,4 +1,4 @@
-import { Card, CardContent, Typography } from "@mui/material";
+import { Box, Card, CardContent, Stack, Typography } from "@mui/material";
 import React, { useEffect, useRef } from "react";
 import { ICategoryOverview } from "@domain/entities/dashboard/category-overview.entity";
 import ReactECharts from 'echarts-for-react';
@@ -7,6 +7,9 @@ import * as echarts from 'echarts/core';
 import { PieChart } from 'echarts/charts';
 import { TooltipComponent, LegendComponent } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
+import { DateFilterContainer } from "@interface/ui/components/common/date-filter/date-filter.container";
+import { ICategoryOverviewFilterParams } from "@domain/entities/dashboard/filter.entity";
+
 echarts.use([
   TooltipComponent,
   LegendComponent,
@@ -17,6 +20,8 @@ echarts.use([
 export interface ICategoryOverviewView {
   children?: React.ReactNode
   data: ICategoryOverview[]
+  onFilterChange: (params: ICategoryOverviewFilterParams) => void
+  filterParams: ICategoryOverviewFilterParams
 }
 
 
@@ -61,7 +66,6 @@ const donutOption = (props: ICategoryOverviewView): EChartsOption => ({
   ],
 });
 
-
 const CategoryOverviewView: React.FC<ICategoryOverviewView> = (props) => {
   const chartRef = useRef<ReactECharts | null>(null);
 
@@ -79,15 +83,19 @@ const CategoryOverviewView: React.FC<ICategoryOverviewView> = (props) => {
         <Typography variant="h6" fontWeight="bold" mb={2}>
           Category Overview
         </Typography>
-        <div style={{ flex: 1 }}>
+        <Box style={{ flex: 1 }}>
+          <Stack direction="row" spacing={2} alignItems="center" mb={2}>
+            <DateFilterContainer onFilterChange={props.onFilterChange} filterParams={props.filterParams} />
+          </Stack>
           <ReactECharts
             ref={chartRef}
             option={donutOption(props)}
             style={{ width: "100%", height: "100%" }}
           />
-        </div>
+        </Box>
       </CardContent>
     </Card>
   );
 };
+
 export default CategoryOverviewView;
