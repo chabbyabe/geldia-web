@@ -18,7 +18,8 @@ export const API_URL = {
     base : DASHBOARD_URL,
     summaryOverview : `${DASHBOARD_URL}summary-overview/`,
     recentTransactions : `${DASHBOARD_URL}recent-transactions/`,
-    categoryOverview : `${DASHBOARD_URL}category-overview/`
+    categoryOverview : `${DASHBOARD_URL}category-overview/`,
+    yearOverview : `${DASHBOARD_URL}year-overview/`
   }
 }
 
