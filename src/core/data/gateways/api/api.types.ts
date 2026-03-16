@@ -135,3 +135,12 @@ export interface ISummaryModel {
   amount: number
   formatted_amount: string
 }
+
+export interface ICategoryOverviewModel {
+  name: string
+  icon: string
+  color: string
+  is_parent: boolean
+  amount: number
+  formatted_amount: string
+}
