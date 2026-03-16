@@ -11,7 +11,14 @@ export const REGISTER_URL = `/users/auth/register`
 export const ACCOUNT_URL = `/ledger/accounts/`
 export const USER_URL = `/ledger/users/`
 export const TRANSACTION_URL = `/ledger/transactions/`
+export const DASHBOARD_URL = `/ledger/dashboard/`
 
+export const API_URL = {
+  DASHBOARD : {
+    base : DASHBOARD_URL,
+    summaryOverview : `${DASHBOARD_URL}summary-overview/`
+  }
+}
 
 /**
  * PAGINATION CONSTANTS

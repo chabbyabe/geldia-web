@@ -6,12 +6,14 @@ import authReducer from '@interface/presenters/store/reducers/auth.reducer';
 import usersReducer from '@interface/presenters/store/reducers/users.reducer';
 import accountsReducer from '@interface/presenters/store/reducers/accounts.reducer';
 import transactionsReducer from '@interface/presenters/store/reducers/transactions.reducer';
+import dashboardReducer from '@interface/presenters/store/reducers/dashboard.reducer';
 
 const reducer = combineReducers({
   authState: authReducer,
   userState: usersReducer,
   accountState: accountsReducer,
   transactionState: transactionsReducer,
+  dashboardState: dashboardReducer
 });
 
 const persistConfig = {
