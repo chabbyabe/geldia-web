@@ -236,7 +236,7 @@ const TransactionModalView: React.FC<ITransactionModalView> = (props) => {
 
   return (
     <>
-      <Dialog open={props.open} onClose={handleCloseModal} fullWidth maxWidth="md">
+      <Dialog open={props.open} onClose={() => {}} fullWidth maxWidth="md">
         <DialogTitle>
           {isCreate ? "Create " : "Edit"}{"Transaction"}
         </DialogTitle>

@@ -3,8 +3,6 @@ import {
   Container, Button, Chip, Stack, Box, Accordion, AccordionSummary,
   AccordionDetails, Typography, Divider, Grid
 } from '@mui/material';
-import { IFormTransaction } from '@domain/entities/formModels/transaction-form.entity';
-import { ITransactionInitial } from '@domain/entities/transaction/initial.entity';
 import { IBasePagedListEntity } from '@domain/entities/base/base.paged.entity';
 import DeleteConfirmationModal from '@interface/ui/components/modals/delete-confirmation-modal/delete-confirmation-modal.container';
 import { GridColDef, GridRenderCellParams, GridValueSetter, getGridStringOperators, getGridNumericOperators } from '@mui/x-data-grid';
@@ -20,7 +18,6 @@ import { useEffect, useState } from 'react';
 
 export interface ITransactionsViewModel {
   children?: React.ReactNode
-  handleFormSubmit: (values: IFormTransaction) => void
   handleDelete: (transactionId: number) => void
   selectedTransaction: ITransaction | null
   transactions: ITransaction[]
@@ -28,7 +25,6 @@ export interface ITransactionsViewModel {
   pagination: IBasePagedListEntity
   handlePagination: (params: ITransactionSearchParams) => Promise<void>
   handleActionMenu: (actionId: number) => void
-  formOptions: ITransactionInitial
   removeCurrentTransaction: () => void
 }
 
@@ -412,8 +408,6 @@ const TransactionsView: React.FC<ITransactionsViewModel> = (props) => {
         <TransactionModalContainer
           open={openCreateEditModal}
           onClose={() => setOpenCreateEditModal(false)}
-          formOptions={props.formOptions}
-          handleFormSumbit={props.handleFormSubmit}
           selectedTransaction={props.selectedTransaction}
         />
       </>
