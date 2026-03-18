@@ -6,8 +6,8 @@ import {
 } from "@interface/presenters/store/reducers/dashboard.reducer"
 import { store } from "@interface/presenters/store/store"
 import { ICategoryOverview } from "@domain/entities/dashboard/category-overview.entity"
-import { ICategoryOverviewFilterParams } from "@domain/entities/dashboard/filter.entity"
-import { IYearOverview } from "@base/core/domain/entities/dashboard/year-overview.entity"
+import { ICategoryOverviewFilterParams, IYearOverviewFilterParams } from "@domain/entities/dashboard/filter.entity"
+import { IYearOverview } from "@domain/entities/dashboard/year-overview.entity"
 
 export default class DashboardRepository {
   retrieveSummaryOverview(summaries: ISummary[]) {
@@ -20,7 +20,7 @@ export default class DashboardRepository {
     store.dispatch(setCategoryOverview({categories, params}))
   }
 
-  setYearOverview(overview: IYearOverview[]) {
-    store.dispatch(setYearOverview(overview))
+  setYearOverview(overview: IYearOverview[], params: IYearOverviewFilterParams) {
+    store.dispatch(setYearOverview({overview, params}))
   }
 }

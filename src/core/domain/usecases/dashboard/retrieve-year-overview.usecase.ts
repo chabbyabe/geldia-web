@@ -1,11 +1,12 @@
 import { IYearOverview } from '@domain/entities/dashboard/year-overview.entity'
+import { IYearOverviewFilterParams } from '@domain/entities/dashboard/filter.entity'
 
 export interface IRetrieveYearOverviewDataGateway {
-  retrieveYearOverview: () => Promise<IYearOverview[]>
+  retrieveYearOverview: (params: IYearOverviewFilterParams) => Promise<IYearOverview[]>
 }
 
 export interface IRetrieveYearOverviewRepository {
-  setYearOverview: (overview: IYearOverview[]) => void
+  setYearOverview: (overview: IYearOverview[], params: IYearOverviewFilterParams) => void
 }
 
 export default class RetrieveYearOverviewUseCase { 
@@ -15,8 +16,8 @@ export default class RetrieveYearOverviewUseCase {
     
   ) {
   }
-  async execute() {
-    const response = await this.dataGateway.retrieveYearOverview()
-    await this.dataRepository.setYearOverview(response)
+  async execute(params: IYearOverviewFilterParams) {
+    const response = await this.dataGateway.retrieveYearOverview(params)
+    await this.dataRepository.setYearOverview(response, params)
   }
 }
