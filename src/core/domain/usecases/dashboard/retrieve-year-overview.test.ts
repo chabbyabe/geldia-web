@@ -3,11 +3,13 @@ import RetrieveYearOverviewUseCase, {
   IRetrieveYearOverviewDataGateway,
   IRetrieveYearOverviewRepository,
 } from './retrieve-year-overview.usecase'
+import { IYearOverviewFilterParams } from '../../entities/dashboard/filter.entity'
 
 describe('Test RetrieveYearOverviewUseCase', () => {
   let mockGateway: jest.Mocked<IRetrieveYearOverviewDataGateway>
   let mockRepository: jest.Mocked<IRetrieveYearOverviewRepository>
   let useCase: RetrieveYearOverviewUseCase
+  let filterParams: IYearOverviewFilterParams = { year: "2026"}  
 
   beforeEach(() => {
     mockGateway = {
@@ -33,17 +35,17 @@ describe('Test RetrieveYearOverviewUseCase', () => {
 
     mockGateway.retrieveYearOverview.mockResolvedValue(overview)
 
-    await useCase.execute()
+    await useCase.execute(filterParams)
 
     expect(mockGateway.retrieveYearOverview).toHaveBeenCalledTimes(1)
-    expect(mockRepository.setYearOverview).toHaveBeenCalledWith(overview)
+    expect(mockRepository.setYearOverview).toHaveBeenCalledWith(overview, filterParams)
   })
 
   test('Execute throws when gateway fails and does not update repository', async () => {
     const simulatedError = new Error('Failed to retrieve year overview')
     mockGateway.retrieveYearOverview.mockRejectedValue(simulatedError)
 
-    await expect(useCase.execute()).rejects.toThrow(simulatedError)
+    await expect(useCase.execute(filterParams)).rejects.toThrow(simulatedError)
     expect(mockRepository.setYearOverview).not.toHaveBeenCalled()
   })
 })
