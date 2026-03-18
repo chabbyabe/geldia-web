@@ -2,9 +2,10 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { ISummary } from "@domain/entities/dashboard/summary-overview.entity";
 import { ITransaction } from "@domain/entities/transaction/transaction.entity";
 import { ICategoryOverview } from "@domain/entities/dashboard/category-overview.entity";
-import { ICategoryOverviewFilterParams } from "@domain/entities/dashboard/filter.entity";
+import { ICategoryOverviewFilterParams, IYearOverviewFilterParams } from "@domain/entities/dashboard/filter.entity";
 import { DATE_RANGES } from "@data/gateways/api/constants";
 import { IYearOverview } from "@domain/entities/dashboard/year-overview.entity";
+import dayjs from "dayjs";
 
 interface IDashboardState {
   summaryOverview: ISummary[]
@@ -12,7 +13,8 @@ interface IDashboardState {
   categoryOverview: ICategoryOverview[],
   yearOverview: IYearOverview[],
   filters: {
-    categoryOverview: ICategoryOverviewFilterParams
+    categoryOverview: ICategoryOverviewFilterParams,
+    yearOverview: IYearOverviewFilterParams
   }
 }
 
@@ -26,6 +28,9 @@ const initialState: IDashboardState = {
       filterBy: DATE_RANGES.MONTH,
       startDate: null,
       endDate: null
+    },
+    yearOverview: {
+      year: dayjs().format('YYYY')
     }
   }
 }
@@ -53,8 +58,15 @@ export const dashboardSlice = createSlice({
       }
       state.categoryOverview = [...action.payload.categories]
     },
-    setYearOverview(state, action: PayloadAction<IYearOverview[]>) {
-      state.yearOverview = [...action.payload]
+    setYearOverview(state, action: PayloadAction<{
+      overview: IYearOverview[],
+      params: IYearOverviewFilterParams
+    }>) {
+      if (!state.filters) state.filters = {} as IDashboardState['filters']
+      state.yearOverview = [...action.payload.overview]
+      state.filters.yearOverview = {
+        year: action.payload.params.year
+      }
     },
   },
 })
