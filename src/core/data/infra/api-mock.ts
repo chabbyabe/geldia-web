@@ -8,7 +8,7 @@ import {
 } from '@data/gateways/api/constants'
 import { IFormLogin, IFormSignUp } from '@domain/entities/formModels/signup-form.entity'
 import { IYearOverviewFilterParams } from '@domain/entities/dashboard/filter.entity'
-import { escapeRegExpForApiRequest } from '@base/core/data/utils/regex.utils'
+import { escapeRegExpForApiRequest, getIdFromUrl } from '@base/core/data/utils/regex.utils'
 import { IFormAccount } from '@base/core/domain/entities/formModels/account-form.entity'
 
 const MOCK_URLS = {
@@ -41,6 +41,10 @@ export const mockAPIResponses = (
     )
     // Accounts
     mock.onGet(MOCK_URLS.ACCOUNT.BASE).reply(400, getAccountErrorResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.ACCOUNT.DETAIL).reply(
+      400,
+      getAccountErrorResponse(baseDataRes),
+    )
   } else {
     // User Registration
     mock.onPost(MOCK_URLS.REGISTER).reply(201, formatUserCreateIntoResponse(baseDataRes))
@@ -55,6 +59,9 @@ export const mockAPIResponses = (
     )
     // Accounts
     mock.onGet(MOCK_URLS.ACCOUNT.BASE).reply(200, formatRetrieveAccountsIntoResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.ACCOUNT.DETAIL).reply((config) => {
+      return [200, formatAccountIntoResponse(baseDataRes.accountForm, getIdFromUrl(config.url))]
+    })
   }
 }
 
