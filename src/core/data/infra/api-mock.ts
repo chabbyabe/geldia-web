@@ -46,7 +46,7 @@ export const mockAPIResponses = (
       getAccountErrorResponse(baseDataRes),
     )
     mock.onPost(MOCK_URLS.ACCOUNT.BASE).reply(400, getAccountErrorResponse(baseDataRes))
-
+    mock.onPatch(MOCK_URLS.ACCOUNT.DETAIL).reply(400, getAccountErrorResponse(baseDataRes))
   } else {
     // User Registration
     mock.onPost(MOCK_URLS.REGISTER).reply(201, formatUserCreateIntoResponse(baseDataRes))
@@ -65,7 +65,9 @@ export const mockAPIResponses = (
       return [200, formatAccountIntoResponse(baseDataRes.accountForm, getIdFromUrl(config.url))]
     })
     mock.onPost(ACCOUNT_URL).reply(201, formatAccountIntoResponse(baseDataRes))
-
+    mock.onPatch(MOCK_URLS.ACCOUNT.DETAIL).reply((config) => {
+      return [200, formatAccountIntoResponse(baseDataRes.accountForm, getIdFromUrl(config.url))]
+    })
   }
 }
 
