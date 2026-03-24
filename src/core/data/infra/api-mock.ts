@@ -5,6 +5,7 @@ import {
   LOGIN_URL,
   LOGOUT_URL,
   REGISTER_URL,
+  TRANSACTION_URL,
 } from '@data/gateways/api/constants'
 import { IFormLogin, IFormSignUp } from '@domain/entities/formModels/signup-form.entity'
 import { IYearOverviewFilterParams } from '@domain/entities/dashboard/filter.entity'
@@ -21,7 +22,10 @@ const MOCK_URLS = {
   ACCOUNT: {
     BASE: ACCOUNT_URL,
     DETAIL: new RegExp(`^${escapeRegExpForApiRequest(ACCOUNT_URL)}\\d+/$`),
-  }
+  },
+  TRANSACTION: {
+    FORM_INITIAL: `${TRANSACTION_URL}initial/list/`,
+  },
 }
 
 export const mockAPIResponses = (
@@ -41,13 +45,12 @@ export const mockAPIResponses = (
     )
     // Accounts
     mock.onGet(MOCK_URLS.ACCOUNT.BASE).reply(400, getAccountErrorResponse(baseDataRes))
-    mock.onGet(MOCK_URLS.ACCOUNT.DETAIL).reply(
-      400,
-      getAccountErrorResponse(baseDataRes),
-    )
+    mock.onGet(MOCK_URLS.ACCOUNT.DETAIL).reply(400, getAccountErrorResponse(baseDataRes))
     mock.onPost(MOCK_URLS.ACCOUNT.BASE).reply(400, getAccountErrorResponse(baseDataRes))
     mock.onPatch(MOCK_URLS.ACCOUNT.DETAIL).reply(400, getAccountErrorResponse(baseDataRes))
     mock.onDelete(MOCK_URLS.ACCOUNT.DETAIL).reply(400, getAccountErrorResponse(baseDataRes))
+    // Transactions
+    mock.onGet(MOCK_URLS.TRANSACTION.FORM_INITIAL).reply(400, getTransactionErrorResponse(baseDataRes))
   } else {
     // User Registration
     mock.onPost(MOCK_URLS.REGISTER).reply(201, formatUserCreateIntoResponse(baseDataRes))
@@ -70,13 +73,16 @@ export const mockAPIResponses = (
       return [200, formatAccountIntoResponse(baseDataRes.accountForm, getIdFromUrl(config.url))]
     })
     mock.onDelete(MOCK_URLS.ACCOUNT.DETAIL).reply(204)
+    // Transactions
+    mock.onGet(MOCK_URLS.TRANSACTION.FORM_INITIAL).reply(200, formatTransactionInitialDataIntoResponse(baseDataRes),
+    )
   }
 }
 
 /** Logout */
 const formatUserLogoutIntoResponse = () => {
   return {
-    "detail": "Successfully logged out."
+    "detail": 'Successfully logged out.',
   }
 }
 
@@ -86,6 +92,7 @@ const getUserLoginErrorResponse = (data: string) => {
     "non_form_errors": [data]
   }
 }
+
 
 const formatUserLoginIntoResponse = (data: IFormLogin) => {
   return {
@@ -109,6 +116,7 @@ const getUserRegistrationErrorResponse = (data: string) => {
   }
 }
 
+
 const formatUserCreateIntoResponse = (data: IFormSignUp) => {
   return {
     "access": "xxx",
@@ -121,7 +129,6 @@ const formatUserCreateIntoResponse = (data: IFormSignUp) => {
     },
   }
 }
-
 /** Dashboard Year Overview**/
 const getDashboardYearOverviewErrorResponse = (data: string) => {
   return {
@@ -190,5 +197,23 @@ const formatAccountIntoResponse = (
     "created_at": '2026-01-01T00:00:00.000Z',
     "updated_at": null,
     "deleted_at": null,
+  }
+}
+
+//  Transactions
+const getTransactionErrorResponse = (data: any) => {
+  return {
+    "non_field_errors": [data?.errorMessage ?? data ?? 'failed'],
+  }
+}
+
+const formatTransactionInitialDataIntoResponse = (data: any) => {
+  return {
+    "stores": data.stores,
+    "places": data.places,
+    "accounts": data.accounts,
+    "categories": data.categories,
+    "transaction_types": data.transactionTypes,
+    "tags": data.tags,
   }
 }
