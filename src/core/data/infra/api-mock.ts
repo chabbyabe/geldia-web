@@ -57,6 +57,7 @@ export const mockAPIResponses = (
     mock.onGet(MOCK_URLS.TRANSACTION.FORM_INITIAL).reply(400, getTransactionErrorResponse(baseDataRes))
     mock.onGet(MOCK_URLS.TRANSACTION.BASE).reply(400, getTransactionErrorResponse(baseDataRes))
     mock.onGet(MOCK_URLS.TRANSACTION.DETAIL).reply(400, getTransactionErrorResponse(baseDataRes))
+    mock.onPost(MOCK_URLS.TRANSACTION.BASE).reply(400, getTransactionErrorResponse(baseDataRes))
   } else {
     // User Registration
     mock.onPost(MOCK_URLS.REGISTER).reply(201, formatUserCreateIntoResponse(baseDataRes))
@@ -85,6 +86,7 @@ export const mockAPIResponses = (
     mock.onGet(MOCK_URLS.TRANSACTION.DETAIL).reply((config) => {
       return [200, formatTransactionIntoResponse(baseDataRes, getIdFromUrl(config.url))]
     })
+    mock.onPost(MOCK_URLS.TRANSACTION.BASE).reply(201, formatTransactionIntoResponse(baseDataRes))
   }
 }
 
