@@ -19,6 +19,7 @@ const MOCK_URLS = {
   LOGIN: LOGIN_URL,
   LOGOUT: LOGOUT_URL,
   DASHBOARD: {
+    SUMMARY_OVERVIEW: API_URL.DASHBOARD.summaryOverview,
     YEAR_OVERVIEW: new RegExp(`^${escapeRegExpForApiRequest(API_URL.DASHBOARD.yearOverview)}\\?.*$`),
   },
   ACCOUNT: {
@@ -43,10 +44,8 @@ export const mockAPIResponses = (
     // Login
     mock.onPost(MOCK_URLS.LOGIN).reply(400, getUserLoginErrorResponse(baseDataRes))
     // Dashboard
-    mock.onGet(MOCK_URLS.DASHBOARD.YEAR_OVERVIEW).reply(
-      400,
-      getDashboardYearOverviewErrorResponse(baseDataRes),
-    )
+    mock.onGet(MOCK_URLS.DASHBOARD.SUMMARY_OVERVIEW).reply(400, getDashboardErrorResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.DASHBOARD.YEAR_OVERVIEW).reply(400, getDashboardYearOverviewErrorResponse(baseDataRes))
     // Accounts
     mock.onGet(MOCK_URLS.ACCOUNT.BASE).reply(400, getAccountErrorResponse(baseDataRes))
     mock.onGet(MOCK_URLS.ACCOUNT.DETAIL).reply(400, getAccountErrorResponse(baseDataRes))
@@ -68,10 +67,8 @@ export const mockAPIResponses = (
     // Logout
     mock.onPost(MOCK_URLS.LOGOUT).reply(200, formatUserLogoutIntoResponse())
     // Dashboard
-    mock.onGet(MOCK_URLS.DASHBOARD.YEAR_OVERVIEW).reply(
-      200,
-      formatDashboardYearOverviewIntoResponse(baseDataRes),
-    )
+    mock.onGet(MOCK_URLS.DASHBOARD.SUMMARY_OVERVIEW).reply(200, formatDashboardSummaryOverviewIntoResponse())
+    mock.onGet(MOCK_URLS.DASHBOARD.YEAR_OVERVIEW).reply(200, formatDashboardYearOverviewIntoResponse(baseDataRes))
     // Accounts
     mock.onGet(MOCK_URLS.ACCOUNT.BASE).reply(200, formatRetrieveAccountsIntoResponse(baseDataRes))
     mock.onGet(MOCK_URLS.ACCOUNT.DETAIL).reply((config) => {
@@ -146,6 +143,40 @@ const formatUserCreateIntoResponse = (data: IFormSignUp) => {
     },
   }
 }
+
+/* Dashboard */
+const getDashboardErrorResponse = (data: any) => {
+  return {
+    "non_field_errors": [data?.errorMessage ?? data ?? 'failed'],
+  }
+}
+
+const formatDashboardSummaryOverviewIntoResponse = () => {
+  return [
+    {
+        "name": "Income",
+        "icon": "Savings",
+        "color": "#006CD1",
+        "amount": "185489.00",
+        "formatted_amount": "€185,489.00"
+    },
+    {
+        "name": "Expenses",
+        "icon": "Payments",
+        "color": "#E5484D",
+        "amount": "293402.00",
+        "formatted_amount": "€293,402.00"
+    },
+    {
+        "name": "Savings",
+        "icon": "Balance",
+        "color": "#F5A524",
+        "amount": "49200.00",
+        "formatted_amount": "€49,200.00"
+    }
+  ]
+}
+
 /** Dashboard Year Overview**/
 const getDashboardYearOverviewErrorResponse = (data: string) => {
   return {
