@@ -28,6 +28,7 @@ const MOCK_URLS = {
   TRANSACTION: {
     FORM_INITIAL: `${TRANSACTION_URL}initial/list/`,
     BASE: TRANSACTION_URL,
+    DETAIL: new RegExp(`^${escapeRegExpForApiRequest(TRANSACTION_URL)}\\d+/$`),
   },
 }
 
@@ -55,6 +56,7 @@ export const mockAPIResponses = (
     // Transactions
     mock.onGet(MOCK_URLS.TRANSACTION.FORM_INITIAL).reply(400, getTransactionErrorResponse(baseDataRes))
     mock.onGet(MOCK_URLS.TRANSACTION.BASE).reply(400, getTransactionErrorResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.TRANSACTION.DETAIL).reply(400, getTransactionErrorResponse(baseDataRes))
   } else {
     // User Registration
     mock.onPost(MOCK_URLS.REGISTER).reply(201, formatUserCreateIntoResponse(baseDataRes))
@@ -80,6 +82,9 @@ export const mockAPIResponses = (
     // Transactions
     mock.onGet(MOCK_URLS.TRANSACTION.FORM_INITIAL).reply(200, formatTransactionInitialDataIntoResponse(baseDataRes))
     mock.onGet(MOCK_URLS.TRANSACTION.BASE).reply(200, formatRetrieveTransactionsIntoResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.TRANSACTION.DETAIL).reply((config) => {
+      return [200, formatTransactionIntoResponse(baseDataRes, getIdFromUrl(config.url))]
+    })
   }
 }
 
