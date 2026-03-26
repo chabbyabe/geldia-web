@@ -13,6 +13,7 @@ import { IYearOverviewFilterParams } from '@domain/entities/dashboard/filter.ent
 import { escapeRegExpForApiRequest, getIdFromUrl } from '@base/core/data/utils/regex.utils'
 import { IFormAccount } from '@base/core/domain/entities/formModels/account-form.entity'
 import { IFormTransaction } from '@domain/entities/formModels/transaction-form.entity'
+import { ITransaction } from '@base/core/domain/entities/transaction/transaction.entity'
 
 const MOCK_URLS = {
   REGISTER: REGISTER_URL,
@@ -20,6 +21,7 @@ const MOCK_URLS = {
   LOGOUT: LOGOUT_URL,
   DASHBOARD: {
     SUMMARY_OVERVIEW: API_URL.DASHBOARD.summaryOverview,
+    RECENT_TRANSACTIONS: API_URL.DASHBOARD.recentTransactions,
     YEAR_OVERVIEW: new RegExp(`^${escapeRegExpForApiRequest(API_URL.DASHBOARD.yearOverview)}\\?.*$`),
   },
   ACCOUNT: {
@@ -45,6 +47,7 @@ export const mockAPIResponses = (
     mock.onPost(MOCK_URLS.LOGIN).reply(400, getUserLoginErrorResponse(baseDataRes))
     // Dashboard
     mock.onGet(MOCK_URLS.DASHBOARD.SUMMARY_OVERVIEW).reply(400, getDashboardErrorResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.DASHBOARD.RECENT_TRANSACTIONS).reply(400, getDashboardErrorResponse(baseDataRes))
     mock.onGet(MOCK_URLS.DASHBOARD.YEAR_OVERVIEW).reply(400, getDashboardYearOverviewErrorResponse(baseDataRes))
     // Accounts
     mock.onGet(MOCK_URLS.ACCOUNT.BASE).reply(400, getAccountErrorResponse(baseDataRes))
@@ -68,6 +71,7 @@ export const mockAPIResponses = (
     mock.onPost(MOCK_URLS.LOGOUT).reply(200, formatUserLogoutIntoResponse())
     // Dashboard
     mock.onGet(MOCK_URLS.DASHBOARD.SUMMARY_OVERVIEW).reply(200, formatDashboardSummaryOverviewIntoResponse())
+    mock.onGet(MOCK_URLS.DASHBOARD.RECENT_TRANSACTIONS).reply(200, formatDashboardRecentTransactionsIntoResponse(baseDataRes))
     mock.onGet(MOCK_URLS.DASHBOARD.YEAR_OVERVIEW).reply(200, formatDashboardYearOverviewIntoResponse(baseDataRes))
     // Accounts
     mock.onGet(MOCK_URLS.ACCOUNT.BASE).reply(200, formatRetrieveAccountsIntoResponse(baseDataRes))
@@ -176,6 +180,13 @@ const formatDashboardSummaryOverviewIntoResponse = () => {
     }
   ]
 }
+
+const formatDashboardRecentTransactionsIntoResponse = (data: any) => {
+  return (data?.transactions ?? []).map((transaction: ITransaction) =>
+    formatTransactionIntoResponse(transaction),
+  )
+}
+
 
 /** Dashboard Year Overview**/
 const getDashboardYearOverviewErrorResponse = (data: string) => {
