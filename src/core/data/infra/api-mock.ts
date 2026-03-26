@@ -14,6 +14,7 @@ import { escapeRegExpForApiRequest, getIdFromUrl } from '@base/core/data/utils/r
 import { IFormAccount } from '@base/core/domain/entities/formModels/account-form.entity'
 import { IFormTransaction } from '@domain/entities/formModels/transaction-form.entity'
 import { ITransaction } from '@base/core/domain/entities/transaction/transaction.entity'
+import { ICategoryOverview } from '@base/core/domain/entities/dashboard/category-overview.entity'
 
 const MOCK_URLS = {
   REGISTER: REGISTER_URL,
@@ -22,6 +23,7 @@ const MOCK_URLS = {
   DASHBOARD: {
     SUMMARY_OVERVIEW: API_URL.DASHBOARD.summaryOverview,
     RECENT_TRANSACTIONS: API_URL.DASHBOARD.recentTransactions,
+    CATEGORY_OVERVIEW: new RegExp(`^${escapeRegExpForApiRequest(API_URL.DASHBOARD.categoryOverview)}\\?.*$`),
     YEAR_OVERVIEW: new RegExp(`^${escapeRegExpForApiRequest(API_URL.DASHBOARD.yearOverview)}\\?.*$`),
   },
   ACCOUNT: {
@@ -72,6 +74,7 @@ export const mockAPIResponses = (
     // Dashboard
     mock.onGet(MOCK_URLS.DASHBOARD.SUMMARY_OVERVIEW).reply(200, formatDashboardSummaryOverviewIntoResponse())
     mock.onGet(MOCK_URLS.DASHBOARD.RECENT_TRANSACTIONS).reply(200, formatDashboardRecentTransactionsIntoResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.DASHBOARD.CATEGORY_OVERVIEW).reply(200, formatDashboardCategoryOverviewIntoResponse(baseDataRes))
     mock.onGet(MOCK_URLS.DASHBOARD.YEAR_OVERVIEW).reply(200, formatDashboardYearOverviewIntoResponse(baseDataRes))
     // Accounts
     mock.onGet(MOCK_URLS.ACCOUNT.BASE).reply(200, formatRetrieveAccountsIntoResponse(baseDataRes))
@@ -187,7 +190,16 @@ const formatDashboardRecentTransactionsIntoResponse = (data: any) => {
   )
 }
 
+const formatDashboardCategoryOverviewIntoResponse = (data: any) => {
+  return (data?.categories ?? []).map((category: ICategoryOverview) =>
+    formatCategoryOverview(category),
+  )
+}
 
+const formatCategoryOverview = (category : ICategoryOverview) => {
+  return category;
+}
+ 
 /** Dashboard Year Overview**/
 const getDashboardYearOverviewErrorResponse = (data: string) => {
   return {
