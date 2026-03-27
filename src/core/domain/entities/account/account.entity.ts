@@ -45,31 +45,5 @@ export default class AccountEntity {
   getCurrentValuesAsJSON(): IAccount {
     return Object.assign({}, this);
   }
-
-  static mock(overrides: Partial<IAccount> = {}): AccountEntity {
-    return new AccountEntity({
-      id: 1,
-      name: 'Test Channel',
-      icon: 'test@test.com',
-      color: '#006CD1',
-      balance: 12.0,
-      countInAssets: false,
-      isDefault: false,
-      isShared: false,
-      notes: 'Sample note',
-      user: {
-        id: 1,
-        username: 'JohnDoe23',
-        firstName: 'John',
-        lastName: 'Doe',
-      },
-      sharedUsers: [],
-      hasTransactions: false,
-      createdAt: "2022-01-01T00:00:00.000Z",
-      updatedAt: null,
-      deletedAt: null,
-      ...overrides
-    });
-  }
 }
 

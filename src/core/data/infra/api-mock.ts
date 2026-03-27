@@ -1,5 +1,6 @@
 import MockAdapter from 'axios-mock-adapter'
 import {
+  ACCOUNT_URL,
   API_URL,
   LOGIN_URL,
   LOGOUT_URL,
@@ -7,7 +8,8 @@ import {
 } from '@data/gateways/api/constants'
 import { IFormLogin, IFormSignUp } from '@domain/entities/formModels/signup-form.entity'
 import { IYearOverviewFilterParams } from '@domain/entities/dashboard/filter.entity'
-import { escapeRegExpForApiRequest } from '@base/core/data/utils/regex.utils'
+import { escapeRegExpForApiRequest, getIdFromUrl } from '@base/core/data/utils/regex.utils'
+import { IFormAccount } from '@base/core/domain/entities/formModels/account-form.entity'
 
 const MOCK_URLS = {
   REGISTER: REGISTER_URL,
@@ -15,6 +17,10 @@ const MOCK_URLS = {
   LOGOUT: LOGOUT_URL,
   DASHBOARD: {
     YEAR_OVERVIEW: new RegExp(`^${escapeRegExpForApiRequest(API_URL.DASHBOARD.yearOverview)}\\?.*$`),
+  },
+  ACCOUNT: {
+    BASE: ACCOUNT_URL,
+    DETAIL: new RegExp(`^${escapeRegExpForApiRequest(ACCOUNT_URL)}\\d+/$`),
   }
 }
 
@@ -33,6 +39,15 @@ export const mockAPIResponses = (
       400,
       getDashboardYearOverviewErrorResponse(baseDataRes),
     )
+    // Accounts
+    mock.onGet(MOCK_URLS.ACCOUNT.BASE).reply(400, getAccountErrorResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.ACCOUNT.DETAIL).reply(
+      400,
+      getAccountErrorResponse(baseDataRes),
+    )
+    mock.onPost(MOCK_URLS.ACCOUNT.BASE).reply(400, getAccountErrorResponse(baseDataRes))
+    mock.onPatch(MOCK_URLS.ACCOUNT.DETAIL).reply(400, getAccountErrorResponse(baseDataRes))
+    mock.onDelete(MOCK_URLS.ACCOUNT.DETAIL).reply(400, getAccountErrorResponse(baseDataRes))
   } else {
     // User Registration
     mock.onPost(MOCK_URLS.REGISTER).reply(201, formatUserCreateIntoResponse(baseDataRes))
@@ -45,6 +60,16 @@ export const mockAPIResponses = (
       200,
       formatDashboardYearOverviewIntoResponse(baseDataRes),
     )
+    // Accounts
+    mock.onGet(MOCK_URLS.ACCOUNT.BASE).reply(200, formatRetrieveAccountsIntoResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.ACCOUNT.DETAIL).reply((config) => {
+      return [200, formatAccountIntoResponse(baseDataRes.accountForm, getIdFromUrl(config.url))]
+    })
+    mock.onPost(ACCOUNT_URL).reply(201, formatAccountIntoResponse(baseDataRes))
+    mock.onPatch(MOCK_URLS.ACCOUNT.DETAIL).reply((config) => {
+      return [200, formatAccountIntoResponse(baseDataRes.accountForm, getIdFromUrl(config.url))]
+    })
+    mock.onDelete(MOCK_URLS.ACCOUNT.DETAIL).reply(204)
   }
 }
 
@@ -122,4 +147,48 @@ export const formatDashboardYearOverviewIntoResponse = (data: IYearOverviewFilte
       "year": data.year
     }
   ]
+}
+
+/** Accounts **/
+const getAccountErrorResponse = (data: any) => {
+  return {
+    "non_field_errors": [data?.errorMessage ?? data ?? 'failed'],
+  }
+}
+
+const formatRetrieveAccountsIntoResponse = (data: any) => {
+  return {
+    "previous": null,
+    "next": null,
+    "count": 1,
+    "current_page_number": 1,
+    "total_pages": 1,
+    "results": [formatAccountIntoResponse(data)],
+  }
+}
+
+const formatAccountIntoResponse = (
+  data: any,
+  accountIdOverride?: number,
+) => {
+  const accountId = accountIdOverride ?? data?.accountId
+  const accountForm: IFormAccount = data?.accountForm ?? data 
+
+  return {
+    "id": accountId,
+    "name": accountForm.name,
+    "icon": accountForm.icon,
+    "color": accountForm.color,
+    "balance": accountForm.balance ?? 0,
+    "count_in_assets": accountForm.countInAssets,
+    "is_default": accountForm.isDefault,
+    "is_shared": accountForm.isShared,
+    "notes": accountForm.notes,
+    "user": accountForm.user,
+    "shared_users": accountForm.sharedUsers ?? [],
+    "has_transactions": false,
+    "created_at": '2026-01-01T00:00:00.000Z',
+    "updated_at": null,
+    "deleted_at": null,
+  }
 }
