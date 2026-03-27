@@ -153,7 +153,7 @@ const TransactionModalView: React.FC<ITransactionModalView> = (props) => {
     onSubmit: async (values) => {
       const isCreate = !props.selectedTransaction;
       try {
-        if (isCreate) {
+        if (isCreate && useToday) {
           values.transactionAt = formatDateTime(getCurrentDateTime(), true, true);
         }
         if (values.debitMonthYear) {

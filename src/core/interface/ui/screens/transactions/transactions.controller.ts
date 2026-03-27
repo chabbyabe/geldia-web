@@ -15,6 +15,9 @@ import DeleteTransactionUseCase from "@base/core/domain/usecases/transactions/de
 import RetrieveRecentTransactionsUseCase from "@domain/usecases/dashboard/retrieve-recent-transactions.usecase"
 import DashboardApiGateway from "@data/gateways/api/services/dashboard.gateway"
 import DashboardRepository from "@data/gateways/api/services/dashboard.repository"
+import RetrieveYearOverviewUseCase from "@domain/usecases/dashboard/retrieve-year-overview.usecase"
+import RetrieveCategoryOverviewUseCase from "@domain/usecases/dashboard/retrieve-category-overview.usecase"
+import RetrieveSummaryOverviewUseCase from "@domain/usecases/dashboard/retrieve-summary-overview.usecase"
 
 export default class TransactionsController {
 
@@ -25,6 +28,10 @@ export default class TransactionsController {
   private readonly updateTransactionUseCase: UpdateTransactionUseCase
   private readonly deleteTransactionUseCase: DeleteTransactionUseCase
   private readonly retrieveRecentTransactionsUseCase: RetrieveRecentTransactionsUseCase
+  private readonly retrieveYearOverviewUseCase: RetrieveYearOverviewUseCase
+  private readonly retrieveCategoryOverviewUseCase: RetrieveCategoryOverviewUseCase
+  private readonly retrieveSummaryOverviewUseCase: RetrieveSummaryOverviewUseCase
+
   constructor() {
     this.retrieveTransactionsUseCase = new RetrieveTransactionsUseCase(
       new TransactionApiGateway(),
@@ -54,10 +61,23 @@ export default class TransactionsController {
       new DashboardApiGateway(),
       new DashboardRepository()
     )
+    this.retrieveYearOverviewUseCase = new RetrieveYearOverviewUseCase(
+      new DashboardApiGateway(),
+      new DashboardRepository()
+    )
+    this.retrieveCategoryOverviewUseCase = new RetrieveCategoryOverviewUseCase(
+      new DashboardApiGateway(),
+      new DashboardRepository()
+    )
+    this.retrieveSummaryOverviewUseCase = new RetrieveSummaryOverviewUseCase(
+      new DashboardApiGateway(),
+      new DashboardRepository()
+    )
   }
 
-  async retrieveTransactions(params : ITransactionSearchParams) {
+  async retrieveTransactions(params: ITransactionSearchParams) {
     await this.retrieveTransactionsUseCase.execute(params)
+    await this._refreshAfterTransactionChange()
   }
 
   removeCurrentTransaction() {
@@ -65,21 +85,37 @@ export default class TransactionsController {
   }
 
   async setCurrentTransaction(id: number) {
-     await this.getTransactionUseCase.execute(id)
+    await this.getTransactionUseCase.execute(id)
   }
 
   async createTransaction(data: IFormTransaction) {
     await this.createTransactionUseCase.execute(data)
-    await this.retrieveRecentTransactionsUseCase.execute()
-    await this.retrieveAccountUseCase.execute(true, 1)
+    await this._refreshAfterTransactionChange()
   }
 
   async updateTransaction(id: number, data: IFormTransaction) {
     await this.updateTransactionUseCase.execute(id, data)
-    await this.retrieveAccountUseCase.execute(true, 1)
+    await this._refreshAfterTransactionChange()
   }
 
- async deleteTransaction(transactionId: number) {
-     await this.deleteTransactionUseCase.execute(transactionId)
+  async deleteTransaction(transactionId: number) {
+    await this.deleteTransactionUseCase.execute(transactionId)
+  }
+
+  private async _refreshAfterTransactionChange() {
+    const filters = store.getState().dashboardState.filters;
+    await Promise.all([
+      this.retrieveAccountUseCase.execute(true, 1),
+      this.retrieveSummaryOverviewUseCase.execute(),
+      this.retrieveRecentTransactionsUseCase.execute(),
+      this.retrieveYearOverviewUseCase.execute({
+        year: filters.yearOverview.year
+      }),
+      this.retrieveCategoryOverviewUseCase.execute({
+        filterBy: filters.categoryOverview.filterBy,
+        startDate: null,
+        endDate: null
+      })
+    ])
   }
 }

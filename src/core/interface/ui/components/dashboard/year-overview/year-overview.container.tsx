@@ -10,9 +10,11 @@ interface IYearOverviewContainer {
 export const YearOverviewContainer: React.FC<IYearOverviewContainer> = (props) => {
   const controller = new YearOverviewController()
   const yearOverview = useAppSelector( state => state.dashboardState.yearOverview );
+  const yearOverviewFilterParams = useAppSelector( state => state.dashboardState.filters?.yearOverview );
 
   return <YearOverviewView
     data={yearOverview}
     onFilterChange={controller.retrieveYearOverview.bind(controller)}
+    filterParams={yearOverviewFilterParams}
   />;
 };

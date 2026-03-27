@@ -1,6 +1,6 @@
 
 import { Card, CardContent, FormControl, InputLabel, MenuItem, Select, SelectChangeEvent, Stack, Typography, useTheme } from "@mui/material";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ReactECharts from 'echarts-for-react';
 import * as echarts from 'echarts/core';
 import { PieChart } from 'echarts/charts';
@@ -27,13 +27,14 @@ export interface IYearOverviewView {
   children?: React.ReactNode
   data: IYearOverview[]
   onFilterChange: (filterParams: IYearOverviewFilterParams) => void
+  filterParams: IYearOverviewFilterParams
 }
 
 const YearOverviewView: React.FC<IYearOverviewView> = (props) => {
   const theme = useTheme();
   const incomeName = TRANSACTION_TYPE.INCOME.name;
   const expensesName = TRANSACTION_TYPE.EXPENSES.name;
-  const [selectedYear, setSelectedYear] = useState<string>(dayjs().year().toString());
+  const [selectedYear, setSelectedYear] = useState(props.filterParams.year);
   const years = getYearRange();
 
   const { months, year, incomeNetData, incomeGrossData, expensesData } = useMemo(() => {
@@ -134,6 +135,9 @@ const YearOverviewView: React.FC<IYearOverviewView> = (props) => {
     }
   };
 
+  useEffect(() => {
+    fetchData(selectedYear);
+  }, [])
   return (
     <>
       <Card sx={{ borderRadius: 4, flex: 1, sm: 12, md: 9, minWidth: 350, maxWidth: 1400, width: "100%", mt: 2 }}>

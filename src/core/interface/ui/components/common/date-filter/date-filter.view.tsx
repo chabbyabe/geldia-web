@@ -7,6 +7,7 @@ import { CanvasRenderer } from 'echarts/renderers';
 import dayjs, { Dayjs } from "dayjs";
 import { DATE_RANGES } from "@data/gateways/api/constants";
 import { DatePicker } from "@mui/x-date-pickers";
+import { toDayjs } from "@base/core/interface/presenters/helpers";
 
 echarts.use([
   TooltipComponent,
@@ -15,16 +16,23 @@ echarts.use([
   CanvasRenderer
 ]);
 
-export interface IDateFilterView<T = any, P = any> {
+export interface IDateFilterParams {
+  filterBy: string;
+  startDate: Dayjs | null;
+  endDate: Dayjs | null;
+}
+
+export interface IDateFilterView<T = any, P extends IDateFilterParams = IDateFilterParams> {
   children?: React.ReactNode
   onFilterChange: (params: T) => void
   filterParams: P
 }
 
-const DateFilterView = <T, P>(props: IDateFilterView<T, P>) => {
-  const [filterDate, setFilterDate] = useState<string>(DATE_RANGES.MONTH);
-  const [startDate, setStartDate] = useState<Dayjs | null>(dayjs().startOf("month"));
-  const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
+const DateFilterView = <T, P extends IDateFilterParams>(props: IDateFilterView<T, P>) => {
+
+  const [filterDate, setFilterDate] = useState(props.filterParams.filterBy ?? DATE_RANGES.MONTH);
+  const [startDate, setStartDate] = useState<Dayjs | null>(toDayjs(props.filterParams.startDate) ?? dayjs().startOf("month"));
+  const [endDate, setEndDate] = useState<Dayjs | null>(toDayjs(props.filterParams.endDate) ?? dayjs());
   const [loading, setLoading] = useState(false);
 
   const onChangeDate = async (value: string, start?: Dayjs | null, end?: Dayjs | null) => {
