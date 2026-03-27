@@ -1,4 +1,3 @@
-
 export interface ISummary {
   name: string
   icon: string | null
@@ -22,19 +21,5 @@ export default class SummaryOverviewEntity {
 
   getCurrentValuesAsJSON(): ISummary[] {
     return [...this.summaries]
-  }
-
-  static mock(overrides: Partial<ISummary> = {}): SummaryOverviewEntity {
-    const mockData: ISummary[] = [
-      {
-        name: 'Test Summary',
-        icon: 'Savings',
-        color: '#006CD1',
-        amount: 12.0,
-        formattedAmount: '€12.00',
-        ...overrides
-      }
-    ]
-    return new SummaryOverviewEntity(mockData)
   }
 }

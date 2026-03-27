@@ -13,12 +13,17 @@ import { IYearOverviewFilterParams } from '@domain/entities/dashboard/filter.ent
 import { escapeRegExpForApiRequest, getIdFromUrl } from '@base/core/data/utils/regex.utils'
 import { IFormAccount } from '@base/core/domain/entities/formModels/account-form.entity'
 import { IFormTransaction } from '@domain/entities/formModels/transaction-form.entity'
+import { ITransaction } from '@base/core/domain/entities/transaction/transaction.entity'
+import { ICategoryOverview } from '@base/core/domain/entities/dashboard/category-overview.entity'
 
 const MOCK_URLS = {
   REGISTER: REGISTER_URL,
   LOGIN: LOGIN_URL,
   LOGOUT: LOGOUT_URL,
   DASHBOARD: {
+    SUMMARY_OVERVIEW: API_URL.DASHBOARD.summaryOverview,
+    RECENT_TRANSACTIONS: API_URL.DASHBOARD.recentTransactions,
+    CATEGORY_OVERVIEW: new RegExp(`^${escapeRegExpForApiRequest(API_URL.DASHBOARD.categoryOverview)}\\?.*$`),
     YEAR_OVERVIEW: new RegExp(`^${escapeRegExpForApiRequest(API_URL.DASHBOARD.yearOverview)}\\?.*$`),
   },
   ACCOUNT: {
@@ -43,10 +48,9 @@ export const mockAPIResponses = (
     // Login
     mock.onPost(MOCK_URLS.LOGIN).reply(400, getUserLoginErrorResponse(baseDataRes))
     // Dashboard
-    mock.onGet(MOCK_URLS.DASHBOARD.YEAR_OVERVIEW).reply(
-      400,
-      getDashboardYearOverviewErrorResponse(baseDataRes),
-    )
+    mock.onGet(MOCK_URLS.DASHBOARD.SUMMARY_OVERVIEW).reply(400, getDashboardErrorResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.DASHBOARD.RECENT_TRANSACTIONS).reply(400, getDashboardErrorResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.DASHBOARD.YEAR_OVERVIEW).reply(400, getDashboardYearOverviewErrorResponse(baseDataRes))
     // Accounts
     mock.onGet(MOCK_URLS.ACCOUNT.BASE).reply(400, getAccountErrorResponse(baseDataRes))
     mock.onGet(MOCK_URLS.ACCOUNT.DETAIL).reply(400, getAccountErrorResponse(baseDataRes))
@@ -68,10 +72,10 @@ export const mockAPIResponses = (
     // Logout
     mock.onPost(MOCK_URLS.LOGOUT).reply(200, formatUserLogoutIntoResponse())
     // Dashboard
-    mock.onGet(MOCK_URLS.DASHBOARD.YEAR_OVERVIEW).reply(
-      200,
-      formatDashboardYearOverviewIntoResponse(baseDataRes),
-    )
+    mock.onGet(MOCK_URLS.DASHBOARD.SUMMARY_OVERVIEW).reply(200, formatDashboardSummaryOverviewIntoResponse())
+    mock.onGet(MOCK_URLS.DASHBOARD.RECENT_TRANSACTIONS).reply(200, formatDashboardRecentTransactionsIntoResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.DASHBOARD.CATEGORY_OVERVIEW).reply(200, formatDashboardCategoryOverviewIntoResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.DASHBOARD.YEAR_OVERVIEW).reply(200, formatDashboardYearOverviewIntoResponse(baseDataRes))
     // Accounts
     mock.onGet(MOCK_URLS.ACCOUNT.BASE).reply(200, formatRetrieveAccountsIntoResponse(baseDataRes))
     mock.onGet(MOCK_URLS.ACCOUNT.DETAIL).reply((config) => {
@@ -146,6 +150,56 @@ const formatUserCreateIntoResponse = (data: IFormSignUp) => {
     },
   }
 }
+
+/* Dashboard */
+const getDashboardErrorResponse = (data: any) => {
+  return {
+    "non_field_errors": [data?.errorMessage ?? data ?? 'failed'],
+  }
+}
+
+const formatDashboardSummaryOverviewIntoResponse = () => {
+  return [
+    {
+        "name": "Income",
+        "icon": "Savings",
+        "color": "#006CD1",
+        "amount": "185489.00",
+        "formatted_amount": "€185,489.00"
+    },
+    {
+        "name": "Expenses",
+        "icon": "Payments",
+        "color": "#E5484D",
+        "amount": "293402.00",
+        "formatted_amount": "€293,402.00"
+    },
+    {
+        "name": "Savings",
+        "icon": "Balance",
+        "color": "#F5A524",
+        "amount": "49200.00",
+        "formatted_amount": "€49,200.00"
+    }
+  ]
+}
+
+const formatDashboardRecentTransactionsIntoResponse = (data: any) => {
+  return (data?.transactions ?? []).map((transaction: ITransaction) =>
+    formatTransactionIntoResponse(transaction),
+  )
+}
+
+const formatDashboardCategoryOverviewIntoResponse = (data: any) => {
+  return (data?.categories ?? []).map((category: ICategoryOverview) =>
+    formatCategoryOverview(category),
+  )
+}
+
+const formatCategoryOverview = (category : ICategoryOverview) => {
+  return category;
+}
+ 
 /** Dashboard Year Overview**/
 const getDashboardYearOverviewErrorResponse = (data: string) => {
   return {

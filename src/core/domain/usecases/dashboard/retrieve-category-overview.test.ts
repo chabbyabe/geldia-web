@@ -1,7 +1,8 @@
-import { DATE_RANGES } from '@base/core/data/gateways/api/constants';
-import { ICategoryOverviewFilterParams } from '../../entities/dashboard/filter.entity';
+import { DATE_RANGES } from '@core/data/gateways/api/constants';
+import { ICategoryOverviewFilterParams } from '@domain/entities/dashboard/filter.entity';
 import RetrieveCategoryOverviewUseCase, { IRetrieveCategoryOverviewDataGateway, IRetrieveCategoryOverviewRepository } from './retrieve-category-overview.usecase';
-import CategoryOverviewEntity, { ICategoryOverview } from '@domain/entities/dashboard/category-overview.entity';
+import { ICategoryOverview } from '@domain/entities/dashboard/category-overview.entity';
+import { createMockCategoryOverviewList } from '@core/test/mocks/dashboard/category-overview';
 
 describe('Test RetrieveCategoryOverviewUseCase', () => {
   let mockGateway: jest.Mocked<IRetrieveCategoryOverviewDataGateway>;
@@ -32,7 +33,7 @@ describe('Test RetrieveCategoryOverviewUseCase', () => {
    */
   test('Execute successfully retrieves and stores category overview', async () => {
     // Arrange
-    const mockCategories: ICategoryOverview[] = CategoryOverviewEntity.mock().getCurrentValuesAsJSON();
+    let mockCategories: ICategoryOverview[] = createMockCategoryOverviewList();
    
     mockGateway.retrieveCategoryOverview.mockResolvedValue( mockCategories);
 
