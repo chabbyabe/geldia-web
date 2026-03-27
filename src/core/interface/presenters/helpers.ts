@@ -37,3 +37,12 @@ export const formatToTitleCase = (value: string) => {
     )
     .join(" ");
 };
+
+
+/**
+ * Returns an array of 7 numbers representing: 
+ * 3 previous years, the current, 3 future years
+ * @returns {number[]}
+ */
+export const  getYearRange = (): number[] => 
+  Array.from({ length: 7 }, (_, i) => dayjs().year() - 3 + i);
