@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 export const getCurrentDateTime = (): string => {
   // Format: 2026-02-20T14:35 (YYYY-MM-DDTHH:MM)
   return dayjs().format("YYYY-MM-DDTHH:mm");
@@ -36,4 +36,20 @@ export const formatToTitleCase = (value: string) => {
       word.charAt(0).toUpperCase() + word.slice(1)
     )
     .join(" ");
+};
+
+
+/**
+ * Returns an array of 7 numbers representing: 
+ * 3 previous years, the current, 3 future years
+ * @returns {number[]}
+ */
+export const  getYearRange = (): number[] => 
+  Array.from({ length: 7 }, (_, i) => dayjs().year() - 3 + i);
+
+
+export const toDayjs = (value: any): Dayjs => {
+  if (!value) return dayjs(); // fallback
+
+  return dayjs.isDayjs(value) ? value : dayjs(value);
 };

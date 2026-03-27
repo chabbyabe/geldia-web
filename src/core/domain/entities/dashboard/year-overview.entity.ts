@@ -3,6 +3,7 @@ export interface IYearOverview {
   label: string[]
   data: number[]
   year: string
+  isGross?: boolean
 }
 
 export default class YearOverviewEntity {
@@ -13,7 +14,8 @@ export default class YearOverviewEntity {
       name: model.name,
       label: model.label ?? [],
       data: model.data ?? [],
-      year: model.year
+      year: model.year,
+      isGross: model.isGross
     }))
   }
 
