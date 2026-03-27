@@ -1,49 +1,66 @@
-import { IYearOverview } from '@domain/entities/dashboard/year-overview.entity'
-import RetrieveYearOverviewUseCase, {
-  IRetrieveYearOverviewDataGateway,
-  IRetrieveYearOverviewRepository,
-} from './retrieve-year-overview.usecase'
+import RetrieveYearOverviewUseCase from './retrieve-year-overview.usecase'
+import { mockAPIResponses } from '@data/infra/api-mock'
+import DashboardApiGateway from '@data/gateways/api/services/dashboard.gateway'
+import DashboardRepository from '@data/gateways/api/services/dashboard.repository'
+import { store } from '@interface/presenters/store/store'
+import { setYearOverview } from '@interface/presenters/store/reducers/dashboard.reducer'
+import { IYearOverviewFilterParams } from '@domain/entities/dashboard/filter.entity'
+import { FormRequestError } from '@domain/entities/formModels/errors.entity'
 
 describe('Test RetrieveYearOverviewUseCase', () => {
-  let mockGateway: jest.Mocked<IRetrieveYearOverviewDataGateway>
-  let mockRepository: jest.Mocked<IRetrieveYearOverviewRepository>
+  let gateway: DashboardApiGateway
+  let repo: DashboardRepository
   let useCase: RetrieveYearOverviewUseCase
 
+  let filterParams : IYearOverviewFilterParams = { year: '2026' }
+
   beforeEach(() => {
-    mockGateway = {
-      retrieveYearOverview: jest.fn(),
-    }
-
-    mockRepository = {
-      setYearOverview: jest.fn(),
-    }
-
-    useCase = new RetrieveYearOverviewUseCase(mockGateway, mockRepository)
+    gateway = new DashboardApiGateway()
+    repo = new DashboardRepository()
+    useCase = new RetrieveYearOverviewUseCase(gateway, repo)
+    store.dispatch(setYearOverview({ overview: [], params: filterParams }))
   })
 
-  test('Execute successfully retrieves and stores year overview', async () => {
-    const overview: IYearOverview[] = [
-      {
-        name: 'Income',
-        label: ['Jan', 'Feb'],
-        data: [100, 200],
-        year: '2026',
-      },
-    ]
+  test('Execute without errors', async () => {
+    mockAPIResponses(gateway.apiSauce.axiosInstance, false, filterParams)
 
-    mockGateway.retrieveYearOverview.mockResolvedValue(overview)
+    await useCase.execute(filterParams)
 
-    await useCase.execute()
+    const result = store.getState().dashboardState.yearOverview
 
-    expect(mockGateway.retrieveYearOverview).toHaveBeenCalledTimes(1)
-    expect(mockRepository.setYearOverview).toHaveBeenCalledWith(overview)
+    expect(result[0].name).toBe('Income');
+    expect(result[0].year).toBe('2026');
+    expect(result[0].label).toEqual([
+      'Jan','Feb','Mar','Apr','May','Jun',
+      'Jul','Aug','Sep','Oct','Nov','Dec'
+    ]);
+    expect(Array.isArray(result[0].data)).toBe(true);
+
+    expect(result[1].name).toBe('Expenses');
+    expect(result[1].year).toBe('2026');
+    expect(result[1].label).toEqual([
+      'Jan','Feb','Mar','Apr','May','Jun',
+      'Jul','Aug','Sep','Oct','Nov','Dec'
+    ]);
+    expect(Array.isArray(result[1].data)).toBe(true);
   })
 
-  test('Execute throws when gateway fails and does not update repository', async () => {
-    const simulatedError = new Error('Failed to retrieve year overview')
-    mockGateway.retrieveYearOverview.mockRejectedValue(simulatedError)
 
-    await expect(useCase.execute()).rejects.toThrow(simulatedError)
-    expect(mockRepository.setYearOverview).not.toHaveBeenCalled()
+  test('Execute with error when year is more than three years', async () => {
+    const simulatedError = "Year must be between 2023 and 2029."
+
+    mockAPIResponses(gateway.apiSauce.axiosInstance, true, simulatedError)
+
+    await expect(useCase.execute(filterParams)).rejects.toThrow(FormRequestError)
+    await expect(useCase.execute(filterParams)).rejects.toThrow('bad-request')
+    expect(store.getState().dashboardState.yearOverview).toEqual([])
+  })
+
+  test('Execute with error', async () => {
+    mockAPIResponses(gateway.apiSauce.axiosInstance, true, { errorMessage: 'failed' })
+
+    await expect(useCase.execute(filterParams)).rejects.toThrow(FormRequestError)
+    await expect(useCase.execute(filterParams)).rejects.toThrow('bad-request')
+    expect(store.getState().dashboardState.yearOverview).toEqual([])
   })
 })

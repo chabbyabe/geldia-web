@@ -1,3 +1,4 @@
+import { IYearOverviewFilterParams } from "@domain/entities/dashboard/filter.entity"
 import DashboardApiGateway from "@data/gateways/api/services/dashboard.gateway"
 import DashboardRepository from "@data/gateways/api/services/dashboard.repository"
 import RetrieveYearOverviewUseCase from "@domain/usecases/dashboard/retrieve-year-overview.usecase"
@@ -13,7 +14,7 @@ export default class YearOverviewController {
     )
   }
 
-  async retrieveYearOverview() {
-    return await this.retrieveYearOverviewUseCase.execute()
+  async retrieveYearOverview(params: IYearOverviewFilterParams) {
+    return await this.retrieveYearOverviewUseCase.execute(params)
   }
 }
