@@ -144,3 +144,10 @@ export interface ICategoryOverviewModel {
   amount: number
   formatted_amount: string
 }
+
+export interface IYearOverviewModel {
+  name: string
+  label: string[]
+  data: number[]
+  year: string
+}

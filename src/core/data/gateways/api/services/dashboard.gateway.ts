@@ -3,12 +3,13 @@ import { BadRequest } from '@data/infra/api.error'
 import { FormRequestError } from '@domain/entities/formModels/errors.entity'
 import { API_URL } from '@data/gateways/api/constants'
 import SummaryEntity, { ISummary } from '@domain/entities/dashboard/summary-overview.entity'
-import { mapSummaryOverviewAttributes, mapRecentTransactionAttributes, mapCategoryOverviewAttributes } from '@data/gateways/api/services/mappers/dashboard.mappers'
-import { ICategoryOverviewModel, ISummaryModel, ITransactionModel } from '@data/gateways/api/api.types'
+import { mapSummaryOverviewAttributes, mapRecentTransactionAttributes, mapCategoryOverviewAttributes, mapYearOverviewAttributes } from '@data/gateways/api/services/mappers/dashboard.mappers'
+import { ICategoryOverviewModel, ISummaryModel, ITransactionModel, IYearOverviewModel } from '@data/gateways/api/api.types'
 import TransactionEntity, { ITransaction } from '@domain/entities/transaction/transaction.entity'
 import CategoryOverviewEntity, { ICategoryOverview } from '@domain/entities/dashboard/category-overview.entity'
 import { ICategoryOverviewFilterParams } from '@base/core/domain/entities/dashboard/filter.entity'
 import { toQueryString } from '@base/core/data/utils/query-string.utils'
+import YearOverviewEntity, { IYearOverview } from '@base/core/domain/entities/dashboard/year-overview.entity'
 
 export default class DashboardApiGateway extends Api {
   async retrieveSummaryOverview(): Promise<ISummary[]> {
@@ -70,4 +71,24 @@ export default class DashboardApiGateway extends Api {
     return data.getCurrentValuesAsJSON();
   }
 
+  async retrieveYearOverview(): Promise<IYearOverview[]> {
+    try {
+      const response = await this._retrieveYearOverview()
+      return this._mapYearOverviewFromResponse(response);
+    } catch (error) {
+      if (error instanceof BadRequest) {
+        throw new FormRequestError(error.message, error.data)
+      }
+      throw error
+    }
+  }
+
+  private async _retrieveYearOverview(): Promise<IYearOverviewModel[]> {
+    return await this.get(API_URL.DASHBOARD.yearOverview)
+  }
+
+  private _mapYearOverviewFromResponse(response: IYearOverviewModel[]): IYearOverview[] {
+    const data = new YearOverviewEntity(mapYearOverviewAttributes(response));
+    return data.getCurrentValuesAsJSON();
+  }
 }

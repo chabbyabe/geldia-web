@@ -4,11 +4,13 @@ import { ITransaction } from "@domain/entities/transaction/transaction.entity";
 import { ICategoryOverview } from "@domain/entities/dashboard/category-overview.entity";
 import { ICategoryOverviewFilterParams } from "@domain/entities/dashboard/filter.entity";
 import { DATE_RANGES } from "@data/gateways/api/constants";
+import { IYearOverview } from "@domain/entities/dashboard/year-overview.entity";
 
 interface IDashboardState {
   summaryOverview: ISummary[]
   recentTransactions: ITransaction[]
-  categoryOverview: ICategoryOverview[]
+  categoryOverview: ICategoryOverview[],
+  yearOverview: IYearOverview[],
   filters: {
     categoryOverview: ICategoryOverviewFilterParams
   }
@@ -18,6 +20,7 @@ const initialState: IDashboardState = {
   summaryOverview: [],
   recentTransactions: [],
   categoryOverview: [],
+  yearOverview: [],
   filters: {
     categoryOverview: {
       filterBy: DATE_RANGES.MONTH,
@@ -50,12 +53,16 @@ export const dashboardSlice = createSlice({
       }
       state.categoryOverview = [...action.payload.categories]
     },
+    setYearOverview(state, action: PayloadAction<IYearOverview[]>) {
+      state.yearOverview = [...action.payload]
+    },
   },
 })
 
 export const {
   setSummaryOverview,
   setRecentTransactions,
-  setCategoryOverview
+  setCategoryOverview,
+  setYearOverview
 } = dashboardSlice.actions
 export default dashboardSlice.reducer
