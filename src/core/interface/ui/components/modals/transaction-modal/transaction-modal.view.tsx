@@ -19,6 +19,7 @@ import { TRANSACTION_TYPE } from '@data/gateways/api/constants';
 import { ITransactionInitial } from '@base/core/domain/entities/transaction/initial.entity';
 import { FormRequestError } from '@base/core/domain/entities/formModels/errors.entity';
 import dayjs from 'dayjs';
+import { IUser } from '@domain/entities/user/user.entity';
 
 export interface ITransactionModalView {
   open: boolean
@@ -26,6 +27,7 @@ export interface ITransactionModalView {
   formOptions: ITransactionInitial
   selectedTransaction: ITransaction | null
   handleFormSumbit: (values: IFormTransaction) => Promise<void> | void
+  currentUser: IUser | null
 }
 
 const validationSchema = (accounts: IAccountSimple[]) =>
@@ -308,7 +310,7 @@ const TransactionModalView: React.FC<ITransactionModalView> = (props) => {
                         sx={{ px: 2 }}
                       >
                         {a.name} ({a.balance})
-                        {a.isDefault && (
+                        {a.isDefault && (a.userId === props.currentUser?.id) && (
                           <Chip
                             size="medium"
                             color={(a.color as any) || "primary"}

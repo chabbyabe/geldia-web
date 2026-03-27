@@ -25,6 +25,7 @@ export interface IAccountsViewModel {
   pagination: IBasePagedListEntity
   handlePagination: (initializeList: boolean, page: number) => Promise<void>
   handleActionMenu: (actionId: number) => void
+  currentUser: IUser | null
 }
 
 const AccountsView: React.FC<IAccountsViewModel> = (props) => {
@@ -65,12 +66,13 @@ const AccountsView: React.FC<IAccountsViewModel> = (props) => {
         </Stack>
 
         <Grid container sx={{ mt: 5 }} rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
-          {props.accounts.map((account) => (
+          {props?.accounts.length > 0 ? (props.accounts.map((account) => (
             <Grid container gap={2} rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={`${account.id}`}>
               <Card sx={{ display: "flex", borderRadius: 3, boxShadow: 3, p: 2, borderTop: 3, borderColor: account.color, minWidth: 300 }}>
                 <Stack direction="column" spacing={1} flex={1}>
-                  {account.isDefault && (
-                    <Stack direction="row" justifyContent="space-between" spacing={1}>
+                  {account.isDefault && account.user?.id === props.currentUser?.id && (
+                    <Stack direction="row" justifyContent="space-between" spacing={1}>      
+                                    
                       <Chip icon={<CheckBoxIcon />} label="Default Account" />
                       <ActionMenuContainer key={`actionmenu-${account.id}`}
                         handleDeleteModal={setOpenDeleteModal}
@@ -125,7 +127,13 @@ const AccountsView: React.FC<IAccountsViewModel> = (props) => {
                 </Stack>
               </Card>
             </Grid>
-          ))}
+          ))) : (
+            <Grid display="flex" justifyContent="center" bgcolor="background.paper" width="100%" minHeight="60vh" alignItems="center" borderRadius={2}>
+              <Typography variant="body2" color="text.secondary">
+                No accounts found
+              </Typography>
+            </Grid>
+          )}
         </Grid>
       </Container>
 

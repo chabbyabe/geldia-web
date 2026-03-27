@@ -12,6 +12,7 @@ export interface IPlaceSimple extends IBaseIdNameEntity {
 export interface IAccountSimple extends ITransactionType {
   balance: number | null
   isDefault: boolean
+  userId: number
 }
 
 export interface ICategorySimple extends ITransactionType {
