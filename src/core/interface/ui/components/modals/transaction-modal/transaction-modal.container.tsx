@@ -52,5 +52,6 @@ export const TransactionModalContainer: React.FC<ITransactionModalContainer> = (
     formOptions={formOptions}
     selectedTransaction={props.selectedTransaction}
     handleFormSumbit={handleFormSubmit}
+    currentUser={currentUser}
   />;
 };

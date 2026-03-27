@@ -17,6 +17,7 @@ export const AccountsContainer: React.FC<IAccountsContainerViewModel> = (props) 
   const currentPage = useAppSelector(state => state.accountState.nextAccountsPage);
   const selectedAccount = useAppSelector(state => state.accountState.currentAccount);
   const paginationData = useAppSelector(state => state.accountState.pagination);
+  const currentUser = useAppSelector(state => state.authState.user);
 
   useEffect(() => {
     controller.retrieveAccount(true, 1);
@@ -47,5 +48,6 @@ export const AccountsContainer: React.FC<IAccountsContainerViewModel> = (props) 
     handlePagination={controller.retrieveAccount.bind(controller)}
     selectedAccount={selectedAccount}
     handleActionMenu={controller.setCurrentAccount.bind(controller)}
+    currentUser={currentUser}  
   />
 }

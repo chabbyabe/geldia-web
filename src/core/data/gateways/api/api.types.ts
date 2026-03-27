@@ -73,6 +73,7 @@ export interface ITransactionTypeModel extends IBaseAPIModel {
 export interface IAccountSimpleModel extends ITransactionTypeModel {
   balance: number
   is_default: boolean
+  user_id: number
 }
 
 export interface IStoreSimpleModel extends IBaseAPIModel {
