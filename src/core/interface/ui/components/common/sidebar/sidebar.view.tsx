@@ -14,6 +14,7 @@ import {
   Dashboard as DashboardIcon,
   AccountBalanceWallet as AccountBalanceWalletIcon,
   ReceiptLong as ReceiptLongIcon,
+  Assessment as AssessmentIcon
 } from "@mui/icons-material";
 
 export interface ISidebarViewModel {
@@ -51,6 +52,13 @@ const menuList = (currentPage: string) : ISidebarItem[] => [
     isCurrentPage: currentPage === PAGES.ACCOUNTS.label,
     icon: <ReceiptLongIcon />,
     navigatePath: PAGES.ACCOUNTS.path,
+    hasDivider: false,
+  },
+  {
+    name: PAGES.REPORTS.label,
+    isCurrentPage: currentPage === PAGES.REPORTS.label,
+    icon: <AssessmentIcon />,
+    navigatePath: PAGES.REPORTS.path,
     hasDivider: false,
   },
 ];
