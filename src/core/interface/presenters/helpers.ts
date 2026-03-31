@@ -1,4 +1,6 @@
+import { DEFAULT_CURRENCY, DEFAULT_LOCALE } from "@base/config";
 import dayjs, { Dayjs } from "dayjs";
+
 export const getCurrentDateTime = (): string => {
   // Format: 2026-02-20T14:35 (YYYY-MM-DDTHH:MM)
   return dayjs().format("YYYY-MM-DDTHH:mm");
@@ -38,6 +40,12 @@ export const formatToTitleCase = (value: string) => {
     .join(" ");
 };
 
+export const toDayjs = (value: any): Dayjs => {
+  if (!value) return dayjs(); // fallback
+
+  return dayjs.isDayjs(value) ? value : dayjs(value);
+};
+
 /**
  * Returns an array of 7 numbers representing: 
  * 3 previous years, the current, 3 future years
@@ -46,16 +54,17 @@ export const formatToTitleCase = (value: string) => {
 export const  getYearRange = (): number[] => 
   Array.from({ length: 7 }, (_, i) => dayjs().year() - 3 + i);
 
-
-export const toDayjs = (value: any): Dayjs => {
-  if (!value) return dayjs(); // fallback
-
-  return dayjs.isDayjs(value) ? value : dayjs(value);
-};
-export const getMonths = (format: "short" | "long", locale = "en-US"): string[] => {
+export const getMonths = (format: "short" | "long", locale = DEFAULT_LOCALE): string[] => {
   const formatter = new Intl.DateTimeFormat(locale, { month: format });
 
   return Array.from({ length: 12 }, (_, i) =>
     formatter.format(new Date(2020, i, 1))
   );
 };
+
+export const formatCurrency = (amount: number, locale: string = DEFAULT_LOCALE, currency: string = DEFAULT_CURRENCY ): string => {
+  return new Intl.NumberFormat(locale, {
+    style: 'currency',
+    currency,
+  }).format(amount);
+}
