@@ -152,3 +152,38 @@ export interface IYearOverviewModel {
   data: number[]
   year: string
 }
+
+export interface ICompanyModel {
+  name: string
+  gross_amount: number
+  net_amount: number
+}
+
+export interface IIncomeReportDataModel {
+  month: number
+  month_label : string
+  gross_amount: number
+  net_amount: number
+  companies : ICompanyModel[] 
+}
+
+export interface IIncomeReportModel {
+  selected_year: string
+  compare_year: string | null
+  base_data: IIncomeReportDataModel[]
+  compare_data: IIncomeReportDataModel[] | null
+}
+
+export interface IExpenseReportMonthDataModel {
+  month: number
+  date: string
+  categories: Record<string, string>
+  total: string
+}
+
+export interface IExpenseReportDataModel {
+  selected_year: string | number
+  compare_year: string | number | null
+  base_data: IExpenseReportMonthDataModel[]
+  compare_data: IExpenseReportMonthDataModel[] | null
+}

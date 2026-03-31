@@ -51,7 +51,7 @@ export const toDayjs = (value: any): Dayjs => {
  * 3 previous years, the current, 3 future years
  * @returns {number[]}
  */
-export const  getYearRange = (): number[] => 
+export const getYearRange = (): number[] =>
   Array.from({ length: 7 }, (_, i) => dayjs().year() - 3 + i);
 
 export const getMonths = (format: "short" | "long", locale = DEFAULT_LOCALE): string[] => {
@@ -62,9 +62,19 @@ export const getMonths = (format: "short" | "long", locale = DEFAULT_LOCALE): st
   );
 };
 
-export const formatCurrency = (amount: number, locale: string = DEFAULT_LOCALE, currency: string = DEFAULT_CURRENCY ): string => {
-  return new Intl.NumberFormat(locale, {
+export const formatCurrency = (amount: number | null | undefined, locale: string = DEFAULT_LOCALE, currency: string = DEFAULT_CURRENCY): string => {
+  const formatter = new Intl.NumberFormat(locale, {
     style: 'currency',
     currency,
-  }).format(amount);
-}
+  });
+
+  if (amount == null || Number.isNaN(amount)) {
+    amount = 0;
+  }
+
+  return formatter
+    .formatToParts(amount)
+    .filter(part => part.type !== 'literal')
+    .map(part => part.value)
+    .join('');
+};
