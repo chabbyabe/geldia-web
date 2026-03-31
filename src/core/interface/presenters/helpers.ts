@@ -38,7 +38,6 @@ export const formatToTitleCase = (value: string) => {
     .join(" ");
 };
 
-
 /**
  * Returns an array of 7 numbers representing: 
  * 3 previous years, the current, 3 future years
@@ -52,4 +51,11 @@ export const toDayjs = (value: any): Dayjs => {
   if (!value) return dayjs(); // fallback
 
   return dayjs.isDayjs(value) ? value : dayjs(value);
+};
+export const getMonths = (format: "short" | "long", locale = "en-US"): string[] => {
+  const formatter = new Intl.DateTimeFormat(locale, { month: format });
+
+  return Array.from({ length: 12 }, (_, i) =>
+    formatter.format(new Date(2020, i, 1))
+  );
 };
