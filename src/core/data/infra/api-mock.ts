@@ -10,6 +10,7 @@ import {
 } from '@data/gateways/api/constants'
 import { IFormLogin, IFormSignUp } from '@domain/entities/formModels/signup-form.entity'
 import { IYearOverviewFilterParams } from '@domain/entities/dashboard/filter.entity'
+import { IReportFilterParams } from '@domain/entities/report/filter.entity'
 import { escapeRegExpForApiRequest, getIdFromUrl } from '@base/core/data/utils/regex.utils'
 import { IFormAccount } from '@base/core/domain/entities/formModels/account-form.entity'
 import { IFormTransaction } from '@domain/entities/formModels/transaction-form.entity'
@@ -25,6 +26,10 @@ const MOCK_URLS = {
     RECENT_TRANSACTIONS: API_URL.DASHBOARD.recentTransactions,
     CATEGORY_OVERVIEW: new RegExp(`^${escapeRegExpForApiRequest(API_URL.DASHBOARD.categoryOverview)}\\?.*$`),
     YEAR_OVERVIEW: new RegExp(`^${escapeRegExpForApiRequest(API_URL.DASHBOARD.yearOverview)}\\?.*$`),
+  },
+  REPORT: {
+    INCOME: new RegExp(`^${escapeRegExpForApiRequest(API_URL.REPORT.incomeReport)}\\?.*$`),
+    EXPENSE: new RegExp(`^${escapeRegExpForApiRequest(API_URL.REPORT.expenseReport)}\\?.*$`),
   },
   ACCOUNT: {
     BASE: ACCOUNT_URL,
@@ -51,6 +56,8 @@ export const mockAPIResponses = (
     mock.onGet(MOCK_URLS.DASHBOARD.SUMMARY_OVERVIEW).reply(400, getDashboardErrorResponse(baseDataRes))
     mock.onGet(MOCK_URLS.DASHBOARD.RECENT_TRANSACTIONS).reply(400, getDashboardErrorResponse(baseDataRes))
     mock.onGet(MOCK_URLS.DASHBOARD.YEAR_OVERVIEW).reply(400, getDashboardYearOverviewErrorResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.REPORT.INCOME).reply(400, getDashboardErrorResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.REPORT.EXPENSE).reply(400, getDashboardErrorResponse(baseDataRes))
     // Accounts
     mock.onGet(MOCK_URLS.ACCOUNT.BASE).reply(400, getAccountErrorResponse(baseDataRes))
     mock.onGet(MOCK_URLS.ACCOUNT.DETAIL).reply(400, getAccountErrorResponse(baseDataRes))
@@ -76,6 +83,8 @@ export const mockAPIResponses = (
     mock.onGet(MOCK_URLS.DASHBOARD.RECENT_TRANSACTIONS).reply(200, formatDashboardRecentTransactionsIntoResponse(baseDataRes))
     mock.onGet(MOCK_URLS.DASHBOARD.CATEGORY_OVERVIEW).reply(200, formatDashboardCategoryOverviewIntoResponse(baseDataRes))
     mock.onGet(MOCK_URLS.DASHBOARD.YEAR_OVERVIEW).reply(200, formatDashboardYearOverviewIntoResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.REPORT.INCOME).reply(200, formatIncomeReportIntoResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.REPORT.EXPENSE).reply(200, formatExpenseReportIntoResponse())
     // Accounts
     mock.onGet(MOCK_URLS.ACCOUNT.BASE).reply(200, formatRetrieveAccountsIntoResponse(baseDataRes))
     mock.onGet(MOCK_URLS.ACCOUNT.DETAIL).reply((config) => {
@@ -225,6 +234,234 @@ export const formatDashboardYearOverviewIntoResponse = (data: IYearOverviewFilte
       "year": data.year
     }
   ]
+}
+
+const formatIncomeReportIntoResponse = (data: IReportFilterParams) => {
+  return {
+    selected_year: data.selectedYear,
+    compare_year: data.compareYear ?? null,
+    base_data: [
+      {
+        month: 1,
+        month_label: 'Jan',
+        gross_amount: 2500,
+        net_amount: 2200,
+        companies: [
+          {
+            name: 'Acme BV',
+            gross_amount: 1500,
+            net_amount: 1300
+          },
+          {
+            name: 'Northwind',
+            gross_amount: 1000,
+            net_amount: 900
+          }
+        ]
+      },
+      {
+        month: 2,
+        month_label: 'Feb',
+        gross_amount: 1800,
+        net_amount: 1600,
+        companies: [
+          {
+            name: 'Acme BV',
+            gross_amount: 1800,
+            net_amount: 1600
+          }
+        ]
+      }
+    ],
+    compare_data: data.compareYear ? [
+      {
+        month: 1,
+        month_label: 'Jan',
+        gross_amount: 2100,
+        net_amount: 1900,
+        companies: [
+          {
+            name: 'Acme BV',
+            gross_amount: 2100,
+            net_amount: 1900
+          }
+        ]
+      }
+    ] : []
+  }
+}
+
+const formatExpenseReportIntoResponse = () => {
+  return {
+    selected_year: 2026,
+    compare_year: 2025,
+    base_data: [
+      {
+        month: 1,
+        date: "Jan",
+        categories: {},
+        total: "€0.00"
+      },
+      {
+        month: 2,
+        date: "Feb",
+        categories: {
+          "Category For Expenses": "€5,250.00",
+          "Category For Meee": "€3,250.00",
+          "New Category": "€27,500.00",
+          "Parent Category Savings": "€2,300.00",
+          "This Is The Subcategory": "€2,850.00",
+          "Other": "€3,262.00"
+        },
+        total: "€44,412.00"
+      },
+      {
+        month: 3,
+        date: "Mar",
+        categories: {
+          "Bababa": "€237.00",
+          "New Abe": "€1,500.00",
+          "Parent Category Savings": "€80,700.00",
+          "Salary": "€300.00",
+          "This Is The Subcategory": "€19,230.00",
+          "Other": "€17,919.00"
+        },
+        total: "€119,886.00"
+      },
+      {
+        month: 4,
+        date: "Apr",
+        categories: {},
+        total: "€0.00"
+      },
+      {
+        month: 5,
+        date: "May",
+        categories: {
+          "Salary": "€500.00"
+        },
+        total: "€500.00"
+      },
+      {
+        month: 6,
+        date: "Jun",
+        categories: {
+          "Category For Meee": "€70,000.00"
+        },
+        total: "€70,000.00"
+      },
+      {
+        month: 7,
+        date: "Jul",
+        categories: {},
+        total: "€0.00"
+      },
+      {
+        month: 8,
+        date: "Aug",
+        categories: {},
+        total: "€0.00"
+      },
+      {
+        month: 9,
+        date: "Sep",
+        categories: {},
+        total: "€0.00"
+      },
+      {
+        month: 10,
+        date: "Oct",
+        categories: {},
+        total: "€0.00"
+      },
+      {
+        month: 11,
+        date: "Nov",
+        categories: {},
+        total: "€0.00"
+      },
+      {
+        month: 12,
+        date: "Dec",
+        categories: {},
+        total: "€0.00"
+      }
+    ],
+    compare_data: [
+      {
+        month: 1,
+        date: "Jan",
+        categories: {},
+        total: "€0.00"
+      },
+      {
+        month: 2,
+        date: "Feb",
+        categories: {},
+        total: "€0.00"
+      },
+      {
+        month: 3,
+        date: "Mar",
+        categories: {},
+        total: "€0.00"
+      },
+      {
+        month: 4,
+        date: "Apr",
+        categories: {},
+        total: "€0.00"
+      },
+      {
+        month: 5,
+        date: "May",
+        categories: {},
+        total: "€0.00"
+      },
+      {
+        month: 6,
+        date: "Jun",
+        categories: {},
+        total: "€0.00"
+      },
+      {
+        month: 7,
+        date: "Jul",
+        categories: {},
+        total: "€0.00"
+      },
+      {
+        month: 8,
+        date: "Aug",
+        categories: {},
+        total: "€0.00"
+      },
+      {
+        month: 9,
+        date: "Sep",
+        categories: {},
+        total: "€0.00"
+      },
+      {
+        month: 10,
+        date: "Oct",
+        categories: {},
+        total: "€0.00"
+      },
+      {
+        month: 11,
+        date: "Nov",
+        categories: {},
+        total: "€0.00"
+      },
+      {
+        month: 12,
+        date: "Dec",
+        categories: {},
+        total: "€0.00"
+      }
+    ]
+  }
 }
 
 /** Accounts **/

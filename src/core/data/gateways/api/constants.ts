@@ -12,6 +12,7 @@ export const ACCOUNT_URL = `/ledger/accounts/`
 export const USER_URL = `/ledger/users/`
 export const TRANSACTION_URL = `/ledger/transactions/`
 export const DASHBOARD_URL = `/ledger/dashboard/`
+export const REPORT_URL = `/ledger/reports/`
 
 export const API_URL = {
   DASHBOARD : {
@@ -20,6 +21,11 @@ export const API_URL = {
     recentTransactions : `${DASHBOARD_URL}recent-transactions/`,
     categoryOverview : `${DASHBOARD_URL}category-overview/`,
     yearOverview : `${DASHBOARD_URL}year-overview/`
+  },
+  REPORT: {
+    base: REPORT_URL,
+    incomeReport: `${REPORT_URL}income-report/`,
+    expenseReport: `${REPORT_URL}expenses-report/`
   }
 }
 
