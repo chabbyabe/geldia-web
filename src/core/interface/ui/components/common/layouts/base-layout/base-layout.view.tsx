@@ -43,7 +43,7 @@ const BaseLayoutView: React.FC<IBaseLayoutViewModel> = (props) => {
           }}
         >
           <Toolbar />
-          <Container maxWidth={"xl"} sx={{ mt: 4, mb: 4}}>
+          <Container maxWidth={false} sx={{ mt: 4, mb: 4}}>
             {props.children}
           </Container>
         </Box>

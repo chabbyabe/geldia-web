@@ -3,6 +3,7 @@ import {
   SwapHoriz as SwapHorizIcon,
   Savings as SavingsIcon,
   Payment as PaymentIcon,
+  History as HistoryIcon,
 } from '@mui/icons-material';
 
 export const PAGES = {
@@ -29,6 +30,10 @@ export const PAGES = {
   REPORTS: {
     label: 'Reports',
     path: '/reports',
+  },
+  LOGS: {
+    label: 'Logs',
+    path: '/logs',
   },
 }
 
@@ -57,4 +62,5 @@ export const ICON_MAP: Record<string, React.ElementType> = {
   "Transfer": SwapHorizIcon,
   "Savings": SavingsIcon,
   "Payments" : PaymentIcon,
+  "Logs": HistoryIcon,
 };
