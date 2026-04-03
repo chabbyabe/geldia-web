@@ -24,6 +24,7 @@ export interface ICustomTableViewModel<T = any, P = any> {
   buttonName: string
   disableColumnSelector: boolean
   invisibleColumns: GridColumnVisibilityModel
+  hideAddButton?: boolean
 }
 
 type RowWithId = { id: string | number };
@@ -54,7 +55,7 @@ const CustomToolbarWithoutSearch: React.FC<CustomToolbarProps> =
             <ViewColumnIcon fontSize="small" />
           </ColumnsPanelTrigger>
         }
-        <FilterPanelTrigger
+ <FilterPanelTrigger
           render={(triggerProps: any) => (
             <ToolbarButton
               {...triggerProps}
@@ -131,7 +132,7 @@ export const CustomTableView = <T extends RowWithId, P extends any>(props: ICust
         page: page,
         search: searchText,
         ordering: ordering,
-        filterModel: JSON.stringify(filterModel),
+   filterModel: JSON.stringify(filterModel),
         filterDate: filterDate,
         startDate: startDate?.format("YYYY-MM-DD") ?? '',
         endDate: endDate?.format("YYYY-MM-DD") ?? '',
@@ -191,17 +192,21 @@ export const CustomTableView = <T extends RowWithId, P extends any>(props: ICust
   return (
     <Stack ref={gridRootRef}>
       <Stack direction="row" gap={2} flexWrap="wrap" alignItems="center" justifyContent="space-between" mb={2}>
-        <Button
-          onClick={() => props.handleFormModal?.(true)}
-          variant="contained"
-          startIcon={<Add />}
-          size="large"
-        >
-          {"Add " + props.buttonName}
-        </Button>
+        {!props.hideAddButton ? (
+          <Button
+            onClick={() => props.handleFormModal?.(true)}
+            variant="contained"
+            startIcon={<Add />}
+            size="large"
+          >
+            {"Add " + props.buttonName}
+          </Button>
+        ) : (
+          <Box />
+        )}
 
         <Stack direction="row" spacing={2} alignItems="center">
-          <FormControl size="small" sx={{ minWidth: 150 }}>
+        <FormControl size="small" sx={{ minWidth: 150 }}>
             <InputLabel>Filter</InputLabel>
             <Select
               value={filterDate}
@@ -214,7 +219,7 @@ export const CustomTableView = <T extends RowWithId, P extends any>(props: ICust
             </Select>
           </FormControl>
 
-          {filterDate === DATE_RANGES.CUSTOM && (
+          { filterDate === DATE_RANGES.CUSTOM && (
             <Stack direction="row" spacing={2} mb={2}>
               <DatePicker
                 label="Start Date"

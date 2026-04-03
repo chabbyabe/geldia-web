@@ -8,6 +8,7 @@ import accountsReducer from '@interface/presenters/store/reducers/accounts.reduc
 import transactionsReducer from '@interface/presenters/store/reducers/transactions.reducer';
 import dashboardReducer from '@interface/presenters/store/reducers/dashboard.reducer';
 import reportReducer from '@interface/presenters/store/reducers/report.reducer';
+import logsReducer from '@interface/presenters/store/reducers/logs.reducer';
 
 const reducer = combineReducers({
   authState: authReducer,
@@ -15,7 +16,8 @@ const reducer = combineReducers({
   accountState: accountsReducer,
   transactionState: transactionsReducer,
   dashboardState: dashboardReducer,
-  reportState: reportReducer
+  reportState: reportReducer,
+  logsState: logsReducer
 });
 
 const persistConfig = {

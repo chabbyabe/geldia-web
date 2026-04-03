@@ -13,6 +13,7 @@ export const USER_URL = `/ledger/users/`
 export const TRANSACTION_URL = `/ledger/transactions/`
 export const DASHBOARD_URL = `/ledger/dashboard/`
 export const REPORT_URL = `/ledger/reports/`
+export const LOGS_TRANSACTION_URL = `/ledger/logs/transactions/`
 
 export const API_URL = {
   DASHBOARD : {
@@ -26,6 +27,9 @@ export const API_URL = {
     base: REPORT_URL,
     incomeReport: `${REPORT_URL}income-report/`,
     expenseReport: `${REPORT_URL}expenses-report/`
+  },
+  LOGS: {
+    transactions: LOGS_TRANSACTION_URL
   }
 }
 
@@ -53,15 +57,15 @@ export const TRANSACTION_TYPE = {
 export const USER_ACTIONS = {
   CREATE: {
     id: 1,
-    name: "Create"
+    name: "Created"
   },
   UPDATE: {
     id: 2,
-    name: "Update"
+    name: "Updated"
   },
   DELETE: {
     id: 3,
-    name: "Delete"
+    name: "Deleted"
   }
 }
 

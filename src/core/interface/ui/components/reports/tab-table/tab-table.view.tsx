@@ -1,6 +1,6 @@
 import { IExpenseReportData } from "@domain/entities/report/expense-report.entity";
 import { IIncomeReport } from "@domain/entities/report/income-report.entity";
-import { Paper, Tab, Tabs, Typography } from "@mui/material";
+import { Paper, Tab, Tabs } from "@mui/material";
 import React from "react";
 import { IncomeReportContainer } from "../income-report/income-report.container";
 import { ExpensesReportContainer } from "../expenses-report/expenses-report";
@@ -42,8 +42,6 @@ const TabTableView: React.FC<ITabTableView> = (props) => {
       <Paper sx={{ mt: 2, p: 2 }}>
         {tab === 0 && <IncomeReportContainer incomeReport={props.incomeReport} selectedYear={props.selectedYear} compareYear={props.compareYear} />}
         {tab === 1 && <ExpensesReportContainer expensesReport={props.expenseReport} selectedYear={props.selectedYear} compareYear={props.compareYear} />}
-        {tab === 2 && <Typography variant="body2">Savings report is not wired yet.</Typography>}
-        {tab === 3 && <Typography variant="body2">Transfers report is not wired yet.</Typography>}
       </Paper>
     </>
   );

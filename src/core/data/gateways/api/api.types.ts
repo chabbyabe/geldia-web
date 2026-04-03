@@ -187,3 +187,83 @@ export interface IExpenseReportDataModel {
   base_data: IExpenseReportMonthDataModel[]
   compare_data: IExpenseReportMonthDataModel[] | null
 }
+
+export interface ILogUserModel extends IBaseAPIModel {
+  first_name: string
+  last_name: string
+  username: string
+}
+
+export interface ILogReferenceModel extends IBaseAPIModel {
+  name: string
+}
+
+export interface ILogTagModel extends ILogReferenceModel {
+  color: string | null
+}
+
+export interface ILogAccountModel extends IBaseAPIModel {
+  name: string
+  icon: string | null
+  color: string | null
+  balance: string
+  is_default: boolean
+  user_id?: number
+}
+
+export interface ILogTransactionTypeModel extends IBaseAPIModel {
+  name: string
+  icon: string
+  color: string
+}
+
+export interface ILogCategoryModel extends ILogReferenceModel {
+  color: string | null
+  icon: string | null
+  transaction_type: ILogTransactionTypeModel | null
+  parent_category: ILogReferenceModel | null
+}
+
+export interface ILogTransactionDataModel extends IBaseAPIModel {
+  user: ILogUserModel | null
+  store: ILogReferenceModel | null
+  category: ILogCategoryModel | null
+  place: ILogReferenceModel | null
+  account: ILogAccountModel | null
+  pair_transaction: unknown | null
+  transaction_type: ILogTransactionTypeModel | null
+  tags: ILogTagModel[]
+  formatted_amount: string
+  formatted_net_amount: string
+  formatted_gross_amount: string
+  updated_at: string
+  created_at: string
+  deleted_at: string | null
+  amount: string | null
+  name: string
+  notes: string
+  net_amount: string | null
+  gross_amount: string | null
+  debit_month_year: string | null
+  external_transaction_id: string | null
+  is_recurring: boolean
+  is_refunded: boolean
+  refunded_at: string | null
+  transaction_at: string
+  previous_balance: string | null
+  pair_previous_balance: string | null
+  created_by: number | null
+  updated_by: number | null
+  deleted_by: number | null
+  recurring: unknown | null
+}
+
+export interface ITransactionLogModel extends IBaseAPIModel {
+  performed_by: ILogUserModel
+  transaction: ILogTransactionDataModel | null
+  action: "create" | "updated" | "deleted"
+  old_data: ILogTransactionDataModel | null
+  new_data: ILogTransactionDataModel | null
+  notes: string | null
+  created_at: string
+}

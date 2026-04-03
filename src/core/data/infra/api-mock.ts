@@ -3,6 +3,7 @@ import {
   ACCOUNT_URL,
   API_URL,
   LOGIN_URL,
+  LOGS_TRANSACTION_URL,
   LOGOUT_URL,
   REGISTER_URL,
   TRANSACTION_TYPE,
@@ -40,6 +41,9 @@ const MOCK_URLS = {
     BASE: TRANSACTION_URL,
     DETAIL: new RegExp(`^${escapeRegExpForApiRequest(TRANSACTION_URL)}\\d+/$`),
   },
+  LOGS: {
+    BASE: LOGS_TRANSACTION_URL,
+  },
 }
 
 export const mockAPIResponses = (
@@ -71,6 +75,7 @@ export const mockAPIResponses = (
     mock.onPost(MOCK_URLS.TRANSACTION.BASE).reply(400, getTransactionErrorResponse(baseDataRes))
     mock.onPatch(MOCK_URLS.TRANSACTION.DETAIL).reply(400, getTransactionErrorResponse(baseDataRes))
     mock.onDelete(MOCK_URLS.TRANSACTION.DETAIL).reply(400, getTransactionErrorResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.LOGS.BASE).reply(400, getTransactionErrorResponse(baseDataRes))
   } else {
     // User Registration
     mock.onPost(MOCK_URLS.REGISTER).reply(201, formatUserCreateIntoResponse(baseDataRes))
@@ -106,6 +111,181 @@ export const mockAPIResponses = (
       return [200, formatTransactionIntoResponse(baseDataRes, getIdFromUrl(config.url))]
     })
     mock.onDelete(MOCK_URLS.TRANSACTION.DETAIL).reply(204)
+    mock.onGet(MOCK_URLS.LOGS.BASE).reply(200, formatRetrieveLogsIntoResponse())
+  }
+}
+
+const formatRetrieveLogsIntoResponse = () => {
+  return {
+    count: 4,
+    total_pages: 1,
+    current_page_number: 1,
+    next: null,
+    previous: null,
+    results: [
+      {
+        id: 329,
+        performed_by: {
+          id: 28,
+          first_name: "abedee",
+          last_name: "abebe",
+          username: "abedeee"
+        },
+        transaction: {
+          id: 307,
+          user: {
+            id: 28,
+            first_name: "abedee",
+            last_name: "abebe",
+            username: "abedeee"
+          },
+          store: null,
+          category: null,
+          place: null,
+          account: {
+            id: 136,
+            name: "ABE AND HOSEA",
+            icon: "AccountBalanceWallet",
+            color: "#2EB872",
+            balance: "5400.00",
+            is_default: true,
+            user_id: 32
+          },
+          pair_transaction: null,
+          transaction_type: {
+            id: 1,
+            name: "Income",
+            icon: "Savings",
+            color: "#006CD1"
+          },
+          tags: [],
+          formatted_amount: "€0.00",
+          formatted_net_amount: "€2,400.00",
+          formatted_gross_amount: "€2,500.00",
+          updated_at: "2026-04-01 12:40 PM",
+          created_at: "2026-04-01 12:40 PM",
+          deleted_at: null,
+          amount: null,
+          name: "abe",
+          notes: "",
+          net_amount: "2400.00",
+          gross_amount: "2500.00",
+          debit_month_year: "2025-01-01",
+          external_transaction_id: null,
+          is_recurring: false,
+          is_refunded: false,
+          refunded_at: null,
+          transaction_at: "2026-04-01 12:40 PM",
+          previous_balance: "3000.00",
+          pair_previous_balance: null,
+          created_by: 28,
+          updated_by: null,
+          deleted_by: null,
+          recurring: null
+        },
+        action: "created",
+        old_data: null,
+        new_data: null,
+        notes: null,
+        created_at: "2026-04-01 12:40 PM"
+      },
+      {
+        id: 328,
+        performed_by: {
+          id: 28,
+          first_name: "abedee",
+          last_name: "abebe",
+          username: "abedeee"
+        },
+        transaction: null,
+        action: "updated",
+        old_data: null,
+        new_data: null,
+        notes: "Transaction date changed",
+        created_at: "2026-04-01 11:37 AM"
+      },
+      {
+        id: 317,
+        performed_by: {
+          id: 28,
+          first_name: "abedee",
+          last_name: "abebe",
+          username: "abedeee"
+        },
+        transaction: null,
+        action: "deleted",
+        old_data: null,
+        new_data: null,
+        notes: null,
+        created_at: "2026-03-27 02:26 PM"
+      },
+      {
+        id: 314,
+        performed_by: {
+          id: 28,
+          first_name: "abedee",
+          last_name: "abebe",
+          username: "abedeee"
+        },
+        transaction: {
+          id: 299,
+          user: {
+            id: 28,
+            first_name: "abedee",
+            last_name: "abebe",
+            username: "abedeee"
+          },
+          store: null,
+          category: null,
+          place: null,
+          account: {
+            id: 53,
+            name: "SAMPLE NAME",
+            icon: "MonetizationOn",
+            color: "#2EB872",
+            balance: "20000.00",
+            is_default: false,
+            user_id: 28
+          },
+          pair_transaction: null,
+          transaction_type: {
+            id: 1,
+            name: "Income",
+            icon: "Savings",
+            color: "#006CD1"
+          },
+          tags: [],
+          formatted_amount: "€0.00",
+          formatted_net_amount: "€5,000.00",
+          formatted_gross_amount: "€10,000.00",
+          updated_at: "2026-03-27 01:18 PM",
+          created_at: "2026-03-27 01:18 PM",
+          deleted_at: null,
+          amount: null,
+          name: "5000",
+          notes: "",
+          net_amount: "5000.00",
+          gross_amount: "10000.00",
+          debit_month_year: "2026-11-01",
+          external_transaction_id: null,
+          is_recurring: false,
+          is_refunded: false,
+          refunded_at: null,
+          transaction_at: "2026-03-27 01:18 PM",
+          previous_balance: "15000.00",
+          pair_previous_balance: null,
+          created_by: 28,
+          updated_by: null,
+          deleted_by: null,
+          recurring: null
+        },
+        action: "created",
+        old_data: null,
+        new_data: null,
+        notes: null,
+        created_at: "2026-03-27 01:18 PM"
+      }
+    ]
   }
 }
 

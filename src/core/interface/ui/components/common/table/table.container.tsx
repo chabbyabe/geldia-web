@@ -15,6 +15,7 @@ export interface ICustomTableContainer<T = any, P = any> {
   buttonName: string
   disableColumnSelector?: boolean
   invisibleColumns?: GridColumnVisibilityModel
+  hideAddButton?: boolean
 }
 
 type RowWithId = { id: string | number };
@@ -30,6 +31,7 @@ export const CustomTableContainer = <T extends RowWithId, P extends any>(props: 
       buttonName={pluralize.singular(props.buttonName)}
       disableColumnSelector={props.disableColumnSelector ?? false}
       invisibleColumns={props.invisibleColumns ?? {}}
+      hideAddButton={props.hideAddButton ?? false}
     />
   );
 };
