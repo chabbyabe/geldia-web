@@ -14,6 +14,7 @@ import { AccountsContainer } from '@screens/accounts/accounts.container'
 import { TransactionsContainer } from '@screens/transactions/transactions.container'
 import { ReportsContainer } from '@screens/reports/reports.container'
 import { LogsContainer } from '@screens/logs/logs.container'
+import { LandingContainer } from '@screens/landing/landing.container'
 
 export const Navigator = () => {
   const currentUser = useAppSelector(state => state.authState.user);
@@ -29,7 +30,8 @@ export const Navigator = () => {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path='/' element={<PrivateRoute element={<LoginContainer />} />} />
+        <Route path='/' element={<PrivateRoute element={<LandingContainer />} />} />
+        <Route path={PAGES.LOGIN.path} element={<PrivateRoute element={<LoginContainer />} />} />
         <Route path={PAGES.DASHBOARD.path} element={<AlreadyLoggedInRoute element={<DashboardContainer />} />} />
         <Route path={PAGES.SIGNUP.path} element={<PrivateRoute element={<SignupContainer />} />} />
         <Route path={PAGES.TRANSACTIONS.path} element={<AlreadyLoggedInRoute element={<TransactionsContainer />} />} />
