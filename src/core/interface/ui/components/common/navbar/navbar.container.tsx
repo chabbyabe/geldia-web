@@ -1,7 +1,9 @@
 import { toast } from 'react-toastify'
 import NavbarController from '@interface/ui/components/common/navbar/navbar.controller'
 import { NavbarView } from '@interface/ui/components/common/navbar/navbar.view'
-import { useAppSelector } from '@base/core/interface/presenters/store/hooks'
+import { useAppSelector } from '@interface/presenters/store/hooks'
+import { useNavigate } from 'react-router-dom'
+import { PAGES } from '@interface/presenters/constants'
 
 export interface INavbarContainerViewModel {
   onToggleSidebar: () => void
@@ -11,10 +13,13 @@ export interface INavbarContainerViewModel {
 
 export const NavbarContainer: React.FC<INavbarContainerViewModel> = (props) => {
   const controller = new NavbarController()
+  const navigate = useNavigate();
+  
   const user = useAppSelector(state => state.authState.user ?? undefined);
   const handleLogout = async () => {
     controller.logout()
     toast.success('Successfully Logout!')
+    navigate(PAGES.LOGIN.path);
   };
 
   return <NavbarView
