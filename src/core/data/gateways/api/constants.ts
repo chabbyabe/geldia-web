@@ -12,6 +12,7 @@ export const ACCOUNT_URL = `/ledger/accounts/`
 export const USER_URL = `/ledger/users/`
 export const TRANSACTION_URL = `/ledger/transactions/`
 export const CATEGORY_URL = `/ledger/categories/`
+export const TAG_URL = `/ledger/tags/`
 export const DASHBOARD_URL = `/ledger/dashboard/`
 export const REPORT_URL = `/ledger/reports/`
 export const LOGS_TRANSACTION_URL = `/ledger/logs/transactions/`
@@ -31,6 +32,9 @@ export const API_URL = {
   },
   CATEGORY: {
     base: CATEGORY_URL
+  },
+  TAG: {
+    base: TAG_URL
   },
   LOGS: {
     transactions: LOGS_TRANSACTION_URL

@@ -16,6 +16,7 @@ import { ReportsContainer } from '@screens/reports/reports.container'
 import { LogsContainer } from '@screens/logs/logs.container'
 import { LandingContainer } from '@screens/landing/landing.container'
 import { CategoriesContainer } from '@screens/categories/categories.container'
+import { TagsContainer } from '@screens/tags/tags.container'
 
 export const Navigator = () => {
   const currentUser = useAppSelector(state => state.authState.user);
@@ -40,6 +41,7 @@ export const Navigator = () => {
         <Route path={PAGES.REPORTS.path} element={<AlreadyLoggedInRoute element={<ReportsContainer />} />} />
         <Route path={PAGES.LOGS.path} element={<AlreadyLoggedInRoute element={<LogsContainer />} />} />
         <Route path={PAGES.CATEGORIES.path} element={<AlreadyLoggedInRoute element={<CategoriesContainer />} />} />
+        <Route path={PAGES.TAGS.path} element={<AlreadyLoggedInRoute element={<TagsContainer />} />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>

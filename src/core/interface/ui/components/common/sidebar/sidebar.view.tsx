@@ -17,7 +17,8 @@ import {
   ReceiptLong as ReceiptLongIcon,
   Assessment as AssessmentIcon,
   History as HistoryIcon,
-  Category as CategoryIcon
+  Category as CategoryIcon,
+  LocalOffer as LocalOfferIcon
 } from "@mui/icons-material";
 
 export interface ISidebarViewModel {
@@ -73,6 +74,12 @@ const settingsMenuList = (currentPage: string): ISidebarItem[] => [
     isCurrentPage: currentPage === PAGES.CATEGORIES.label,
     icon: <CategoryIcon />,
     navigatePath: PAGES.CATEGORIES.path,
+  },
+  {
+    name: PAGES.TAGS.label,
+    isCurrentPage: currentPage === PAGES.TAGS.label,
+    icon: <LocalOfferIcon />,
+    navigatePath: PAGES.TAGS.path,
   },
 ]
 

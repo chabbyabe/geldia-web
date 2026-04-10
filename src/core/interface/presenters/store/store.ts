@@ -10,6 +10,7 @@ import dashboardReducer from '@interface/presenters/store/reducers/dashboard.red
 import reportReducer from '@interface/presenters/store/reducers/report.reducer';
 import logsReducer from '@interface/presenters/store/reducers/logs.reducer';
 import categoriesReducer from '@interface/presenters/store/reducers/categories.reducer';
+import tagsReducer from '@interface/presenters/store/reducers/tags.reducer';
 
 const reducer = combineReducers({
   authState: authReducer,
@@ -19,7 +20,8 @@ const reducer = combineReducers({
   dashboardState: dashboardReducer,
   reportState: reportReducer,
   logsState: logsReducer,
-  categoryState: categoriesReducer
+  categoryState: categoriesReducer,
+  tagState: tagsReducer
 });
 
 const persistConfig = {
