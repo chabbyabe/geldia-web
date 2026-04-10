@@ -15,6 +15,7 @@ import { TransactionsContainer } from '@screens/transactions/transactions.contai
 import { ReportsContainer } from '@screens/reports/reports.container'
 import { LogsContainer } from '@screens/logs/logs.container'
 import { LandingContainer } from '@screens/landing/landing.container'
+import { CategoriesContainer } from '@screens/categories/categories.container'
 
 export const Navigator = () => {
   const currentUser = useAppSelector(state => state.authState.user);
@@ -23,7 +24,7 @@ export const Navigator = () => {
     return props.element;
   }
 
-  const AlreadyLoggedInRoute: React.FC<{ element: any }> = (props) => {
+  const AlreadyLoggedInRoute: React.FC<{ element: any, needAdmin?: boolean }> = (props) => {
     const userInfo = currentUser;
     return Boolean(userInfo) ? props.element : <Navigate to='/' /> ;
   }
@@ -38,6 +39,7 @@ export const Navigator = () => {
         <Route path={PAGES.ACCOUNTS.path} element={<AlreadyLoggedInRoute element={<AccountsContainer />} />} />
         <Route path={PAGES.REPORTS.path} element={<AlreadyLoggedInRoute element={<ReportsContainer />} />} />
         <Route path={PAGES.LOGS.path} element={<AlreadyLoggedInRoute element={<LogsContainer />} />} />
+        <Route path={PAGES.CATEGORIES.path} element={<AlreadyLoggedInRoute element={<CategoriesContainer />} />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>
