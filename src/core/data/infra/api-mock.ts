@@ -2,6 +2,7 @@ import MockAdapter from 'axios-mock-adapter'
 import {
   ACCOUNT_URL,
   API_URL,
+  CATEGORY_URL,
   LOGIN_URL,
   LOGS_TRANSACTION_URL,
   LOGOUT_URL,
@@ -36,6 +37,10 @@ const MOCK_URLS = {
     BASE: ACCOUNT_URL,
     DETAIL: new RegExp(`^${escapeRegExpForApiRequest(ACCOUNT_URL)}\\d+/$`),
   },
+  CATEGORY: {
+    BASE: CATEGORY_URL,
+    DETAIL: new RegExp(`^${escapeRegExpForApiRequest(CATEGORY_URL)}\\d+/$`),
+  },
   TRANSACTION: {
     FORM_INITIAL: `${TRANSACTION_URL}initial/list/`,
     BASE: TRANSACTION_URL,
@@ -68,6 +73,11 @@ export const mockAPIResponses = (
     mock.onPost(MOCK_URLS.ACCOUNT.BASE).reply(400, getAccountErrorResponse(baseDataRes))
     mock.onPatch(MOCK_URLS.ACCOUNT.DETAIL).reply(400, getAccountErrorResponse(baseDataRes))
     mock.onDelete(MOCK_URLS.ACCOUNT.DETAIL).reply(400, getAccountErrorResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.CATEGORY.BASE).reply(400, getTransactionErrorResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.CATEGORY.DETAIL).reply(400, getTransactionErrorResponse(baseDataRes))
+    mock.onPost(MOCK_URLS.CATEGORY.BASE).reply(400, getTransactionErrorResponse(baseDataRes))
+    mock.onPatch(MOCK_URLS.CATEGORY.DETAIL).reply(400, getTransactionErrorResponse(baseDataRes))
+    mock.onDelete(MOCK_URLS.CATEGORY.DETAIL).reply(400, getTransactionErrorResponse(baseDataRes))
     // Transactions
     mock.onGet(MOCK_URLS.TRANSACTION.FORM_INITIAL).reply(400, getTransactionErrorResponse(baseDataRes))
     mock.onGet(MOCK_URLS.TRANSACTION.BASE).reply(400, getTransactionErrorResponse(baseDataRes))
@@ -100,6 +110,16 @@ export const mockAPIResponses = (
       return [200, formatAccountIntoResponse(baseDataRes.accountForm, getIdFromUrl(config.url))]
     })
     mock.onDelete(MOCK_URLS.ACCOUNT.DETAIL).reply(204)
+    // Categories
+    mock.onGet(MOCK_URLS.CATEGORY.BASE).reply(200, formatRetrieveCategoriesIntoResponse())
+    mock.onGet(MOCK_URLS.CATEGORY.DETAIL).reply((config) => {
+      return [200, formatCategoryIntoResponse(getIdFromUrl(config.url))]
+    })
+    mock.onPost(MOCK_URLS.CATEGORY.BASE).reply(201, formatCategoryIntoResponse(73))
+    mock.onPatch(MOCK_URLS.CATEGORY.DETAIL).reply((config) => {
+      return [200, formatCategoryIntoResponse(getIdFromUrl(config.url))]
+    })
+    mock.onDelete(MOCK_URLS.CATEGORY.DETAIL).reply(204)
     // Transactions
     mock.onGet(MOCK_URLS.TRANSACTION.FORM_INITIAL).reply(200, formatTransactionInitialDataIntoResponse(baseDataRes))
     mock.onGet(MOCK_URLS.TRANSACTION.BASE).reply(200, formatRetrieveTransactionsIntoResponse(baseDataRes))
@@ -288,6 +308,54 @@ const formatRetrieveLogsIntoResponse = () => {
     ]
   }
 }
+
+const formatCategoryIntoResponse = (categoryId: number = 63) => ({
+  id: categoryId,
+  created_by: {
+    id: 28,
+    first_name: "abedee",
+    last_name: "abebe",
+    username: "abedeee"
+  },
+  updated_by: null,
+  deleted_by: null,
+  transaction_type: {
+    id: 2,
+    name: "Expenses",
+    icon: "Payments",
+    color: "#E5484D"
+  },
+  parent_category: null,
+  updated_at: "2026-03-03 10:45 AM",
+  created_at: "2026-03-03 10:45 AM",
+  deleted_at: null,
+  name: categoryId === 63 ? "Abe Category" : "New Category",
+  notes: null,
+  color: null,
+  icon: null,
+  children: []
+})
+
+const formatRetrieveCategoriesIntoResponse = () => ({
+  count: 2,
+  total_pages: 1,
+  current_page_number: 1,
+  next: null,
+  previous: null,
+  results: [
+    formatCategoryIntoResponse(63),
+    {
+      ...formatCategoryIntoResponse(65),
+      transaction_type: {
+        id: 3,
+        name: "Transfer",
+        icon: "Transfer",
+        color: "#F5A524"
+      },
+      name: "Category For Meee"
+    }
+  ]
+})
 
 /** Logout */
 const formatUserLogoutIntoResponse = () => {
