@@ -9,6 +9,7 @@ import transactionsReducer from '@interface/presenters/store/reducers/transactio
 import dashboardReducer from '@interface/presenters/store/reducers/dashboard.reducer';
 import reportReducer from '@interface/presenters/store/reducers/report.reducer';
 import logsReducer from '@interface/presenters/store/reducers/logs.reducer';
+import categoriesReducer from '@interface/presenters/store/reducers/categories.reducer';
 
 const reducer = combineReducers({
   authState: authReducer,
@@ -17,7 +18,8 @@ const reducer = combineReducers({
   transactionState: transactionsReducer,
   dashboardState: dashboardReducer,
   reportState: reportReducer,
-  logsState: logsReducer
+  logsState: logsReducer,
+  categoryState: categoriesReducer
 });
 
 const persistConfig = {
