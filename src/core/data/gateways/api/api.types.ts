@@ -89,6 +89,14 @@ export interface ITagSimpleModel extends IBaseAPIModel{
   color: string
 }
 
+export interface ITagModel extends IBaseAPIModel, ITimestampsModel {
+  created_by: IUserModel | null
+  updated_by: IUserModel | null
+  deleted_by: IUserModel | null
+  name: string
+  color: string | null
+}
+
 export interface ICategorySimpleModel extends IBaseAPIModel, ITransactionTypeModel{
   transaction_type: ITransactionTypeModel | null
   parent_category: ICategorySimpleModel | null

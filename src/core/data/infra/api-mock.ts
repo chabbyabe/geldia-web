@@ -7,6 +7,7 @@ import {
   LOGS_TRANSACTION_URL,
   LOGOUT_URL,
   REGISTER_URL,
+  TAG_URL,
   TRANSACTION_TYPE,
   TRANSACTION_URL,
 } from '@data/gateways/api/constants'
@@ -40,6 +41,10 @@ const MOCK_URLS = {
   CATEGORY: {
     BASE: CATEGORY_URL,
     DETAIL: new RegExp(`^${escapeRegExpForApiRequest(CATEGORY_URL)}\\d+/$`),
+  },
+  TAG: {
+    BASE: TAG_URL,
+    DETAIL: new RegExp(`^${escapeRegExpForApiRequest(TAG_URL)}\\d+/$`),
   },
   TRANSACTION: {
     FORM_INITIAL: `${TRANSACTION_URL}initial/list/`,
@@ -78,6 +83,11 @@ export const mockAPIResponses = (
     mock.onPost(MOCK_URLS.CATEGORY.BASE).reply(400, getTransactionErrorResponse(baseDataRes))
     mock.onPatch(MOCK_URLS.CATEGORY.DETAIL).reply(400, getTransactionErrorResponse(baseDataRes))
     mock.onDelete(MOCK_URLS.CATEGORY.DETAIL).reply(400, getTransactionErrorResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.TAG.BASE).reply(400, getTransactionErrorResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.TAG.DETAIL).reply(400, getTransactionErrorResponse(baseDataRes))
+    mock.onPost(MOCK_URLS.TAG.BASE).reply(400, getTransactionErrorResponse(baseDataRes))
+    mock.onPatch(MOCK_URLS.TAG.DETAIL).reply(400, getTransactionErrorResponse(baseDataRes))
+    mock.onDelete(MOCK_URLS.TAG.DETAIL).reply(400, getTransactionErrorResponse(baseDataRes))
     // Transactions
     mock.onGet(MOCK_URLS.TRANSACTION.FORM_INITIAL).reply(400, getTransactionErrorResponse(baseDataRes))
     mock.onGet(MOCK_URLS.TRANSACTION.BASE).reply(400, getTransactionErrorResponse(baseDataRes))
@@ -120,6 +130,16 @@ export const mockAPIResponses = (
       return [200, formatCategoryIntoResponse(getIdFromUrl(config.url))]
     })
     mock.onDelete(MOCK_URLS.CATEGORY.DETAIL).reply(204)
+    // Tags
+    mock.onGet(MOCK_URLS.TAG.BASE).reply(200, formatRetrieveTagsIntoResponse())
+    mock.onGet(MOCK_URLS.TAG.DETAIL).reply((config) => {
+      return [200, formatTagIntoResponse(getIdFromUrl(config.url))]
+    })
+    mock.onPost(MOCK_URLS.TAG.BASE).reply(201, formatTagIntoResponse(73))
+    mock.onPatch(MOCK_URLS.TAG.DETAIL).reply((config) => {
+      return [200, formatTagIntoResponse(getIdFromUrl(config.url))]
+    })
+    mock.onDelete(MOCK_URLS.TAG.DETAIL).reply(204)
     // Transactions
     mock.onGet(MOCK_URLS.TRANSACTION.FORM_INITIAL).reply(200, formatTransactionInitialDataIntoResponse(baseDataRes))
     mock.onGet(MOCK_URLS.TRANSACTION.BASE).reply(200, formatRetrieveTransactionsIntoResponse(baseDataRes))
@@ -354,6 +374,35 @@ const formatRetrieveCategoriesIntoResponse = () => ({
       },
       name: "Category For Meee"
     }
+  ]
+})
+
+const formatTagIntoResponse = (tagId: number = 63) => ({
+  id: tagId,
+  created_by: {
+    id: 28,
+    first_name: "abedee",
+    last_name: "abebe",
+    username: "abedeee"
+  },
+  updated_by: null,
+  deleted_by: null,
+  updated_at: "2026-03-03 10:45 AM",
+  created_at: "2026-03-03 10:45 AM",
+  deleted_at: null,
+  name: tagId === 63 ? "Daily" : "Work",
+  color: tagId === 63 ? "#006CD1" : "#E5484D"
+})
+
+const formatRetrieveTagsIntoResponse = () => ({
+  count: 2,
+  total_pages: 1,
+  current_page_number: 1,
+  next: null,
+  previous: null,
+  results: [
+    formatTagIntoResponse(63),
+    formatTagIntoResponse(65),
   ]
 })
 
