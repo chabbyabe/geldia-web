@@ -9,13 +9,15 @@ import MuiDrawer from '@mui/material/Drawer';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import ListSubheader from '@mui/material/ListSubheader';
 import { PAGES } from '@interface/presenters/constants';
 import {
   Dashboard as DashboardIcon,
   AccountBalanceWallet as AccountBalanceWalletIcon,
   ReceiptLong as ReceiptLongIcon,
   Assessment as AssessmentIcon,
-  History as HistoryIcon
+  History as HistoryIcon,
+  Category as CategoryIcon
 } from "@mui/icons-material";
 
 export interface ISidebarViewModel {
@@ -30,46 +32,49 @@ interface ISidebarItem {
   isCurrentPage: boolean
   icon: React.ReactNode
   navigatePath: string
-  hasDivider: boolean
 }
 
-const menuList = (currentPage: string) : ISidebarItem[] => [
+const primaryMenuList = (currentPage: string) : ISidebarItem[] => [
   {
     name: PAGES.DASHBOARD.label,
     isCurrentPage: currentPage === PAGES.DASHBOARD.label,
     icon: <DashboardIcon />,
     navigatePath: PAGES.DASHBOARD.path,
-    hasDivider: false
   },
   {
     name: PAGES.TRANSACTIONS.label,
     isCurrentPage: currentPage === PAGES.TRANSACTIONS.label,
     icon: <AccountBalanceWalletIcon />,
     navigatePath: PAGES.TRANSACTIONS.path,
-    hasDivider: false,
   },
   {
     name: PAGES.ACCOUNTS.label,
     isCurrentPage: currentPage === PAGES.ACCOUNTS.label,
     icon: <ReceiptLongIcon />,
     navigatePath: PAGES.ACCOUNTS.path,
-    hasDivider: false,
   },
   {
     name: PAGES.REPORTS.label,
     isCurrentPage: currentPage === PAGES.REPORTS.label,
     icon: <AssessmentIcon />,
     navigatePath: PAGES.REPORTS.path,
-    hasDivider: false,
   },
   {
     name: PAGES.LOGS.label,
     isCurrentPage: currentPage === PAGES.LOGS.label,
     icon: <HistoryIcon />,
     navigatePath: PAGES.LOGS.path,
-    hasDivider: false,
   },
 ];
+
+const settingsMenuList = (currentPage: string): ISidebarItem[] => [
+  {
+    name: PAGES.CATEGORIES.label,
+    isCurrentPage: currentPage === PAGES.CATEGORIES.label,
+    icon: <CategoryIcon />,
+    navigatePath: PAGES.CATEGORIES.path,
+  },
+]
 
 const drawerWidth: number = 240;
 
@@ -119,8 +124,7 @@ export const SidebarView: React.FC<ISidebarViewModel> = (props) => {
       </Toolbar>
       <Divider />
       <List component="nav">
-
-        {menuList(props.currentPage).map((element: ISidebarItem) => (
+        {primaryMenuList(props.currentPage).map((element: ISidebarItem) => (
           <React.Fragment key={element.name}>
             <ListItemButton
               sx={{
@@ -134,10 +138,24 @@ export const SidebarView: React.FC<ISidebarViewModel> = (props) => {
               <ListItemIcon>{element.icon}</ListItemIcon>
               <ListItemText primary={element.name} />
             </ListItemButton>
-            {element.hasDivider ?
-              <Divider sx={{ my: 1 }} />
-              : null}
-
+          </React.Fragment>
+        ))}
+        <Divider sx={{ my: 1 }} />
+        <ListSubheader inset>Settings</ListSubheader>
+        {settingsMenuList(props.currentPage).map((element: ISidebarItem) => (
+          <React.Fragment key={element.name}>
+            <ListItemButton
+              sx={{
+                backgroundColor: element.isCurrentPage
+                  ? "bg-primary"
+                  : "inherit",
+              }}
+              selected={element.isCurrentPage}
+              onClick={() => props.navigateTo(element.navigatePath)}
+            >
+              <ListItemIcon>{element.icon}</ListItemIcon>
+              <ListItemText primary={element.name} />
+            </ListItemButton>
           </React.Fragment>
         ))}
       </List>

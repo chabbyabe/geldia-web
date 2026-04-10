@@ -4,7 +4,9 @@ import {
   Savings as SavingsIcon,
   Payment as PaymentIcon,
   History as HistoryIcon,
+  Category as CategoryIcon,
 } from '@mui/icons-material';
+import { getGridStringOperators } from '@mui/x-data-grid';
 
 export const PAGES = {
   LOGIN: {
@@ -26,6 +28,10 @@ export const PAGES = {
   TRANSACTIONS: {
     label: 'Transactions',
     path: '/transactions',
+  },
+  CATEGORIES: {
+    label: 'Categories',
+    path: '/categories',
   },
   REPORTS: {
     label: 'Reports',
@@ -63,4 +69,9 @@ export const ICON_MAP: Record<string, React.ElementType> = {
   "Savings": SavingsIcon,
   "Payments" : PaymentIcon,
   "Logs": HistoryIcon,
+  "Categories": CategoryIcon,
 };
+
+export const STRING_OPERATORS = getGridStringOperators().filter((operator) =>
+  ["contains", "startsWith", "endsWith", "=", "isEmpty", "isNotEmpty"].includes(operator.value)
+)

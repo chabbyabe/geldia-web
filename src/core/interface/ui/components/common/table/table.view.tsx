@@ -25,6 +25,7 @@ export interface ICustomTableViewModel<T = any, P = any> {
   disableColumnSelector: boolean
   invisibleColumns: GridColumnVisibilityModel
   hideAddButton?: boolean
+  hideFilter?: boolean
 }
 
 type RowWithId = { id: string | number };
@@ -55,7 +56,7 @@ const CustomToolbarWithoutSearch: React.FC<CustomToolbarProps> =
             <ViewColumnIcon fontSize="small" />
           </ColumnsPanelTrigger>
         }
- <FilterPanelTrigger
+        <FilterPanelTrigger
           render={(triggerProps: any) => (
             <ToolbarButton
               {...triggerProps}
@@ -132,7 +133,7 @@ export const CustomTableView = <T extends RowWithId, P extends any>(props: ICust
         page: page,
         search: searchText,
         ordering: ordering,
-   filterModel: JSON.stringify(filterModel),
+        filterModel: JSON.stringify(filterModel),
         filterDate: filterDate,
         startDate: startDate?.format("YYYY-MM-DD") ?? '',
         endDate: endDate?.format("YYYY-MM-DD") ?? '',
@@ -206,41 +207,44 @@ export const CustomTableView = <T extends RowWithId, P extends any>(props: ICust
         )}
 
         <Stack direction="row" spacing={2} alignItems="center">
-        <FormControl size="small" sx={{ minWidth: 150 }}>
-            <InputLabel>Filter</InputLabel>
-            <Select
-              value={filterDate}
-              label="Filter"
-              onChange={onChangeSelect}>
-              <MenuItem value={DATE_RANGES.WEEK}>Current {DATE_RANGES.WEEK}</MenuItem>
-              <MenuItem value={DATE_RANGES.MONTH}>Current {DATE_RANGES.MONTH}</MenuItem>
-              <MenuItem value={DATE_RANGES.YEAR}>Current {DATE_RANGES.YEAR}</MenuItem>
-              <MenuItem value={DATE_RANGES.CUSTOM}>{DATE_RANGES.CUSTOM}</MenuItem>
-            </Select>
-          </FormControl>
+          {!props.hideFilter ?
+            <>
+              <FormControl size="small" sx={{ minWidth: 150 }}>
+                <InputLabel>Filter</InputLabel>
+                <Select
+                  value={filterDate}
+                  label="Filter"
+                  onChange={onChangeSelect}>
+                  <MenuItem value={DATE_RANGES.WEEK}>Current {DATE_RANGES.WEEK}</MenuItem>
+                  <MenuItem value={DATE_RANGES.MONTH}>Current {DATE_RANGES.MONTH}</MenuItem>
+                  <MenuItem value={DATE_RANGES.YEAR}>Current {DATE_RANGES.YEAR}</MenuItem>
+                  <MenuItem value={DATE_RANGES.CUSTOM}>{DATE_RANGES.CUSTOM}</MenuItem>
+                </Select>
+              </FormControl>
 
-          { filterDate === DATE_RANGES.CUSTOM && (
-            <Stack direction="row" spacing={2} mb={2}>
-              <DatePicker
-                label="Start Date"
-                value={startDate}
-                onChange={(newValue: Dayjs | null | undefined) => {
-                  const safeValue = newValue ?? null;
-                  onChangeDate?.(DATE_RANGES.CUSTOM, safeValue, endDate);
-                }}
-                slotProps={{ textField: { size: "small", sx: { width: 180 } } }}
-              />
-              <DatePicker
-                label="End Date"
-                value={endDate}
-                onChange={(newValue: Dayjs | null | undefined) => {
-                  onChangeDate?.(DATE_RANGES.CUSTOM, startDate, newValue);
-                }}
-                slotProps={{ textField: { size: "small", sx: { width: 180 } } }}
-              />
-            </Stack>
-          )}
-
+              {filterDate === DATE_RANGES.CUSTOM && (
+                <Stack direction="row" spacing={2} mb={2}>
+                  <DatePicker
+                    label="Start Date"
+                    value={startDate}
+                    onChange={(newValue: Dayjs | null | undefined) => {
+                      const safeValue = newValue ?? null;
+                      onChangeDate?.(DATE_RANGES.CUSTOM, safeValue, endDate);
+                    }}
+                    slotProps={{ textField: { size: "small", sx: { width: 180 } } }}
+                  />
+                  <DatePicker
+                    label="End Date"
+                    value={endDate}
+                    onChange={(newValue: Dayjs | null | undefined) => {
+                      onChangeDate?.(DATE_RANGES.CUSTOM, startDate, newValue);
+                    }}
+                    slotProps={{ textField: { size: "small", sx: { width: 180 } } }}
+                  />
+                </Stack>
+              )}
+            </>
+          : null}
           <TextField
             label="Search"
             variant="outlined"
