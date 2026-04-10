@@ -94,6 +94,27 @@ export interface ICategorySimpleModel extends IBaseAPIModel, ITransactionTypeMod
   parent_category: ICategorySimpleModel | null
 }
 
+export interface ICategoryModel extends IBaseAPIModel, ITimestampsModel {
+  created_by: IUserModel | null
+  updated_by: IUserModel | null
+  deleted_by: IUserModel | null
+  transaction_type: ITransactionTypeModel | null
+  parent_category: ICategorySimpleModel | null
+  name: string
+  notes: string | null
+  color: string | null
+  icon: string | null
+  children: ICategoryListItemModel[]
+}
+
+export interface ICategoryListItemModel extends IBaseAPIModel {
+  name: string
+  color: string | null
+  icon: string | null
+  transaction_type: ITransactionTypeModel | null
+  parent_category: ICategorySimpleModel | null
+}
+
 export interface ITransactionModel extends IBaseAPIModel, ITimestampsModel {
   name: string
   user: IUserModel 
