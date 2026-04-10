@@ -85,7 +85,7 @@ const ReportsView: React.FC<IReportsViewModel> = (props) => {
 
   return (
     <BaseLayoutContainer currentPage={PAGES.REPORTS.label}>
-      <Grid container flexDirection="column" gap={1} sx={{maxWidth: "60vw"}}>
+      <Grid container flexDirection="column" gap={1} >
         <Grid container flexDirection="row" alignItems="center" justifyContent="space-between">
           <Grid container flexDirection="row" alignItems="center">
             <Typography variant="body1" sx={{ mr: 1 }}> Summary for the year: </Typography>

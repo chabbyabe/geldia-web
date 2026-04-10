@@ -133,7 +133,7 @@ const tableColumns = (): GridColDef<ILogRow>[] => [
       <Chip
         label={params.row.transactionType}
         size="small"
-        color={params.row.transactionType === TRANSACTION_TYPE.INCOME.name ? "info" : params.row.transactionType === TRANSACTION_TYPE.EXPENSES.name ? "error" : "warning"}
+        color={params.row.transactionType === TRANSACTION_TYPE.INCOME.name ? "primary" : params.row.transactionType === TRANSACTION_TYPE.EXPENSES.name ? "error" : "warning"}
         sx={{ fontWeight: 600, my: 1 }}
       />
     )

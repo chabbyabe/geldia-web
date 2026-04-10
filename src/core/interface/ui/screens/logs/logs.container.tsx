@@ -8,9 +8,9 @@ export const LogsContainer: React.FC = () => {
   const logs = useAppSelector((state) => state.logsState.logs)
   const pagination = useAppSelector((state) => state.logsState.pagination)
 
-  return <LogsView 
-    logs={logs} 
-    pagination={pagination} 
-    handlePagination={controller.retrieveLogs.bind(controller)} 
-    />;
+  return <LogsView
+    logs={logs}
+    pagination={pagination}
+    handlePagination={controller.retrieveLogs.bind(controller)}
+  />;
 };
