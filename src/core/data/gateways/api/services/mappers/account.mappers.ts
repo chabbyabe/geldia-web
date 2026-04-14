@@ -4,7 +4,23 @@ import { IPagedAccountEntity } from '@domain/entities/account/paged.account.enti
 import { objectToCamel } from 'ts-case-convert';
 
 export const mapAccountAttributes = (initialModel: IAccountModel) : IAccount => {
-  return objectToCamel(initialModel) as IAccount;
+  const mapped = objectToCamel(initialModel) as any;
+
+  if (Array.isArray(mapped.categories)) {
+    mapped.categories = mapped.categories.map((category: any) => ({
+      ...category,
+      transactionType: category.transactionType ?? null,
+      parentCategory: category.parentCategory
+        ? {
+          ...category.parentCategory,
+          transactionType: category.parentCategory.transactionType ?? null,
+          parentCategory: category.parentCategory.parentCategory ?? null
+        }
+        : null
+    }))
+  }
+
+  return mapped as IAccount;
 }
 
 export const mapUserAccountAttributes = (initialModel: IPagedAPIViewModel<IAccountModel>): IPagedAccountEntity => {

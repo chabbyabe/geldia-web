@@ -74,6 +74,9 @@ const formInitialValues = (
     sharedUsers: selectedAccount?.sharedUsers ?? [],
     sharedUserIds:
       selectedAccount?.sharedUsers?.map((user) => user.id) ?? [] as number[],
+    categories: selectedAccount?.categories ?? [],
+    categoryIds:
+      selectedAccount?.categories?.map((category) => category.id) ?? [] as number[],
   };
 };
 

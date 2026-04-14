@@ -1,4 +1,5 @@
 import { IUser } from "@domain/entities/user/user.entity"
+import { ICategorySimple } from "@domain/entities/transaction/transaction.entity"
 
 export interface IFormAccount {
   name: string
@@ -12,4 +13,6 @@ export interface IFormAccount {
   user: IUser | null
   sharedUsers: IUser[] | null
   sharedUserIds?: number[]
+  categories: ICategorySimple[] | null
+  categoryIds?: number[]
 }

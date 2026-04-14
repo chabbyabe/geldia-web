@@ -14,6 +14,7 @@ export const createMockAccount = (overrides = {}) => {
     notes: faker.lorem.sentence(),
     user: null,
     sharedUsers: [],
+    categories: [],
     hasTransactions: faker.datatype.boolean(),
     createdAt: faker.date.past().toISOString(),
     updatedAt: faker.date.recent().toISOString(),

@@ -13,6 +13,7 @@ export interface IAccountSimple extends ITransactionType {
   balance: number | null
   isDefault: boolean
   userId: number
+  categories: ICategorySimple[] | null
 }
 
 export interface ICategorySimple extends ITransactionType {
@@ -37,9 +38,6 @@ export interface ITransaction extends IBaseAPIModel, IBaseDataModelEntity {
   notes: string | null
   netAmount: number | null
   grossAmount: number | null
-  formattedAmount: string | null
-  formattedNetAmount: string | null
-  formattedGrossAmount: string | null
   debitMonthYear: string | null
   externalTransactionId: number | null
   pairTransaction: IAccountSimple | null
@@ -73,9 +71,6 @@ export default class TransactionEntity {
   notes: string | null
   netAmount: number | null
   grossAmount: number | null
-  formattedAmount: string | null
-  formattedNetAmount: string | null
-  formattedGrossAmount: string | null
   debitMonthYear: string | null
   externalTransactionId: number | null
   pairTransaction: IAccountSimple | null
@@ -101,9 +96,6 @@ export default class TransactionEntity {
     this.amount = model.amount
     this.netAmount = model.netAmount
     this.grossAmount = model.grossAmount
-    this.formattedAmount = model.formattedAmount
-    this.formattedNetAmount = model.formattedNetAmount
-    this.formattedGrossAmount = model.formattedGrossAmount
     this.debitMonthYear = model.debitMonthYear
     this.externalTransactionId = model.externalTransactionId
     this.pairTransaction = model.pairTransaction
@@ -125,4 +117,3 @@ export default class TransactionEntity {
     return models.map(model => new TransactionEntity(model).getCurrentValuesAsJSON());
   }
 }
-

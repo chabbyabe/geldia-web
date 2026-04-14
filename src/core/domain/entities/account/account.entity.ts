@@ -2,27 +2,29 @@ import { IBaseAPIModel } from "@data/gateways/api/api.types";
 import { IFormAccount } from "@domain/entities/formModels/account-form.entity"
 import { IBaseDataModelEntity } from "@domain/entities/base/base.entity";
 import { IUser } from "@domain/entities/user/user.entity";
+import { ICategorySimple } from "@domain/entities/transaction/transaction.entity";
 
 export interface IAccount extends IFormAccount,IBaseAPIModel, IBaseDataModelEntity {
   hasTransactions: boolean
 }
 
 export default class AccountEntity {
-  id: number;
-  name: string;
-  icon: string | null;  
-  color: string | null;
-  balance: number;
-  countInAssets: boolean;
-  isDefault: boolean;
-  isShared: boolean;
-  notes: string | null;
-  user: IUser | null;
-  sharedUsers: IUser[];
-  hasTransactions: boolean;
-  createdAt: string;
-  updatedAt: string | null;
-  deletedAt: string | null;
+  id: number
+  name: string
+  icon: string | null  
+  color: string | null
+  balance: number
+  countInAssets: boolean
+  isDefault: boolean
+  isShared: boolean
+  notes: string | null
+  user: IUser | null
+  sharedUsers: IUser[]
+  hasTransactions: boolean
+  createdAt: string
+  updatedAt: string | null
+  deletedAt: string | null
+  categories: ICategorySimple[]
 
   constructor(model: IAccount) {
     this.id = model.id;
@@ -36,6 +38,7 @@ export default class AccountEntity {
     this.notes = model.notes ?? null;
     this.user = model.user ?? null;
     this.sharedUsers = model.sharedUsers ?? [];
+    this.categories = model.categories ?? [];
     this.hasTransactions = model.hasTransactions;
     this.createdAt = model.createdAt ?? "2022-01-01T00:00:00.000Z";
     this.updatedAt = model.updatedAt ?? null;

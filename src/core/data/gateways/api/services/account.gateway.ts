@@ -11,6 +11,21 @@ import { mapErrorAttributes } from './mappers/error.mappers'
 
 export default class AccountApiGateway extends Api {
 
+  private _serializeAccountDetail(accountDetail: IFormAccount) {
+    return {
+      name: accountDetail.name,
+      icon: accountDetail.icon,
+      color: accountDetail.color,
+      balance: accountDetail.balance,
+      countInAssets: accountDetail.countInAssets,
+      isDefault: accountDetail.isDefault,
+      isShared: accountDetail.isShared,
+      notes: accountDetail.notes,
+      sharedUserIds: accountDetail.isShared ? (accountDetail.sharedUserIds ?? []) : [],
+      categoryIds: accountDetail.categoryIds ?? []
+    }
+  }
+
   // Create a new account
   async createAccount(accountDetail: IFormAccount): Promise<IAccount> {
     try {
@@ -26,7 +41,7 @@ export default class AccountApiGateway extends Api {
   }
 
   private async _createAccount(accountDetail: IFormAccount) : Promise<IAccountModel> {
-    return await this.post(ACCOUNT_URL, accountDetail)
+    return await this.post(ACCOUNT_URL, this._serializeAccountDetail(accountDetail))
   }
 
   private _mapAccountFromResponse(response: IAccountModel): IAccount {
@@ -49,7 +64,7 @@ export default class AccountApiGateway extends Api {
   }
 
   private async _updateAccount(id: number,accountDetail: IFormAccount) : Promise<IAccountModel> {
-    return await this.patch(ACCOUNT_URL + `${id}/`, accountDetail)
+    return await this.patch(ACCOUNT_URL + `${id}/`, this._serializeAccountDetail(accountDetail))
   }
 
   // Get user own accounts

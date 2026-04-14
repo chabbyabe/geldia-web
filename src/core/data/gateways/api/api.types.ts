@@ -61,6 +61,7 @@ export interface IAccountModel extends IBaseAPIModel, ITimestampsModel {
   notes: string,
   user: IUserModel,
   shared_users: IUserModel[],
+  categories: ICategoryModel[],
   has_transactions: boolean
 }
 
