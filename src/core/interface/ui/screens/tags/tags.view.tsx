@@ -11,6 +11,7 @@ import { GridColDef, GridRenderCellParams } from "@mui/x-data-grid"
 import { Delete, Edit } from "@mui/icons-material"
 import DeleteConfirmationModal from "@interface/ui/components/modals/delete-confirmation-modal/delete-confirmation-modal.container"
 import TagModalContainer from "@interface/ui/components/modals/tag-modal/tag-modal.container"
+import { IUser } from "@domain/entities/user/user.entity"
 
 export interface ITagsViewModel {
   tags: ITag[]
@@ -21,6 +22,7 @@ export interface ITagsViewModel {
   handlePagination: (params: ITagSearchParams) => Promise<void>
   handleActionMenu: (actionId: number) => void
   clearCurrentTag: () => void
+  currentUser: IUser | null
 }
 
 const TagsView: React.FC<ITagsViewModel> = (props) => {
@@ -73,6 +75,22 @@ const TagsView: React.FC<ITagsViewModel> = (props) => {
       )
     },
     {
+      field: "created_by__username",
+      headerName: "Created By",
+      minWidth: 170,
+      flex: 0.8,
+      filterOperators: STRING_OPERATORS,
+      renderCell: (params: GridRenderCellParams<ITag>) => {
+        const isOwner = params.row.createdBy?.id === props.currentUser?.id
+        return (
+          <Chip label={params.row.createdBy?.username ?? "System Generated"}
+            size="small"
+            color={isOwner ? "primary" : "default"}></Chip>
+
+        )
+      }
+    },
+    {
       field: "created_at",
       headerName: "Created",
       minWidth: 170,
@@ -81,39 +99,74 @@ const TagsView: React.FC<ITagsViewModel> = (props) => {
       renderCell: (params: GridRenderCellParams<ITag>) => <Box>{params.row.createdAt}</Box>
     },
     {
+      field: "updated_by__username",
+      headerName: "Updated By",
+      minWidth: 170,
+      flex: 0.8,
+      filterOperators: STRING_OPERATORS,
+      renderCell: (params: GridRenderCellParams<ITag>) => {
+        const isOwner = params.row.updatedBy?.id === props.currentUser?.id
+        return isOwner && (
+          <Chip label={params.row.updatedBy?.username ?? "System Generated"}
+            size="small"
+            color={isOwner ? "primary" : "default"}></Chip>
+
+        )
+      }
+    },
+    {
+      field: "updated_at",
+      headerName: "Updated By",
+      minWidth: 170,
+      flex: 0.8,
+      filterOperators: STRING_OPERATORS,
+      renderCell: (params: GridRenderCellParams<ITag>) => {
+        const isOwner = params.row.updatedBy?.id === props.currentUser?.id
+        return isOwner && <Box>{params.row.updatedAt}</Box>
+      }
+    },
+    {
       field: "actions",
       headerName: "Actions",
       minWidth: 120,
       flex: 0.7,
       sortable: false,
       filterable: false,
-      renderCell: (params: GridRenderCellParams<ITag>) => (
-        <Stack direction="row" spacing={1} alignItems="center">
-          <Tooltip title="Edit">
-            <IconButton
-              size="small"
-              onClick={async (event) => {
-                event.stopPropagation()
-                await handleEditTag(params.row.id)
-              }}
-            >
-              <Edit fontSize="small" color="primary" />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title="Delete">
-            <IconButton
-              size="small"
-              color="error"
-              onClick={async (event) => {
-                event.stopPropagation()
-                await handleDeleteTag(params.row.id)
-              }}
-            >
-              <Delete fontSize="small" />
-            </IconButton>
-          </Tooltip>
-        </Stack>
-      )
+      renderCell: (params: GridRenderCellParams<ITag>) => {
+        const isOwner = params.row.createdBy?.id === props.currentUser?.id;
+        return (
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Tooltip title="Edit">
+              <span>
+                <IconButton
+                  size="small"
+                  onClick={async (event) => {
+                    event.stopPropagation()
+                    await handleEditTag(params.row.id)
+                  }}
+                >
+                  <Edit fontSize="small" color="primary" />
+                </IconButton>
+              </span>
+            </Tooltip>
+            <Tooltip title={isOwner ? "Delete" : "You are not allowed to delete this tag."}>
+              <span>
+                <IconButton
+                  size="small"
+                  color="error"
+                  disabled={!isOwner}
+                  onClick={async (event) => {
+                    event.stopPropagation()
+                    await handleDeleteTag(params.row.id)
+                  }}
+                >
+                  <Delete fontSize="small" />
+                </IconButton>
+              </span>
+            </Tooltip>
+          </Stack>
+        )
+      }
     }
   ]
 
