@@ -6,7 +6,9 @@ import {
   LOGIN_URL,
   LOGS_TRANSACTION_URL,
   LOGOUT_URL,
+  PLACE_URL,
   REGISTER_URL,
+  STORE_URL,
   TAG_URL,
   TRANSACTION_TYPE,
   TRANSACTION_URL,
@@ -45,6 +47,14 @@ const MOCK_URLS = {
   TAG: {
     BASE: TAG_URL,
     DETAIL: new RegExp(`^${escapeRegExpForApiRequest(TAG_URL)}\\d+/$`),
+  },
+  STORE: {
+    BASE: STORE_URL,
+    DETAIL: new RegExp(`^${escapeRegExpForApiRequest(STORE_URL)}\\d+/$`),
+  },
+  PLACE: {
+    BASE: PLACE_URL,
+    DETAIL: new RegExp(`^${escapeRegExpForApiRequest(PLACE_URL)}\\d+/$`),
   },
   TRANSACTION: {
     FORM_INITIAL: `${TRANSACTION_URL}initial/list/`,
@@ -88,6 +98,16 @@ export const mockAPIResponses = (
     mock.onPost(MOCK_URLS.TAG.BASE).reply(400, getTransactionErrorResponse(baseDataRes))
     mock.onPatch(MOCK_URLS.TAG.DETAIL).reply(400, getTransactionErrorResponse(baseDataRes))
     mock.onDelete(MOCK_URLS.TAG.DETAIL).reply(400, getTransactionErrorResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.STORE.BASE).reply(400, getTransactionErrorResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.STORE.DETAIL).reply(400, getTransactionErrorResponse(baseDataRes))
+    mock.onPost(MOCK_URLS.STORE.BASE).reply(400, getTransactionErrorResponse(baseDataRes))
+    mock.onPatch(MOCK_URLS.STORE.DETAIL).reply(400, getTransactionErrorResponse(baseDataRes))
+    mock.onDelete(MOCK_URLS.STORE.DETAIL).reply(400, getTransactionErrorResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.PLACE.BASE).reply(400, getTransactionErrorResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.PLACE.DETAIL).reply(400, getTransactionErrorResponse(baseDataRes))
+    mock.onPost(MOCK_URLS.PLACE.BASE).reply(400, getTransactionErrorResponse(baseDataRes))
+    mock.onPatch(MOCK_URLS.PLACE.DETAIL).reply(400, getTransactionErrorResponse(baseDataRes))
+    mock.onDelete(MOCK_URLS.PLACE.DETAIL).reply(400, getTransactionErrorResponse(baseDataRes))
     // Transactions
     mock.onGet(MOCK_URLS.TRANSACTION.FORM_INITIAL).reply(400, getTransactionErrorResponse(baseDataRes))
     mock.onGet(MOCK_URLS.TRANSACTION.BASE).reply(400, getTransactionErrorResponse(baseDataRes))
@@ -140,6 +160,26 @@ export const mockAPIResponses = (
       return [200, formatTagIntoResponse(getIdFromUrl(config.url))]
     })
     mock.onDelete(MOCK_URLS.TAG.DETAIL).reply(204)
+    // Stores
+    mock.onGet(MOCK_URLS.STORE.BASE).reply(200, formatRetrieveStoresIntoResponse())
+    mock.onGet(MOCK_URLS.STORE.DETAIL).reply((config) => {
+      return [200, formatStoreIntoResponse(getIdFromUrl(config.url))]
+    })
+    mock.onPost(MOCK_URLS.STORE.BASE).reply(201, formatStoreIntoResponse(73))
+    mock.onPatch(MOCK_URLS.STORE.DETAIL).reply((config) => {
+      return [200, formatStoreIntoResponse(getIdFromUrl(config.url))]
+    })
+    mock.onDelete(MOCK_URLS.STORE.DETAIL).reply(204)
+    // Places
+    mock.onGet(MOCK_URLS.PLACE.BASE).reply(200, formatRetrievePlacesIntoResponse())
+    mock.onGet(MOCK_URLS.PLACE.DETAIL).reply((config) => {
+      return [200, formatPlaceIntoResponse(getIdFromUrl(config.url))]
+    })
+    mock.onPost(MOCK_URLS.PLACE.BASE).reply(201, formatPlaceIntoResponse(73))
+    mock.onPatch(MOCK_URLS.PLACE.DETAIL).reply((config) => {
+      return [200, formatPlaceIntoResponse(getIdFromUrl(config.url))]
+    })
+    mock.onDelete(MOCK_URLS.PLACE.DETAIL).reply(204)
     // Transactions
     mock.onGet(MOCK_URLS.TRANSACTION.FORM_INITIAL).reply(200, formatTransactionInitialDataIntoResponse(baseDataRes))
     mock.onGet(MOCK_URLS.TRANSACTION.BASE).reply(200, formatRetrieveTransactionsIntoResponse(baseDataRes))
@@ -403,6 +443,62 @@ const formatRetrieveTagsIntoResponse = () => ({
   results: [
     formatTagIntoResponse(63),
     formatTagIntoResponse(65),
+  ]
+})
+
+const formatStoreIntoResponse = (storeId: number = 63) => ({
+  id: storeId,
+  created_by: {
+    id: 28,
+    first_name: "abedee",
+    last_name: "abebe",
+    username: "abedeee"
+  },
+  updated_by: null,
+  deleted_by: null,
+  updated_at: "2026-03-03 10:45 AM",
+  created_at: "2026-03-03 10:45 AM",
+  deleted_at: null,
+  name: storeId === 63 ? "Albert Heijn" : "Jumbo",
+})
+
+const formatRetrieveStoresIntoResponse = () => ({
+  count: 2,
+  total_pages: 1,
+  current_page_number: 1,
+  next: null,
+  previous: null,
+  results: [
+    formatStoreIntoResponse(63),
+    formatStoreIntoResponse(65),
+  ]
+})
+
+const formatPlaceIntoResponse = (placeId: number = 63) => ({
+  id: placeId,
+  created_by: {
+    id: 28,
+    first_name: "abedee",
+    last_name: "abebe",
+    username: "abedeee"
+  },
+  updated_by: null,
+  deleted_by: null,
+  updated_at: "2026-03-03 10:45 AM",
+  created_at: "2026-03-03 10:45 AM",
+  deleted_at: null,
+  name: placeId === 63 ? "Amsterdam" : "Rotterdam",
+})
+
+const formatRetrievePlacesIntoResponse = () => ({
+  count: 2,
+  total_pages: 1,
+  current_page_number: 1,
+  next: null,
+  previous: null,
+  results: [
+    formatPlaceIntoResponse(63),
+    formatPlaceIntoResponse(65),
   ]
 })
 
