@@ -11,6 +11,7 @@ export const TagsContainer: React.FC = () => {
   const selectedTag = useAppSelector((state) => state.tagState.currentTag)
   const pagination = useAppSelector((state) => state.tagState.pagination)
   const searchParams = useAppSelector((state) => state.tagState.searchParams)
+  const currentUser = useAppSelector(state => state.authState.user);
 
   useEffect(() => {
     controller.clearCurrentTag()
@@ -47,6 +48,7 @@ export const TagsContainer: React.FC = () => {
       handlePagination={controller.retrieveTags.bind(controller)}
       handleActionMenu={controller.setCurrentTag.bind(controller)}
       clearCurrentTag={controller.clearCurrentTag.bind(controller)}
+      currentUser={currentUser}
     />
   )
 }

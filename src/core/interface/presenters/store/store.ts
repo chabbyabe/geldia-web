@@ -11,6 +11,8 @@ import reportReducer from '@interface/presenters/store/reducers/report.reducer';
 import logsReducer from '@interface/presenters/store/reducers/logs.reducer';
 import categoriesReducer from '@interface/presenters/store/reducers/categories.reducer';
 import tagsReducer from '@interface/presenters/store/reducers/tags.reducer';
+import storesReducer from '@interface/presenters/store/reducers/stores.reducer';
+import placesReducer from '@interface/presenters/store/reducers/places.reducer';
 
 const reducer = combineReducers({
   authState: authReducer,
@@ -21,7 +23,9 @@ const reducer = combineReducers({
   reportState: reportReducer,
   logsState: logsReducer,
   categoryState: categoriesReducer,
-  tagState: tagsReducer
+  tagState: tagsReducer,
+  storesState: storesReducer,
+  placesState: placesReducer
 });
 
 const persistConfig = {

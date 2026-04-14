@@ -34,7 +34,7 @@ const LoginView: React.FC<ILoginViewModel> = (props) => {
                   toast.error('Unable to log in with provided credentials.')
                }
             } else {
-               throw Error("Uncaught exception while creating user")
+               throw Error("Uncaught exception while logging in user")
             }
          }
       },

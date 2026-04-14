@@ -84,6 +84,20 @@ export interface IPlaceSimpleModel extends IBaseAPIModel{
   name: string
 }
 
+export interface IStoreModel extends IBaseAPIModel, ITimestampsModel {
+  created_by: IUserModel | null
+  updated_by: IUserModel | null
+  deleted_by: IUserModel | null
+  name: string
+}
+
+export interface IPlaceModel extends IBaseAPIModel, ITimestampsModel {
+  created_by: IUserModel | null
+  updated_by: IUserModel | null
+  deleted_by: IUserModel | null
+  name: string
+}
+
 export interface ITagSimpleModel extends IBaseAPIModel{
   name: string
   color: string
