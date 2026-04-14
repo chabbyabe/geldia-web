@@ -18,7 +18,9 @@ import {
   Assessment as AssessmentIcon,
   History as HistoryIcon,
   Category as CategoryIcon,
-  LocalOffer as LocalOfferIcon
+  LocalOffer as LocalOfferIcon,
+  Storefront as StorefrontIcon,
+  Place as PlaceIcon
 } from "@mui/icons-material";
 
 export interface ISidebarViewModel {
@@ -80,6 +82,18 @@ const settingsMenuList = (currentPage: string): ISidebarItem[] => [
     isCurrentPage: currentPage === PAGES.TAGS.label,
     icon: <LocalOfferIcon />,
     navigatePath: PAGES.TAGS.path,
+  },
+  {
+    name: PAGES.STORES.label,
+    isCurrentPage: currentPage === PAGES.STORES.label,
+    icon: <StorefrontIcon />,
+    navigatePath: PAGES.STORES.path,
+  },
+  {
+    name: PAGES.PLACES.label,
+    isCurrentPage: currentPage === PAGES.PLACES.label,
+    icon: <PlaceIcon />,
+    navigatePath: PAGES.PLACES.path,
   },
 ]
 
