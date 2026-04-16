@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { BaseLayoutContainer } from "@interface/ui/components/common/layouts/base-layout/base-layout.container"
-import { PAGES, STRING_OPERATORS } from "@interface/presenters/constants"
+import { PAGES, MUI_STRING_OPERATORS as STRING_OPERATORS } from "@interface/presenters/constants"
 import { ITag } from "@domain/entities/tag/tag.entity"
 import { ITagSearchParams } from "@domain/entities/tag/search.entity"
 import { IFormTag } from "@domain/entities/formModels/tag-form.entity"
@@ -149,7 +149,7 @@ const TagsView: React.FC<ITagsViewModel> = (props) => {
                 </IconButton>
               </span>
             </Tooltip>
-            <Tooltip title={isOwner ? "Delete" : "You are not allowed to delete this tag."}>
+            <Tooltip title={isOwner ? "Delete" : "You don't have permission to delete this tag."}>
               <span>
                 <IconButton
                   size="small"

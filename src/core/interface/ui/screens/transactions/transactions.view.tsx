@@ -1,20 +1,24 @@
 import { BaseLayoutContainer } from '@interface/ui/components/common/layouts/base-layout/base-layout.container';
 import {
   Container, Button, Chip, Stack, Box, Accordion, AccordionSummary,
-  AccordionDetails, Typography, Divider, Grid
+  AccordionDetails, Typography, Divider, Grid,
+  Tooltip
 } from '@mui/material';
 import { IBasePagedListEntity } from '@domain/entities/base/base.paged.entity';
 import DeleteConfirmationModal from '@interface/ui/components/modals/delete-confirmation-modal/delete-confirmation-modal.container';
-import { GridColDef, GridRenderCellParams, GridValueSetter, getGridStringOperators, getGridNumericOperators } from '@mui/x-data-grid';
+import { GridColDef, GridRenderCellParams, GridValueSetter } from '@mui/x-data-grid';
 import { Circle, Delete, Edit, ExpandMore } from '@mui/icons-material';
+import { ArrowBack } from '@mui/icons-material';
 import { TransactionModalContainer } from '@interface/ui/components/modals/transaction-modal/transaction-modal.container';
 import { ITransactionSearchParams } from '@domain/entities/transaction/search.entity';
 import CustomTableContainer from '@interface/ui/components/common/table/table.container';
-import { formatDateTime } from '@interface/presenters/helpers';
+import { formatDateTime, getColoredChipSx, getTransactionTypeChipSx } from '@interface/presenters/helpers';
 import { TRANSACTION_TYPE } from '@data/gateways/api/constants';
-import { PAGES } from '@interface/presenters/constants';
+import { PAGES, MUI_STRING_OPERATORS as stringOperators, MUI_NUMBER_OPERATORS as numberOperators } from '@interface/presenters/constants';
 import { ITransaction } from '@domain/entities/transaction/transaction.entity';
 import { useEffect, useState } from 'react';
+import { IAccount } from '@domain/entities/account/account.entity';
+import { IUser } from '@domain/entities/user/user.entity';
 
 export interface ITransactionsViewModel {
   children?: React.ReactNode
@@ -26,22 +30,15 @@ export interface ITransactionsViewModel {
   handlePagination: (params: ITransactionSearchParams) => Promise<void>
   handleActionMenu: (actionId: number) => void
   removeCurrentTransaction: () => void
+  currentPageLabel?: string
+  buttonName?: string
+  hideAddButton?: boolean
+  sidebarCurrentPageLabel?: string
+  onBack?: () => void
+  backButtonLabel?: string
+  defaultAccount?: IAccount | null
+  currentUser: IUser | null
 }
-
-const stringOperators = getGridStringOperators().filter((op) =>
-  [
-    "contains",
-    "startsWith",
-    "endsWith",
-    "=",
-    "isEmpty",
-    "isNotEmpty"
-  ].includes(op.value)
-);
-
-const numberOperators = getGridNumericOperators().filter((op) =>
-  [">", ">=", "<", "<=", "=", "isEmpty", "isNotEmpty"].includes(op.value)
-);
 
 const tableColumns = (
   props: ITransactionsViewModel,
@@ -72,26 +69,15 @@ const tableColumns = (
         };
       }) as GridValueSetter<ITransaction>,
       renderCell: (params: GridRenderCellParams<ITransaction>) => {
-        let label: string | null = null;
-        let color: 'primary' | 'secondary' | 'error' | 'warning' | 'info' | 'success' | null = null;
-        switch (params.row.transactionType?.id) {
-          case TRANSACTION_TYPE.INCOME.id:
-            label = TRANSACTION_TYPE.INCOME.name;
-            color = 'primary';
-            break;
-          case TRANSACTION_TYPE.EXPENSES.id:
-            label = TRANSACTION_TYPE.EXPENSES.name;
-            color = 'error';
-            break;
-          case TRANSACTION_TYPE.TRANSFER.id:
-            label = TRANSACTION_TYPE.TRANSFER.name;
-            color = 'warning';
-            break;
-          default:
-            label = null;
-            color = null;
-        }
-        return label && color && <Chip sx={{ width: '100%' }} label={label} color={color} size="small" />;
+        const label = params.row.transactionType?.name;
+        if (!label) return null;
+        return (
+          <Chip
+            sx={{ ...getTransactionTypeChipSx(params.row.transactionType?.color), width: '100%' }}
+            label={label}
+            size="small"
+          />
+        );
       },
     },
     {
@@ -118,7 +104,7 @@ const tableColumns = (
             >
               <AccordionSummary expandIcon={<ExpandMore />}>
                 <Typography variant="body1">
-                  {row.formattedAmount ?? "-"}
+                  {row.amount ?? "-"}
                 </Typography>
               </AccordionSummary>
               <Divider />
@@ -166,7 +152,7 @@ const tableColumns = (
                 sx={{ minHeight: 40 }}
               >
                 <Typography variant="body1" color="error" fontWeight="bold">
-                  {row.formattedAmount ?? "-"}
+                  {row.amount ?? "-"}
                 </Typography>
               </AccordionSummary>
               <Divider />
@@ -206,7 +192,7 @@ const tableColumns = (
                 sx={{ minHeight: 40 }}
               >
                 <Typography variant="body1" fontWeight="bold">
-                  {row.formattedNetAmount ?? "-"}
+                  {row.netAmount ?? "-"}
                 </Typography>
               </AccordionSummary>
               <Divider />
@@ -223,14 +209,14 @@ const tableColumns = (
                   {row.grossAmount &&
                     <Stack direction="row" justifyContent="space-between" alignItems="center">
                       <Typography variant="body2" color="text.secondary">Gross Amount</Typography> <br />
-                      <Typography variant="body2">{row.formattedGrossAmount ?? "-"}</Typography>
+                      <Typography variant="body2">{row.grossAmount ?? "-"}</Typography>
                     </Stack>
                   }
 
                   {row.netAmount &&
                     <Stack direction="row" justifyContent="space-between" alignItems="center">
                       <Typography variant="body2" color="text.secondary">Net Amount</Typography> <br />
-                      <Typography variant="body2" color="primary">{row.formattedNetAmount ?? "-"}</Typography>
+                      <Typography variant="body2" color="primary">{row.netAmount ?? "-"}</Typography>
                     </Stack>
                   }
 
@@ -261,7 +247,7 @@ const tableColumns = (
         if (!params.row.amount) return "";
         return (
           <Box sx={{ textAlign: "right" }}>
-            {params.row.formattedAmount}
+            {params.row.amount}
           </Box>
         );
       }
@@ -272,7 +258,7 @@ const tableColumns = (
       renderCell: (params: GridRenderCellParams<ITransaction>) => {
         if (!params.row.netAmount) return "";
         return (
-          <Box sx={{ textAlign: "right" }}>{params.row.formattedNetAmount}</Box>
+          <Box sx={{ textAlign: "right" }}>{params.row.netAmount}</Box>
         );
       },
     },
@@ -281,7 +267,7 @@ const tableColumns = (
       renderCell: (params: GridRenderCellParams<ITransaction>) => {
         if (!params.row.grossAmount) return "";
         return (
-          <Box sx={{ textAlign: "right" }}>{params.row.formattedGrossAmount}</Box>
+          <Box sx={{ textAlign: "right" }}>{params.row.grossAmount}</Box>
         );
       },
     },
@@ -306,7 +292,7 @@ const tableColumns = (
         const hasData = params.row.category?.id;
         if (!hasData) return null;
         return hasData && <Chip label={params.row.category?.name}
-          sx={{ backgroundColor: params.row.category?.color }} size="small" />;
+          sx={getColoredChipSx(params.row.category?.color)} size="small" />;
       },
     },
     {
@@ -333,7 +319,7 @@ const tableColumns = (
                 <Chip
                   key={tag.id}
                   label={tag.name}
-                  sx={{ backgroundColor: tag.color ?? 'primary' }}
+                  sx={getColoredChipSx(tag.color)}
                   size="small"
                 />
               ))}
@@ -357,43 +343,70 @@ const tableColumns = (
       align: "center",
       flex: 1,
       minWidth: 120,
-      renderCell: (params: GridRenderCellParams<ITransaction>) => (
-        <>
-          <Stack direction="row" height="100%" justifyContent="center" alignItems="center">
-            <Button size="large" endIcon={<Edit />} color="secondary" onClick={() => {
-              props.handleActionMenu(params.row.id);
-              openEditModal(true)
-            }}>
-            </Button>
-            <Button size="large" startIcon={<Delete />} color="error" onClick={() => {
-              props.handleActionMenu(params.row.id);
-              openDeleteModal(true)
-            }}>
-            </Button>
-          </Stack>
-        </>
-      ),
+      renderCell: (params: GridRenderCellParams<ITransaction>) => {
+        const isOwner = params.row.user?.id === props.currentUser?.id;
+        return (
+          <>
+            <Stack direction="row" height="100%" justifyContent="center" alignItems="center">
+              <Tooltip title="Edit">
+                <span>
+
+                  <Button size="large" endIcon={<Edit />} color="secondary" onClick={() => {
+                    props.handleActionMenu(params.row.id);
+                    openEditModal(true)
+                  }}>
+                  </Button>
+                </span>
+              </Tooltip>
+              <Tooltip title={isOwner ? "Delete" : "You don’t have permission to delete this transaction."}>
+                <span>
+                  <Button size="large" startIcon={<Delete />} disabled={!isOwner} color="error" onClick={() => {
+                    props.handleActionMenu(params.row.id);
+                    openDeleteModal(true)
+                  }}>
+                  </Button>
+                </span>
+              </Tooltip>
+            </Stack>
+          </>
+        )
+      }
     }
   ];
 
 const TransactionsView: React.FC<ITransactionsViewModel> = (props) => {
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const [openCreateEditModal, setOpenCreateEditModal] = useState(false);
+  const currentPageLabel = props.currentPageLabel ?? PAGES.TRANSACTIONS.label;
+  const buttonName = props.buttonName ?? PAGES.TRANSACTIONS.label;
+  const backButtonLabel = props.backButtonLabel ?? 'Back';
 
   useEffect(() => {
     props.removeCurrentTransaction();
   }, [openCreateEditModal]);
 
   return (
-    <BaseLayoutContainer currentPage={PAGES.TRANSACTIONS.label}>
+    <BaseLayoutContainer currentPage={currentPageLabel} sidebarCurrentPage={props.sidebarCurrentPageLabel}>
       <Container maxWidth={false} sx={{ mt: 4, mb: 4 }}>
-        <Stack>
+        <Stack spacing={2}>
+          {props.onBack && (
+            <Box>
+              <Button
+                variant="outlined"
+                startIcon={<ArrowBack />}
+                onClick={props.onBack}
+              >
+                {backButtonLabel}
+              </Button>
+            </Box>
+          )}
           <CustomTableContainer tableData={props.transactions}
             pagination={props.pagination}
             tableColumns={tableColumns(props, setOpenCreateEditModal, setOpenDeleteModal)}
             handlePagination={props.handlePagination}
-            buttonName={PAGES.TRANSACTIONS.label}
+            buttonName={buttonName}
             handleFormModal={setOpenCreateEditModal}
+            hideAddButton={props.hideAddButton ?? false}
             disableColumnSelector={true}
             invisibleColumns={{
               net_amount: false,
@@ -409,11 +422,12 @@ const TransactionsView: React.FC<ITransactionsViewModel> = (props) => {
           open={openCreateEditModal}
           onClose={() => setOpenCreateEditModal(false)}
           selectedTransaction={props.selectedTransaction}
+          defaultAccount={props.defaultAccount}
         />
       </>
       <DeleteConfirmationModal
         open={openDeleteModal}
-        pageTitle={PAGES.TRANSACTIONS.label}
+        pageTitle={buttonName}
         hasConfirmation={false}
         onClose={() => setOpenDeleteModal(false)}
         onConfirm={async () => {

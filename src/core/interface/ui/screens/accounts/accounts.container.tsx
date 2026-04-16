@@ -4,6 +4,11 @@ import AccountsController from '@interface/ui/screens/accounts/accounts.controll
 import { IFormAccount } from '@domain/entities/formModels/account-form.entity';
 import { useAppSelector } from '@interface/presenters/store/hooks';
 import { IAccount } from '@domain/entities/account/account.entity';
+import CategoriesController from '@interface/ui/screens/categories/categories.controller';
+import TransactionModalController from '@interface/ui/components/modals/transaction-modal/transaction-modal.controller';
+import { IFormCategory } from '@domain/entities/formModels/category-form.entity';
+import { ICategory } from '@domain/entities/category/category.entity';
+import DashboardController from '@interface/ui/screens/dashboard/dashboard.controller';
 
 export interface IAccountsContainerViewModel {
   children?: React.ReactNode
@@ -12,17 +17,37 @@ export interface IAccountsContainerViewModel {
 export const AccountsContainer: React.FC<IAccountsContainerViewModel> = (props) => {
 
   const controller = new AccountsController();
+  const categoriesController = new CategoriesController()
+  const transactionModalController = new TransactionModalController()
+  const dashboardController = new DashboardController()
+
   const accounts = useAppSelector(state => state.accountState.accounts);
   const users = useAppSelector(state => state.userState.users);
   const currentPage = useAppSelector(state => state.accountState.nextAccountsPage);
   const selectedAccount = useAppSelector(state => state.accountState.currentAccount);
   const paginationData = useAppSelector(state => state.accountState.pagination);
   const currentUser = useAppSelector(state => state.authState.user);
+  const transactionTypes = useAppSelector(state => state.transactionState.options.transactionTypes);
+  const categories = useAppSelector(state => state.categoryState.categories);
+  const selectedCategory = useAppSelector(state => state.categoryState.currentCategory);
+  const categoryPagination = useAppSelector(state => state.categoryState.pagination);
+  const categorySearchParams = useAppSelector(state => state.categoryState.searchParams);
+  const recentTransactions = useAppSelector(state => state.dashboardState.recentTransactions);
 
   useEffect(() => {
     controller.retrieveAccount(true, 1);
     controller.retrieveAllUsers();
     controller.removeCurrentAccount();
+
+    transactionModalController.retrieveFormOptions()
+    dashboardController.retrieveRecentTransactions()
+    categoriesController.clearCurrentCategory()
+    categoriesController.retrieveCategories({
+      page: 1,
+      search: "",
+      ordering: "",
+      filterModel: ""
+    })
   }, []);
 
   const handleDelete = async (account: IAccount) => {
@@ -37,6 +62,29 @@ export const AccountsContainer: React.FC<IAccountsContainerViewModel> = (props) 
     }
   };
 
+  const refreshCategories = async () => {
+    await categoriesController.retrieveCategories({
+      ...categorySearchParams,
+      page: categoryPagination.currentPageNumber
+    })
+    await transactionModalController.retrieveFormOptions()
+  }
+
+  const handleCategorySubmit = async (values: IFormCategory) => {
+    if (selectedCategory) {
+      await categoriesController.updateCategory(selectedCategory.id, values)
+    } else {
+      await categoriesController.createCategory(values)
+    }
+    await refreshCategories()
+  }
+
+  const handleCategoryDelete = async (category: ICategory) => {
+    await categoriesController.deleteCategory(category)
+    await refreshCategories()
+    categoriesController.clearCurrentCategory()
+  }
+
   return <AccountsView
     children={props.children}
     accounts={accounts}
@@ -48,6 +96,15 @@ export const AccountsContainer: React.FC<IAccountsContainerViewModel> = (props) 
     handlePagination={controller.retrieveAccount.bind(controller)}
     selectedAccount={selectedAccount}
     handleActionMenu={controller.setCurrentAccount.bind(controller)}
-    currentUser={currentUser}  
+    currentUser={currentUser}
+    recentTransactions={recentTransactions}
+    categoryOptions={categories}
+    categories={categories}
+    selectedCategory={selectedCategory}
+    transactionTypes={transactionTypes}
+    handleCategorySubmit={handleCategorySubmit}
+    handleCategoryDelete={handleCategoryDelete}
+    handleSetCurrentCategory={categoriesController.setCurrentCategory.bind(categoriesController)}
+    clearCurrentCategory={categoriesController.clearCurrentCategory.bind(categoriesController)}
   />
 }

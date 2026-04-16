@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from "react"
 import { BaseLayoutContainer } from "@interface/ui/components/common/layouts/base-layout/base-layout.container"
-import { PAGES, STRING_OPERATORS } from "@interface/presenters/constants"
+import { PAGES, MUI_STRING_OPERATORS as STRING_OPERATORS } from "@interface/presenters/constants"
 import { ICategory, ICategoryListItem } from "@domain/entities/category/category.entity"
 import { ICategorySearchParams } from "@domain/entities/category/search.entity"
 import { IFormCategory } from "@domain/entities/formModels/category-form.entity"
@@ -9,11 +9,10 @@ import { ITransactionType } from "@domain/entities/transaction/transaction.entit
 import CustomTableContainer from "@interface/ui/components/common/table/table.container"
 import { Box, Chip, IconButton, Paper, Stack, Tooltip, Typography } from "@mui/material"
 import { GridColDef, GridRenderCellParams } from "@mui/x-data-grid"
-import { Edit, Delete, Wallet as WalletIcon } from "@mui/icons-material"
+import { Edit, Delete } from "@mui/icons-material"
 import DeleteConfirmationModal from "@interface/ui/components/modals/delete-confirmation-modal/delete-confirmation-modal.container"
 import CategoryModalContainer from "@interface/ui/components/modals/category-modal/category-modal.container"
-import IconOptions from "@interface/ui/components/common/account/account-icon.constant"
-import { TRANSACTION_TYPE } from "@base/core/data/gateways/api/constants"
+import { getTransactionTypeChipSx, renderCategoryIcon, truncateText } from "@interface/presenters/helpers"
 
 export interface ICategoriesViewModel {
   categories: ICategory[]
@@ -25,15 +24,6 @@ export interface ICategoriesViewModel {
   handlePagination: (params: ICategorySearchParams) => Promise<void>
   handleActionMenu: (actionId: number) => void
   clearCurrentCategory: () => void
-}
-
-const renderCategoryIcon = (icon: string | null, color: string | null) => {
-  const iconFromOptions = icon ? IconOptions[icon] : undefined
-  const iconToRender = iconFromOptions ?? <WalletIcon />
-
-  return React.cloneElement(iconToRender as React.ReactElement, {
-    sx: { fontSize: 22, color: color ?? "#006CD1" }
-  })
 }
 
 const ChildCategoryCard: React.FC<{
@@ -48,27 +38,16 @@ const ChildCategoryCard: React.FC<{
           <Stack direction="row" spacing={1} alignItems="center">
             {renderCategoryIcon(child.icon, child.color)}
             <Typography variant="body2" fontWeight={600}>{child.name}</Typography>
-              <Typography variant="body2" fontWeight={600}>{child.notes}</Typography>
           </Stack>
           <Stack direction="row" spacing={1} flexWrap="wrap">
             {child.transactionType && (
               <Chip
                 label={child.transactionType.name}
                 size="small"
-                sx={{
-                  backgroundColor: child.transactionType.color ?? "transparent",
-                  color: child.transactionType.color ? "#fff" : "inherit"
-                }}
+                sx={getTransactionTypeChipSx(child.transactionType.color)}
               />
             )}
-            {child.color && (
-              <Chip
-                label={child.color}
-                size="small"
-                variant="outlined"
-                sx={{ borderColor: child.color }}
-              />
-            )}
+            <Typography variant="body2" color="text.secondary">{truncateText(child.notes ?? '', 15)}</Typography>
           </Stack>
         </Stack>
         <Stack direction="row" spacing={0.5}>
@@ -129,12 +108,11 @@ const CategoriesView: React.FC<ICategoriesViewModel> = (props) => {
       renderCell: (params: GridRenderCellParams<ICategory>) => {
         const transType = params.row.transactionType?.name
         if (!transType) return null
-        const color = transType === TRANSACTION_TYPE.INCOME.name ? "primary" : (transType === TRANSACTION_TYPE.EXPENSES.name ? "error" : "warning")
         return (
           <Chip
             label={transType}
             size="small"
-            color={color}
+            sx={getTransactionTypeChipSx(params.row.transactionType?.color)}
           />
         )
       }
@@ -148,8 +126,30 @@ const CategoriesView: React.FC<ICategoriesViewModel> = (props) => {
       renderCell: (params: GridRenderCellParams<ICategory>) => (
         <Stack direction="row" spacing={1} alignItems="center">
           {renderCategoryIcon(params.row.icon, params.row.color)}
-          <Typography variant="body2">{params.row.icon ?? "Default"}</Typography>
         </Stack>
+      )
+    },
+    {
+      field: "color",
+      headerName: "Color",
+      minWidth: 120,
+      flex: 0.7,
+      sortable: true,
+      filterOperators: STRING_OPERATORS,
+      renderCell: (params: GridRenderCellParams<ICategory>) => (
+        params.row.color ? (
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Box
+              sx={{
+                width: 20,
+                height: 20,
+                borderRadius: 1,
+                backgroundColor: params.row.color,
+                border: "1px solid rgba(0,0,0,0.1)"
+              }}
+            />
+          </Stack>
+        ) : <Box>-</Box>
       )
     },
     {
@@ -176,30 +176,7 @@ const CategoriesView: React.FC<ICategoriesViewModel> = (props) => {
         )
       )
     },
-    {
-      field: "color",
-      headerName: "Color",
-      minWidth: 120,
-      flex: 0.7,
-      sortable: true,
-      filterOperators: STRING_OPERATORS,
-      renderCell: (params: GridRenderCellParams<ICategory>) => (
-        params.row.color ? (
-          <Stack direction="row" spacing={1} alignItems="center">
-            <Box
-              sx={{
-                width: 20,
-                height: 20,
-                borderRadius: 1,
-                backgroundColor: params.row.color,
-                border: "1px solid rgba(0,0,0,0.1)"
-              }}
-            />
-            <Typography variant="body2">{params.row.color}</Typography>
-          </Stack>
-        ) : <Box>-</Box>
-      )
-    },
+
     {
       field: "notes",
       headerName: "Notes",
@@ -229,38 +206,39 @@ const CategoriesView: React.FC<ICategoriesViewModel> = (props) => {
         const hasChildren = Boolean(params.row.children?.length)
 
         return (
-        <Stack direction="row" spacing={1} alignItems="center">
-          <Tooltip title="Edit">
-            <IconButton
-              size="small"
-              onClick={async (event) => {
-                event.stopPropagation()
-                await handleEditCategory(params.row.id)
-              }}
-            >
-              <Edit fontSize="small" color="primary" />
-            </IconButton>
-          </Tooltip>
-          <Tooltip title={hasChildren ? "Remove child categories first" : "Delete"}>
-            <span>
+          <Stack direction="row" spacing={1} alignItems="center">
+            <Tooltip title="Edit">
               <IconButton
                 size="small"
-                color="error"
-                disabled={hasChildren}
                 onClick={async (event) => {
                   event.stopPropagation()
-                  await handleDeleteCategory(params.row.id)
+                  await handleEditCategory(params.row.id)
                 }}
               >
-                <Delete fontSize="small" />
+                <Edit fontSize="small" color="primary" />
               </IconButton>
-            </span>
-          </Tooltip>
-          {hasChildren && (
-            <Chip label="Locked" size="small" variant="outlined" color="warning" />
-          )}
-        </Stack>
-      ) }
+            </Tooltip>
+            <Tooltip title={hasChildren ? "Remove child categories first" : "Delete"}>
+              <span>
+                <IconButton
+                  size="small"
+                  color="error"
+                  disabled={hasChildren}
+                  onClick={async (event) => {
+                    event.stopPropagation()
+                    await handleDeleteCategory(params.row.id)
+                  }}
+                >
+                  <Delete fontSize="small" />
+                </IconButton>
+              </span>
+            </Tooltip>
+            {hasChildren && (
+              <Chip label="Locked" size="small" variant="outlined" color="warning" />
+            )}
+          </Stack>
+        )
+      }
     }
   ], [props])
 
