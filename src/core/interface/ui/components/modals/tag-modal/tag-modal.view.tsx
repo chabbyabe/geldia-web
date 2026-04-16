@@ -1,17 +1,13 @@
 import React from "react"
 import {
-  Box,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormControlLabel,
   FormLabel,
   Grid,
   IconButton,
-  Radio,
-  RadioGroup,
   TextField,
   styled
 } from "@mui/material"
@@ -22,7 +18,7 @@ import { toast } from "react-toastify"
 import { FormRequestError } from "@domain/entities/formModels/errors.entity"
 import { IFormTag } from "@domain/entities/formModels/tag-form.entity"
 import { ITag } from "@domain/entities/tag/tag.entity"
-import { ACCOUNT_COLORS } from "@interface/presenters/constants"
+import { ColorComponentContainer } from "@interface/ui/components/common/color-component/color-component.container"
 
 interface ITagModalView {
   showModal: boolean
@@ -134,39 +130,9 @@ const TagModalView: React.FC<ITagModalView> = (props) => {
 
             <Grid size={12}>
               <FormLabel>Select Color</FormLabel>
-              <RadioGroup
-                row
-                id="color"
-                name="color"
-                value={formik.values.color ?? ""}
-                onChange={formik.handleChange}
-              >
-                {ACCOUNT_COLORS.map((color) => (
-                  <FormControlLabel
-                    key={color}
-                    value={color}
-                    control={
-                      <Radio
-                        sx={{
-                          color,
-                          "&.Mui-checked": { color }
-                        }}
-                      />
-                    }
-                    label={
-                      <Box
-                        sx={{
-                          width: 30,
-                          height: 30,
-                          borderRadius: "20%",
-                          backgroundColor: color,
-                          border: "1px solid #ccc"
-                        }}
-                      />
-                    }
-                  />
-                ))}
-              </RadioGroup>
+                <Grid container spacing={1.25} sx={{ mt: 1 }}>
+                <ColorComponentContainer formik={formik} />
+                </Grid>
             </Grid>
           </Grid>
         </DialogContent>

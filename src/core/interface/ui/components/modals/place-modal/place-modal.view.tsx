@@ -123,6 +123,20 @@ const PlaceModalView: React.FC<IPlaceModalView> = (props) => {
                 helperText={formik.touched.name && formik.errors.name}
               />
             </Grid>
+            <Grid size={12}>
+              <TextField
+                fullWidth
+                required
+                id="classification"
+                name="classification"
+                label="Place Classification"
+                value={formik.values.classification}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.classification && Boolean(formik.errors.classification)}
+                helperText={formik.touched.classification && formik.errors.classification}
+              />
+            </Grid>
           </Grid>
         </DialogContent>
 
