@@ -18,7 +18,7 @@ const initialState: IReportState = {
       selectedYear: dayjs().format("YYYY"),
       compareYear: null
   },
-  reportTab: 0,
+  reportTab: 1,
 }
 
 export const reportSlice = createSlice({
