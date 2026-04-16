@@ -11,6 +11,7 @@ import { DashboardContainer } from '@screens/dashboard/dashboard.container'
 import { LoginContainer } from '@screens/login/login.container'
 import { SignupContainer } from '@screens/signup/signup.container'
 import { AccountsContainer } from '@screens/accounts/accounts.container'
+import { AccountTransactionsContainer } from '@screens/account-transactions/account-transactions.container'
 import { TransactionsContainer } from '@screens/transactions/transactions.container'
 import { ReportsContainer } from '@screens/reports/reports.container'
 import { LogsContainer } from '@screens/logs/logs.container'
@@ -39,6 +40,7 @@ export const Navigator = () => {
         <Route path={PAGES.DASHBOARD.path} element={<AlreadyLoggedInRoute element={<DashboardContainer />} />} />
         <Route path={PAGES.SIGNUP.path} element={<PrivateRoute element={<SignupContainer />} />} />
         <Route path={PAGES.TRANSACTIONS.path} element={<AlreadyLoggedInRoute element={<TransactionsContainer />} />} />
+        <Route path={PAGES.ACCOUNT_TRANSACTIONS.path} element={<AlreadyLoggedInRoute element={<AccountTransactionsContainer />} />} />
         <Route path={PAGES.ACCOUNTS.path} element={<AlreadyLoggedInRoute element={<AccountsContainer />} />} />
         <Route path={PAGES.REPORTS.path} element={<AlreadyLoggedInRoute element={<ReportsContainer />} />} />
         <Route path={PAGES.LOGS.path} element={<AlreadyLoggedInRoute element={<LogsContainer />} />} />
