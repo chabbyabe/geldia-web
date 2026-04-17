@@ -1,8 +1,10 @@
 import {
   Grid, Button, Dialog, TextField, Autocomplete, createFilterOptions, MenuItem,
-  Chip, FormControlLabel, Checkbox, Stack, FormControl, InputLabel, Select, FormHelperText
+  Chip, FormControlLabel, Checkbox, Stack, FormControl, InputLabel, Select, FormHelperText,
+  Box,
+  Typography
 } from '@mui/material';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from 'react-toastify';
@@ -16,21 +18,24 @@ import {
 } from '@domain/entities/transaction/transaction.entity';
 import { getCurrentDateTime, formatToTitleCase, formatDateTime } from '@interface/presenters/helpers';
 import { TRANSACTION_TYPE } from '@data/gateways/api/constants';
+import { getTransactionTypeChipSx, renderCategoryIcon } from '@interface/presenters/helpers';
 import { ITransactionInitial } from '@base/core/domain/entities/transaction/initial.entity';
 import { FormRequestError } from '@base/core/domain/entities/formModels/errors.entity';
 import dayjs from 'dayjs';
 import { IUser } from '@domain/entities/user/user.entity';
+import { IAccount } from '@domain/entities/account/account.entity';
 
 export interface ITransactionModalView {
   open: boolean
   onClose: () => void
   formOptions: ITransactionInitial
   selectedTransaction: ITransaction | null
-  handleFormSumbit: (values: IFormTransaction) => Promise<void> | void
+  defaultAccount: IAccount | null
+  handleFormSubmit: (values: IFormTransaction) => Promise<void> | void
   currentUser: IUser | null
 }
 
-const validationSchema = (accounts: IAccountSimple[]) =>
+const validationSchema = (accounts: IAccountSimple[], isCreate: boolean) =>
   Yup.object({
     account: Yup.number().required("Account is required"),
     transactionType: Yup.number().required("Transaction type is required"),
@@ -38,7 +43,9 @@ const validationSchema = (accounts: IAccountSimple[]) =>
     amount: Yup.number()
       .typeError("Amount must be a number")
       .when(["transactionType", "account"], {
-        is: (transactionType: number) => transactionType !== TRANSACTION_TYPE.INCOME.id,
+        is: (transactionType: number) =>
+          isCreate &&
+          transactionType !== TRANSACTION_TYPE.INCOME.id,
         then: (schema) =>
           schema
             .positive("Amount must be greater than 0")
@@ -50,33 +57,40 @@ const validationSchema = (accounts: IAccountSimple[]) =>
                 const { account } = this.parent;
                 if (!account) return true;
 
-                const selectedAccount = accounts!.find(
-                  (a: any) => a.id === account
-                );
+                const selectedAccount = accounts.find((a) => a.id === account);
                 if (!selectedAccount || value == null) return true;
+
                 return value <= (selectedAccount.balance || 0);
               }
             ),
         otherwise: (schema) => schema.notRequired(),
       }),
-    grossAmount: Yup.number().nullable().when("transactionType", {
-      is: (transactionType: number) => transactionType === TRANSACTION_TYPE.INCOME.id,
-      then: (schema) =>
-        schema
-          .typeError("Gross amount must be a number")
-          .test(
-            "greater-than-income",
-            "Gross amount must be greater than income",
-            function (value) {
-              const { income } = this.parent;
-              if (value == null || income == null) return true;
-              return value > income;
-            }
-          ),
-      otherwise: (schema) => schema.notRequired(),
-    }),
+
+    grossAmount: Yup.number()
+      .nullable()
+      .when("transactionType", {
+        is: (transactionType: number) =>
+          !isCreate &&
+          transactionType === TRANSACTION_TYPE.INCOME.id,
+        then: (schema) =>
+          schema
+            .typeError("Gross amount must be a number")
+            .test(
+              "greater-than-income",
+              "Gross amount must be greater than income",
+              function (value) {
+                const { netAmount } = this.parent;
+                if (value == null || netAmount == null) return true;
+                return value > netAmount;
+              }
+            ),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+
     netAmount: Yup.number().when("transactionType", {
-      is: (transactionType: number) => transactionType === TRANSACTION_TYPE.INCOME.id,
+      is: (transactionType: number) =>
+        !isCreate &&
+        transactionType === TRANSACTION_TYPE.INCOME.id,
       then: (schema) =>
         schema
           .typeError("Income must be a number")
@@ -93,8 +107,10 @@ const validationSchema = (accounts: IAccountSimple[]) =>
           ),
       otherwise: (schema) => schema.notRequired(),
     }),
+
     pairTransaction: Yup.number().when("transactionType", {
-      is: (transactionType: number) => transactionType === TRANSACTION_TYPE.TRANSFER.id,
+      is: (transactionType: number) =>
+        transactionType === TRANSACTION_TYPE.TRANSFER.id,
       then: (schema) =>
         schema
           .required("Paired account is required")
@@ -108,25 +124,33 @@ const validationSchema = (accounts: IAccountSimple[]) =>
           ),
       otherwise: (schema) => schema.notRequired(),
     }),
+
     debitMonthYear: Yup.string().when("grossAmount", {
       is: (grossAmount: number | null) =>
-        grossAmount !== null && grossAmount !== null,
+        !isCreate && grossAmount != null,
       then: (schema) =>
-        schema.required("Month and year is required when gross amount is provided"),
+        schema.required(
+          "Month and year is required when gross amount is provided"
+        ),
       otherwise: (schema) => schema.notRequired(),
     }),
-    transactionAt: Yup.string().required("Date is required"),
-  })
 
-const getInitialValues = (transaction: ITransaction | null): IFormTransaction => ({
+    transactionAt: Yup.string().required("Date is required"),
+
+    category: Yup.string()
+      .trim()
+      .required("Category is required"),
+  });
+
+const getInitialValues = (transaction: ITransaction | null, defaultAccount: IAccount | null, currentUser: IUser | null): IFormTransaction => ({
   name: transaction?.name ?? "",
-  user: transaction?.user?.id ?? null,
+  user: currentUser?.id ?? transaction?.user?.id ?? null,
   store: transaction?.store?.name ?? null,
   place: transaction?.place?.name ?? null,
-  account: transaction?.account?.id ?? null,
+  account: transaction?.account?.id ?? defaultAccount?.id ?? null,
   category: transaction?.category?.name ?? null,
   transactionType: transaction?.transactionType?.id ?? null,
-  amount: transaction?.amount ?? 0,
+  amount: transaction?.amount ?? null,
   notes: transaction?.notes ?? "",
   netAmount: transaction?.netAmount ?? null,
   grossAmount: transaction?.grossAmount ?? null,
@@ -145,38 +169,84 @@ const getInitialValues = (transaction: ITransaction | null): IFormTransaction =>
 const TransactionModalView: React.FC<ITransactionModalView> = (props) => {
   const filterStore = createFilterOptions<IStoreSimple>();
   const filterPlace = createFilterOptions<IPlaceSimple>();
-  const filterCategory = createFilterOptions<ICategorySimple>();
   const [useToday, setUseToday] = React.useState<boolean>(true);
   const isCreate = !props.selectedTransaction;
+  const [dynamicCategories, setDynamicCategories] = React.useState<ICategorySimple[]>([]);
+
+  const normalizeAutocompleteValue = React.useCallback(
+    (newValue: string | IStoreSimple | IPlaceSimple | null | undefined) => {
+      if (typeof newValue === "string") {
+        const normalizedValue = newValue.trim();
+        return normalizedValue || null;
+      }
+
+      if (newValue?.inputValue) {
+        const normalizedValue = newValue.inputValue.trim();
+        return normalizedValue || null;
+      }
+
+      const normalizedValue = newValue?.name?.trim();
+      return normalizedValue || null;
+    },
+    []
+  );
+
+  const initialValues = useMemo(
+    () =>
+      getInitialValues(
+        props.selectedTransaction ?? null,
+        props.defaultAccount,
+        props.currentUser
+      ),
+    [props.selectedTransaction, props.defaultAccount, props.currentUser]
+  );
+
+  const schema = useMemo(
+    () =>
+      validationSchema(
+        props.formOptions.accounts,
+        !props.selectedTransaction
+      ),
+    [props.formOptions.accounts, props.selectedTransaction]
+  );
+
 
   const formik = useFormik<IFormTransaction>({
-    initialValues: getInitialValues(props.selectedTransaction ?? null),
-    validationSchema: !props.selectedTransaction && validationSchema(props.formOptions.accounts),
+    initialValues: initialValues,
+    validationSchema: schema,
+    enableReinitialize: true,
     onSubmit: async (values) => {
       const isCreate = !props.selectedTransaction;
+      const sanitizedValues: IFormTransaction = {
+        ...values,
+        category: values.category?.trim() ?? null,
+        store: values.store?.trim() || null,
+        place: values.place?.trim() || null,
+      };
+
       try {
         if (isCreate && useToday) {
-          values.transactionAt = formatDateTime(getCurrentDateTime(), true, true);
+          sanitizedValues.transactionAt = formatDateTime(getCurrentDateTime(), true, true);
         }
-        if (values.debitMonthYear) {
-          values.debitMonthYear = dayjs(values.debitMonthYear).format("YYYY-MM-DD");
+        if (sanitizedValues.debitMonthYear) {
+          sanitizedValues.debitMonthYear = dayjs(sanitizedValues.debitMonthYear).format("YYYY-MM-DD");
         }
 
-        if (values.transactionType === TRANSACTION_TYPE.TRANSFER.id) {
-          values.netAmount = null;
-          values.grossAmount = null;
-          values.debitMonthYear = null;
-        } else if (values.transactionType === TRANSACTION_TYPE.INCOME.id) {
-          values.amount = null;
-          values.pairTransaction = null;
+        if (sanitizedValues.transactionType === TRANSACTION_TYPE.TRANSFER.id) {
+          sanitizedValues.netAmount = null;
+          sanitizedValues.grossAmount = null;
+          sanitizedValues.debitMonthYear = null;
+        } else if (sanitizedValues.transactionType === TRANSACTION_TYPE.INCOME.id) {
+          sanitizedValues.amount = null;
+          sanitizedValues.pairTransaction = null;
         } else {
           // Expenses
-          values.netAmount = null;
-          values.grossAmount = null;
-          values.debitMonthYear = null;
-          values.pairTransaction = null;
+          sanitizedValues.netAmount = null;
+          sanitizedValues.grossAmount = null;
+          sanitizedValues.debitMonthYear = null;
+          sanitizedValues.pairTransaction = null;
         }
-        await props.handleFormSumbit(values);
+        await props.handleFormSubmit(sanitizedValues);
 
         toast.success(
           isCreate
@@ -226,21 +296,64 @@ const TransactionModalView: React.FC<ITransactionModalView> = (props) => {
     formik.resetForm();
   };
 
+  const selectedAccount = React.useMemo(
+    () => props.formOptions.accounts.find((account) => account.id === formik.values.account) ?? null,
+    [formik.values.account]
+  );
+
+  const availableCategories = React.useMemo(() => {
+    const baseCategories = selectedAccount?.categories ?? [];
+
+    let filteredCategories = baseCategories;
+
+    if (formik.values.transactionType) {
+      filteredCategories = baseCategories.filter((category) => {
+        if (formik.values.transactionType === TRANSACTION_TYPE.TRANSFER.id) {
+          return true;
+        }
+
+        return (
+          !category.transactionType?.id ||
+          category.transactionType.id === formik.values.transactionType
+        );
+      });
+    }
+
+    const mergedCategories = [...filteredCategories, ...dynamicCategories];
+
+    return mergedCategories.filter(
+      (cat, index, self) =>
+        index ===
+        self.findIndex(
+          (c) => c.name.toLowerCase() === cat.name.toLowerCase()
+        )
+    );
+  }, [
+    selectedAccount,
+    formik.values.transactionType,
+    dynamicCategories
+  ]);
+
   React.useEffect(() => {
-    formik.resetForm({ values: getInitialValues(props.selectedTransaction) });
     if (isCreate) {
       setUseToday(true);
       formik.setFieldValue("transactionAt", getCurrentDateTime());
     } else {
       setUseToday(false);
-    } 
-  }, [props.selectedTransaction, props.onClose]);
+    }
+  }, [props.selectedTransaction]);
+
+  React.useEffect(() => {
+    if (!selectedAccount && formik.values.category) {
+      formik.setFieldValue("category", null);
+    }
+  }, [selectedAccount, formik.values.category]);
 
   return (
     <>
-      <Dialog open={props.open} onClose={() => {}} fullWidth maxWidth="md">
+      <Dialog open={props.open} onClose={() => { }} fullWidth maxWidth="md">
         <DialogTitle>
-          {isCreate ? "Create " : "Edit"}{"Transaction"}
+          {isCreate ? "Create " : "Edit"} {"Transaction"}
         </DialogTitle>
         <DialogContent dividers>
           <form id="transaction-form" onSubmit={formik.handleSubmit}>
@@ -268,7 +381,7 @@ const TransactionModalView: React.FC<ITransactionModalView> = (props) => {
                         <Chip
                           size="medium"
                           label={t.name}
-                          sx={{ mr: 1 , backgroundColor: t.color , color: t.name === TRANSACTION_TYPE.TRANSFER.name ? "black" : "white" }}
+                          sx={{ ...getTransactionTypeChipSx(t.color), mr: 1 }}
                         />
                       </MenuItem>
                     ))}
@@ -405,7 +518,6 @@ const TransactionModalView: React.FC<ITransactionModalView> = (props) => {
                 <>
                   <Grid size={{ xs: 12, md: 4 }}>
                     <TextField
-                      disabled={!isCreate}
                       fullWidth
                       type="number"
                       label="Gross Amount"
@@ -447,7 +559,6 @@ const TransactionModalView: React.FC<ITransactionModalView> = (props) => {
 
                   <Grid size={{ xs: 12, md: 4 }}>
                     <TextField
-                      disabled={!isCreate}
                       fullWidth
                       type="month"
                       label="Month & Year"
@@ -478,57 +589,107 @@ const TransactionModalView: React.FC<ITransactionModalView> = (props) => {
                 </Grid>
               )}
               <Grid container size={{ xs: 12 }}>
-                {/* Category Field */}
                 <Grid size={{ xs: 12, md: 4 }}>
                   <Autocomplete
-                    options={props.formOptions.categories}
+                    disableCloseOnSelect
+                    freeSolo
+                    options={availableCategories}
                     value={
-                      props.formOptions.categories.find(category => category.name === formik.values.category) || formik.values.category || null
+                      availableCategories.find(
+                        (c) => c.name === formik.values.category
+                      ) ||
+                      formik.values.category ||
+                      null
                     }
-                    onChange={(event, newValue) => {
-                      if (!newValue) return;
-                      if (typeof newValue === "string") {
+                    onChange={(_, nextValue) => {
+                      const normalizedValue = normalizeAutocompleteValue(nextValue);
+
+                      const shouldRegisterDynamicCategory = normalizedValue && !availableCategories.some(
+                        (category) => category.name.toLowerCase() === normalizedValue.toLowerCase()
+                      );
+
+                      if (shouldRegisterDynamicCategory) {
+                        const newCategory: ICategorySimple = {
+                          id: Date.now(),
+                          name: normalizedValue,
+                          icon: null,
+                          color: null,
+                          parentCategory: null,
+                          transactionType:
+                            props.formOptions.transactionTypes.find(
+                              (t) => t.id === formik.values.transactionType
+                            ) || null,
+                        };
+
+                        setDynamicCategories((prev) => [...prev, newCategory]);
+                      }
+                      formik.setFieldValue("category", normalizedValue);
+                    }}
+                    onInputChange={(_, newInputValue, reason) => {
+                      if (reason === "input") {
+                        formik.setFieldValue("category", newInputValue || null);
+                      }
+                      if (reason === "clear") {
                         formik.setFieldValue("category", null);
-                      } else if (newValue.inputValue) {
-                        formik.setFieldValue("category", newValue.inputValue);
-                      } else {
-                        formik.setFieldValue("category", newValue.name ?? null);
                       }
                     }}
+                    isOptionEqualToValue={(option, value) => {
+                      if (typeof value === "string") {
+                        return option.name === value;
+                      }
+
+                      return option.id === value.id;
+                    }}
+                    groupBy={(option) =>
+                      option.parentCategory?.name ?? "No parent category"
+                    }
                     getOptionLabel={(option) => {
-                      if (typeof option === "string") return option;
-                      if (option.inputValue) return option.inputValue;
+                      if (typeof option === "string") {
+                        return option;
+                      }
+
                       return option.name;
                     }}
-                    filterOptions={(options: ICategorySimple[], params) => {
-                      const filtered = filterCategory(options, params);
-                      const { inputValue } = params;
+                    renderOption={(optionProps, option) => (
+                      <Box
+                        component="li"
+                        {...optionProps}
+                        sx={{
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 1
+                        }}
+                      >
+                        {renderCategoryIcon(option.icon, option.color)}
 
-                      const isExisting = options.some(
-                        (option) => inputValue === option.name
-                      );
-                      if (inputValue !== "" && !isExisting) {
-                        filtered.push({
-                          id: -1,
-                          inputValue,
-                          name: `Add "${inputValue}"`,
-                          parentCategory: null,
-                          transactionType: null,
-                          icon: null,
-                          color: null
-                        });
-                      }
+                        <Box sx={{ flex: 1, minWidth: 0 }}>
+                          <Typography
+                            variant="body2"
+                            fontWeight={600}
+                            noWrap>  {option.name}
+                          </Typography>
+                          <Typography variant="caption" color="text.secondary" noWrap>  {option.transactionType?.name ?? "No transaction type"}</Typography>
+                        </Box>
 
-                      return filtered;
-                    }}
-                    selectOnFocus
-                    clearOnBlur
-                    handleHomeEndKeys
-                    freeSolo
+                        {option.transactionType?.name && (
+                          <Chip
+                            label={option.transactionType.name
+                              .substring(0, 1)
+                              .toUpperCase()}
+                            size="small"
+                            sx={getTransactionTypeChipSx(
+                              option.transactionType.color
+                            )}
+                          />
+                        )}
+                      </Box>
+                    )}
                     renderInput={(params) => (
                       <TextField
                         {...params}
                         label="Category"
+                        placeholder="Search or create category..."
+                        onBlur={() => formik.setFieldTouched("category", true)}
                         error={formik.touched.category && Boolean(formik.errors.category)}
                         helperText={formik.touched.category && formik.errors.category}
                       />
@@ -544,13 +705,14 @@ const TransactionModalView: React.FC<ITransactionModalView> = (props) => {
                       props.formOptions.stores.find(store => store.name === formik.values.store) || formik.values.store || null
                     }
                     onChange={(event, newValue) => {
-                      if (!newValue) return;
-                      if (typeof newValue === "string") {
+                      formik.setFieldValue("store", normalizeAutocompleteValue(newValue));
+                    }}
+                    onInputChange={(_, newInputValue, reason) => {
+                      if (reason === "input") {
+                        formik.setFieldValue("store", newInputValue || null);
+                      }
+                      if (reason === "clear") {
                         formik.setFieldValue("store", null);
-                      } else if (newValue.inputValue) {
-                        formik.setFieldValue("store", newValue.inputValue);
-                      } else {
-                        formik.setFieldValue("store", newValue.name ?? null);
                       }
                     }}
                     getOptionLabel={(option) => {
@@ -576,13 +738,13 @@ const TransactionModalView: React.FC<ITransactionModalView> = (props) => {
                       return filtered;
                     }}
                     selectOnFocus
-                    clearOnBlur
                     handleHomeEndKeys
                     freeSolo
                     renderInput={(params) => (
                       <TextField
                         {...params}
                         label="Store"
+                        onBlur={() => formik.setFieldTouched("store", true)}
                         error={formik.touched.store && Boolean(formik.errors.store)}
                         helperText={formik.touched.store && formik.errors.store}
                       />
@@ -598,13 +760,14 @@ const TransactionModalView: React.FC<ITransactionModalView> = (props) => {
                       props.formOptions.places.find(place => place.name === formik.values.place) || formik.values.place || null
                     }
                     onChange={(event, newValue) => {
-                      if (!newValue) return;
-                      if (typeof newValue === "string") {
+                      formik.setFieldValue("place", normalizeAutocompleteValue(newValue));
+                    }}
+                    onInputChange={(_, newInputValue, reason) => {
+                      if (reason === "input") {
+                        formik.setFieldValue("place", newInputValue || null);
+                      }
+                      if (reason === "clear") {
                         formik.setFieldValue("place", null);
-                      } else if (newValue.inputValue) {
-                        formik.setFieldValue("place", newValue.inputValue);
-                      } else {
-                        formik.setFieldValue("place", newValue.name ?? null);
                       }
                     }}
                     getOptionLabel={(option) => {
@@ -629,13 +792,13 @@ const TransactionModalView: React.FC<ITransactionModalView> = (props) => {
                       return filtered;
                     }}
                     selectOnFocus
-                    clearOnBlur
                     handleHomeEndKeys
                     freeSolo
                     renderInput={(params) => (
                       <TextField
                         {...params}
                         label="Place"
+                        onBlur={() => formik.setFieldTouched("place", true)}
                         error={formik.touched.place && Boolean(formik.errors.place)}
                         helperText={formik.touched.place && formik.errors.place}
                       />
@@ -735,4 +898,3 @@ const TransactionModalView: React.FC<ITransactionModalView> = (props) => {
 };
 
 export default TransactionModalView;
-

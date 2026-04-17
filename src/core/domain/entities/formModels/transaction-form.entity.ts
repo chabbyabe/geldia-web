@@ -4,7 +4,7 @@ export interface IFormTransaction {
   account: number | null
   store?: string | null
   place?: string | null
-  category?: string | null
+  category: string | null
   tags?: string[] | null
   transactionType: number | null
   amount: number | null

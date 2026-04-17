@@ -3,7 +3,6 @@ export interface ISummary {
   icon: string | null
   color: string | null
   amount: number
-  formattedAmount: string
 }
 
 export default class SummaryOverviewEntity {
@@ -15,7 +14,6 @@ export default class SummaryOverviewEntity {
       icon: model.icon ?? null,
       color: model.color ?? null,
       amount: Number(model.amount),
-      formattedAmount: model.formattedAmount
     }))
   }
 

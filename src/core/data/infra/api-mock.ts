@@ -43,6 +43,7 @@ const MOCK_URLS = {
   CATEGORY: {
     BASE: CATEGORY_URL,
     DETAIL: new RegExp(`^${escapeRegExpForApiRequest(CATEGORY_URL)}\\d+/$`),
+    USER_CATEGORY: new RegExp(`^${escapeRegExpForApiRequest(API_URL.CATEGORY.userCategory)}\\d+/$`),
   },
   TAG: {
     BASE: TAG_URL,
@@ -93,6 +94,7 @@ export const mockAPIResponses = (
     mock.onPost(MOCK_URLS.CATEGORY.BASE).reply(400, getTransactionErrorResponse(baseDataRes))
     mock.onPatch(MOCK_URLS.CATEGORY.DETAIL).reply(400, getTransactionErrorResponse(baseDataRes))
     mock.onDelete(MOCK_URLS.CATEGORY.DETAIL).reply(400, getTransactionErrorResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.CATEGORY.USER_CATEGORY).reply(400, getTransactionErrorResponse(baseDataRes))
     mock.onGet(MOCK_URLS.TAG.BASE).reply(400, getTransactionErrorResponse(baseDataRes))
     mock.onGet(MOCK_URLS.TAG.DETAIL).reply(400, getTransactionErrorResponse(baseDataRes))
     mock.onPost(MOCK_URLS.TAG.BASE).reply(400, getTransactionErrorResponse(baseDataRes))
@@ -150,6 +152,13 @@ export const mockAPIResponses = (
       return [200, formatCategoryIntoResponse(getIdFromUrl(config.url))]
     })
     mock.onDelete(MOCK_URLS.CATEGORY.DETAIL).reply(204)
+    mock.onGet(MOCK_URLS.CATEGORY.USER_CATEGORY).reply((config) => {
+      return [200, formatSettingsCategoryDetailIntoResponse(getIdFromUrl(config.url))]
+    })
+    mock.onPatch(MOCK_URLS.CATEGORY.USER_CATEGORY).reply((config) => {
+      return [200, formatSettingsCategoryDetailIntoResponse(getIdFromUrl(config.url))]
+    })
+    mock.onDelete(MOCK_URLS.CATEGORY.USER_CATEGORY).reply(204)
     // Tags
     mock.onGet(MOCK_URLS.TAG.BASE).reply(200, formatRetrieveTagsIntoResponse())
     mock.onGet(MOCK_URLS.TAG.DETAIL).reply((config) => {
@@ -239,9 +248,6 @@ const formatRetrieveLogsIntoResponse = () => {
             color: "#006CD1"
           },
           tags: [],
-          formatted_amount: "€0.00",
-          formatted_net_amount: "€2,400.00",
-          formatted_gross_amount: "€2,500.00",
           updated_at: "2026-04-01 12:40 PM",
           created_at: "2026-04-01 12:40 PM",
           deleted_at: null,
@@ -335,9 +341,6 @@ const formatRetrieveLogsIntoResponse = () => {
             color: "#006CD1"
           },
           tags: [],
-          formatted_amount: "€0.00",
-          formatted_net_amount: "€5,000.00",
-          formatted_gross_amount: "€10,000.00",
           updated_at: "2026-03-27 01:18 PM",
           created_at: "2026-03-27 01:18 PM",
           deleted_at: null,
@@ -416,6 +419,130 @@ const formatRetrieveCategoriesIntoResponse = () => ({
     }
   ]
 })
+
+const formatSettingsCategoryDetailIntoResponse = (categoryId: number = 46) => {
+  if (categoryId === 53) {
+    return {
+      id: 53,
+      created_by: {
+        id: 3,
+        first_name: "abe",
+        last_name: "easydraw",
+        username: "aoizen"
+      },
+      updated_by: {
+        id: 3,
+        first_name: "abe",
+        last_name: "easydraw",
+        username: "aoizen"
+      },
+      deleted_by: null,
+      transaction_type: {
+        id: 2,
+        name: "Expenses",
+        icon: "Payments",
+        color: "#E5484D"
+      },
+      parent_category: {
+        id: 46,
+        name: "Mistletoe",
+        color: null,
+        icon: null
+      },
+      updated_at: "2026-04-16 07:42 PM",
+      created_at: "2026-04-16 07:03 PM",
+      deleted_at: null,
+      name: "Wactober",
+      notes: "asdd asddd asd sad ddd",
+      color: "#2EB872",
+      icon: "TrendingDown",
+      children: []
+    }
+  }
+
+  return {
+    id: categoryId,
+    created_by: {
+      id: 3,
+      first_name: "abe",
+      last_name: "easydraw",
+      username: "aoizen"
+    },
+    updated_by: {
+      id: 3,
+      first_name: "abe",
+      last_name: "easydraw",
+      username: "aoizen"
+    },
+    deleted_by: null,
+    transaction_type: {
+      id: 2,
+      name: "Expenses",
+      icon: "Payments",
+      color: "#E5484D"
+    },
+    parent_category: null,
+    updated_at: "2026-04-16 01:47 PM",
+    created_at: "2026-04-16 01:47 PM",
+    deleted_at: null,
+    name: categoryId === 77 ? "Settings New Category" : "Mistletoe",
+    notes: categoryId === 77 ? "created from settings" : null,
+    color: categoryId === 77 ? "#4DA3FF" : null,
+    icon: categoryId === 77 ? "Transfer" : null,
+    children: categoryId === 46 ? [
+      {
+        id: 53,
+        name: "Wactober",
+        color: "#2EB872",
+        icon: "TrendingDown",
+        transaction_type: {
+          id: 2,
+          name: "Expenses",
+          icon: "Payments",
+          color: "#E5484D"
+        },
+        parent_category: {
+          id: 46,
+          name: "Mistletoe",
+          color: null,
+          icon: null
+        }
+      }
+    ] : []
+  }
+}
+
+const formatRetrieveSettingsCategoriesIntoResponse = () => ([
+  {
+    parent_category: null,
+    items: [
+      formatSettingsCategoryDetailIntoResponse(46),
+      {
+        ...formatSettingsCategoryDetailIntoResponse(52),
+        transaction_type: {
+          id: 1,
+          name: "Income",
+          icon: "Savings",
+          color: "#006CD1"
+        },
+        name: "Morias",
+        color: "#4DA3FF",
+        icon: "Transfer"
+      }
+    ]
+  },
+  {
+    parent_category: {
+      id: 46,
+      name: "Mistletoe",
+      color: null,
+      icon: null
+    },
+    items: [
+      formatSettingsCategoryDetailIntoResponse(53)
+    ]
+  }
+])
 
 const formatTagIntoResponse = (tagId: number = 63) => ({
   id: tagId,
@@ -567,21 +694,18 @@ const formatDashboardSummaryOverviewIntoResponse = () => {
         "icon": "Savings",
         "color": "#006CD1",
         "amount": "185489.00",
-        "formatted_amount": "€185,489.00"
     },
     {
         "name": "Expenses",
         "icon": "Payments",
         "color": "#E5484D",
         "amount": "293402.00",
-        "formatted_amount": "€293,402.00"
     },
     {
         "name": "Savings",
         "icon": "Balance",
         "color": "#F5A524",
         "amount": "49200.00",
-        "formatted_amount": "€49,200.00"
     }
   ]
 }
@@ -990,9 +1114,6 @@ const formatTransactionIntoResponse = (data: any, transactionIdOverride?: number
     "notes": transactionForm.notes,
     "net_amount": transactionForm.netAmount,
     "gross_amount": transactionForm.grossAmount,
-    "formatted_amount": `${transactionForm.amount ?? 0}.00`,
-    "formatted_net_amount": `${transactionForm.netAmount ?? 0}.00`,
-    "formatted_gross_amount": `${transactionForm.grossAmount ?? 0}.00`,
     "debit_month_year": transactionForm.debitMonthYear,
     "external_transaction_id": transactionForm.externalTransactionId,
     "pair_transaction": transactionForm.pairTransaction

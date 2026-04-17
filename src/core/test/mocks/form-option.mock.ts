@@ -41,6 +41,7 @@ export const createMockTransactionFormOption = (
         color: faker.color.rgb(),
         isDefault: faker.datatype.boolean(),
         userId: faker.number.int({ min: 1, max: 1000 }),
+        categories: [],
       },
     ],
     categories: [

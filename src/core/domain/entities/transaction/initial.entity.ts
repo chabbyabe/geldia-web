@@ -33,4 +33,3 @@ export default class TransactionInitialFormEntity {
     return Object.assign({}, this);
   }
 }
-

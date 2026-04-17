@@ -2,6 +2,7 @@ import { Avatar, Box, Card, CardContent, Icon, Stack, Typography } from "@mui/ma
 import React from "react";
 import { ISummary } from "@domain/entities/dashboard/summary-overview.entity";
 import { ICON_MAP } from "@interface/presenters/constants";
+import { formatCurrency } from "@interface/presenters/helpers";
 
 export interface ISummaryCardView {
   children?: React.ReactNode
@@ -30,7 +31,7 @@ const SummaryCardView: React.FC<ISummaryCardView> = (props) => {
               </Avatar>
               <Box>
                 <Typography variant="h5" fontWeight="bold" color={item.color ?? "primary"}>
-                  {item.formattedAmount}
+                  {formatCurrency(item.amount)}
                 </Typography>
                 <Typography variant="h6">{item.name}</Typography>
               </Box>

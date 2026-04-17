@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { BaseLayoutContainer } from "@interface/ui/components/common/layouts/base-layout/base-layout.container"
-import { PAGES, STRING_OPERATORS } from "@interface/presenters/constants"
+import { PAGES, MUI_STRING_OPERATORS as STRING_OPERATORS } from "@interface/presenters/constants"
 import { IPlace } from "@domain/entities/place/place.entity"
 import { IPlaceSearchParams } from "@domain/entities/place/search.entity"
 import { IFormPlace } from "@domain/entities/formModels/place-form.entity"
@@ -138,7 +138,7 @@ const PlacesView: React.FC<IPlacesViewModel> = (props) => {
                 <Edit fontSize="small" color="primary" />
               </IconButton>
             </Tooltip>
-            <Tooltip title={isOwner ? "Delete" : "You are not allowed to delete this place."}>
+            <Tooltip title={isOwner ? "Delete" : "You don't have permission to delete this place."}>
               <IconButton
                 size="small"
                 color="error"

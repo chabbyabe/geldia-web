@@ -3,6 +3,7 @@ import React from "react";
 import { ICON_MAP, PAGES } from "@interface/presenters/constants";
 import { ITransaction } from "@domain/entities/transaction/transaction.entity";
 import { TRANSACTION_TYPE } from "@base/core/data/gateways/api/constants";
+import { formatCurrency, getColoredChipSx } from "@interface/presenters/helpers";
 import {
   Place as PlaceIcon,
   Store as StoreIcon,
@@ -52,11 +53,11 @@ const TransactionCardView: React.FC<ITransactionCardView> = (props) => {
                       </Stack>
                       <Stack direction="row" gap={1} flexWrap="wrap">
                         {item.category &&
-                          <Chip key={`chip-category-${item.category?.id}`} label={item.category?.name} sx={{ backgroundColor: item.category?.color }} size="small" />
+                          <Chip key={`chip-category-${item.category?.id}`} label={item.category?.name} sx={getColoredChipSx(item.category?.color)} size="small" />
                         }
                         {item.tags && item.tags.map((tag, index) => (
                           <Chip icon={<LocalOfferIcon fontSize="inherit" />} key={`chip-tag-${tag.id}`} label={item.tags?.[index].name} size="small"
-                            sx={{ backgroundColor: item.tags?.[index].color, "& .MuiChip-icon": { fontSize: "inherit", color: "inherit" } }} />
+                            sx={{ ...getColoredChipSx(item.tags?.[index].color), "& .MuiChip-icon": { fontSize: "inherit" } }} />
                         ))
                         }
                       </Stack>
@@ -67,8 +68,8 @@ const TransactionCardView: React.FC<ITransactionCardView> = (props) => {
                     </Stack>
                     <Typography variant="body1" display="flex" justifyContent="flex-end" fontWeight="bold" color={item.transactionType?.color ?? "primary"}>
                       {
-                        item.transactionType?.name === TRANSACTION_TYPE.INCOME.name ?
-                          item.formattedNetAmount : item.formattedAmount
+                        formatCurrency(item.transactionType?.name === TRANSACTION_TYPE.INCOME.name ?
+                          item.netAmount : item.amount)
                       }
                     </Typography>
                   </Stack>

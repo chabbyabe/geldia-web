@@ -1,6 +1,5 @@
 import React, { useEffect, useMemo } from "react"
 import {
-  Box,
   Dialog,
   DialogActions,
   DialogContent,
@@ -9,15 +8,11 @@ import {
   Grid,
   IconButton,
   MenuItem,
-  Radio,
-  RadioGroup,
-  FormControlLabel,
   FormLabel,
   TextField,
-  Stack,
   styled
 } from "@mui/material"
-import { Close as CloseIcon, Wallet as WalletIcon } from "@mui/icons-material"
+import { Close as CloseIcon } from "@mui/icons-material"
 import { useFormik } from "formik"
 import * as Yup from "yup"
 import { toast } from "react-toastify"
@@ -25,8 +20,9 @@ import { FormRequestError } from "@domain/entities/formModels/errors.entity"
 import { ICategory } from "@domain/entities/category/category.entity"
 import { IFormCategory } from "@domain/entities/formModels/category-form.entity"
 import { ITransactionType } from "@domain/entities/transaction/transaction.entity"
-import { ACCOUNT_COLORS } from "@interface/presenters/constants"
-import IconOptions from "@interface/ui/components/common/account/account-icon.constant"
+import { ICON_TYPE } from "@interface/presenters/constants"
+import { IconComponentContainer } from "@interface/ui/components/common/icon-component/icon-component.container"
+import { ColorComponentContainer } from "@interface/ui/components/common/color-component/color-component.container"
 
 interface ICategoryModalView {
   showModal: boolean
@@ -64,15 +60,6 @@ const formInitialValues = (selectedCategory?: ICategory | null): IFormCategory =
   parentCategory: selectedCategory?.parentCategory?.id ?? null
 })
 
-const renderCategoryIcon = (icon: string | null, color: string | null) => {
-  const iconFromOptions = icon ? IconOptions[icon] : undefined
-  const iconToRender = iconFromOptions ?? <WalletIcon />
-
-  return React.cloneElement(iconToRender as React.ReactElement, {
-    sx: { fontSize: 24, color: color ?? "#006CD1" }
-  })
-}
-
 const CategoryModalView: React.FC<ICategoryModalView> = (props) => {
   const isCreate = !props.selectedCategory
   const hasChildren = Boolean(props.selectedCategory?.children?.length)
@@ -84,10 +71,11 @@ const CategoryModalView: React.FC<ICategoryModalView> = (props) => {
     validationSchema,
     onSubmit: async (values, { resetForm, setErrors }) => {
       try {
-        const payload = { ...values,
+        const payload = {
+          ...values,
           transactionTypeId: values.transactionType,
           parentCategoryId: values.parentCategory
-         }
+        }
         await props.handleSubmit(payload)
         toast.success(
           isCreate
@@ -99,7 +87,11 @@ const CategoryModalView: React.FC<ICategoryModalView> = (props) => {
       } catch (error) {
         if (error instanceof FormRequestError) {
           setErrors(error.data)
-          toast.error(`Unable to ${isCreate ? "create" : "edit"} category.`)
+          if (error?.data.nonFieldErrors?.length) {
+            toast.error(error.data.nonFieldErrors[0]);
+          } else {
+            toast.error(`Unable to ${isCreate ? "create" : "edit"} category.`)
+          }
           return
         }
         throw error
@@ -231,29 +223,7 @@ const CategoryModalView: React.FC<ICategoryModalView> = (props) => {
                 ))}
               </TextField>
             </Grid>
-
             <Grid size={6}>
-              <TextField
-                select
-                fullWidth
-                id="icon"
-                name="icon"
-                label="Icon"
-                value={formik.values.icon ?? ""}
-                onChange={formik.handleChange}
-              >
-                {Object.keys(IconOptions).map((iconName) => (
-                  <MenuItem key={iconName} value={iconName}>
-                    <Stack direction="row" spacing={1} alignItems="center">
-                      {renderCategoryIcon(iconName, formik.values.color)}
-                      <span>{iconName}</span>
-                    </Stack>
-                  </MenuItem>
-                ))}
-              </TextField>
-            </Grid>
-
-            <Grid size={12}>
               <TextField
                 fullWidth
                 multiline
@@ -264,41 +234,19 @@ const CategoryModalView: React.FC<ICategoryModalView> = (props) => {
                 onChange={formik.handleChange}
               />
             </Grid>
+            <Grid size={6}>
+              <FormLabel>Select Icon</FormLabel>
 
-            <Grid size={12}>
+              <Grid container spacing={1.25} sx={{ mt: 1 }}>
+                <IconComponentContainer formik={formik} iconType={ICON_TYPE.Category} />
+              </Grid>
+            </Grid>
+
+            <Grid size={6}>
               <FormLabel>Select Color</FormLabel>
-              <RadioGroup
-                row
-                name="color"
-                value={formik.values.color ?? ""}
-                onChange={formik.handleChange}
-              >
-                {ACCOUNT_COLORS.map((color) => (
-                  <FormControlLabel
-                    key={color}
-                    value={color}
-                    control={
-                      <Radio
-                        sx={{
-                          color,
-                          "&.Mui-checked": { color }
-                        }}
-                      />
-                    }
-                    label={
-                      <Box
-                        sx={{
-                          width: 30,
-                          height: 30,
-                          borderRadius: "20%",
-                          backgroundColor: color,
-                          border: "1px solid #ccc"
-                        }}
-                      />
-                    }
-                  />
-                ))}
-              </RadioGroup>
+              <Grid container spacing={1.25} sx={{ mt: 1 }}>
+                <ColorComponentContainer formik={formik} />
+              </Grid>
             </Grid>
           </Grid>
         </DialogContent>

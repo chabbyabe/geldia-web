@@ -1,4 +1,4 @@
-import { CATEGORY_URL } from "@data/gateways/api/constants"
+import { API_URL } from "@data/gateways/api/constants"
 import { Api } from "@data/infra/api.base"
 import { BadRequest } from "@data/infra/api.error"
 import { ICategoryModel, IPagedAPIViewModel } from "@data/gateways/api/api.types"
@@ -57,25 +57,25 @@ export default class CategoryApiGateway extends Api {
   }
 
   async deleteCategory(categoryId: number): Promise<void> {
-    await this.delete(CATEGORY_URL + `${categoryId}/`)
+    await this.delete(API_URL.CATEGORY.base + `${categoryId}/`)
   }
 
   private async _retrieveCategories(
     params: ICategorySearchParams
   ): Promise<IPagedAPIViewModel<ICategoryModel>> {
-    return await this.get(CATEGORY_URL, params)
+    return await this.get(API_URL.CATEGORY.base, params)
   }
 
   private async _getCategory(categoryId?: number): Promise<ICategoryModel> {
-    return await this.get(CATEGORY_URL + `${categoryId}/`)
+    return await this.get(API_URL.CATEGORY.base + `${categoryId}/`)
   }
 
   private async _createCategory(categoryData: IFormCategory): Promise<ICategoryModel> {
-    return await this.post(CATEGORY_URL, categoryData)
+    return await this.post(API_URL.CATEGORY.base, categoryData)
   }
 
   private async _updateCategory(id: number, categoryData: IFormCategory): Promise<ICategoryModel> {
-    return await this.patch(CATEGORY_URL + `${id}/`, categoryData)
+    return await this.patch(API_URL.CATEGORY.base + `${id}/`, categoryData)
   }
 
   private _mapPageFromResponse(
@@ -88,5 +88,29 @@ export default class CategoryApiGateway extends Api {
   private _mapCategoryFromResponse(response: ICategoryModel): ICategory {
     const category = new CategoryEntity(mapCategoryAttributes(response))
     return category.getCurrentValuesAsJSON()
+  }
+
+  async retrieveUserCategories(): Promise<ICategory[]> {
+    try {
+      const response = await this._retrieveUserCategories();
+
+      const categories = response.map((category: ICategoryModel) =>
+        new CategoryEntity(mapCategoryAttributes(category)).getCurrentValuesAsJSON()
+      );
+
+      return categories;
+    } catch (error) {
+      if (error instanceof BadRequest) {
+        throw new FormRequestError(
+          error.message,
+          mapErrorAttributes(error.data)
+        );
+      }
+      throw error;
+    }
+  }
+
+  private async _retrieveUserCategories(): Promise<ICategoryModel[]> {
+    return await this.get(API_URL.CATEGORY.userCategory);
   }
 }

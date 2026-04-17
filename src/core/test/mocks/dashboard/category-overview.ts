@@ -29,10 +29,6 @@ export const createMockCategoryOverview = (
     color: faker.color.rgb(),
     isParent: faker.datatype.boolean(),
     amount,
-    formattedAmount: new Intl.NumberFormat('nl-NL', {
-      style: 'currency',
-      currency: 'EUR',
-    }).format(amount),
     ...overrides,
   }
 }

@@ -14,7 +14,6 @@ export default class CategoryOverviewEntity {
       color: model.color ?? null,
       isParent: model.isParent,
       amount: Number(model.amount),
-      formattedAmount: model.formattedAmount
     }))
   }
 

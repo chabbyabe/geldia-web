@@ -1,17 +1,12 @@
 import React, { useMemo } from "react"
 import { Box, Chip, Grid, Stack, Typography } from "@mui/material"
-import {
-  GridColDef,
-  GridRenderCellParams,
-  getGridNumericOperators,
-  getGridStringOperators
-} from "@mui/x-data-grid"
+import { GridColDef, GridRenderCellParams } from "@mui/x-data-grid"
 import { IBasePagedListEntity } from "@domain/entities/base/base.paged.entity"
 import { ILogSearchParams } from "@domain/entities/log/search.entity"
 import { ILogCategory, ILogTag, ILogUser, ITransactionLog } from "@domain/entities/log/transaction-log.entity"
-import { formatCurrency, formatToTitleCase } from "@interface/presenters/helpers"
+import { formatCurrency, formatToTitleCase, getColoredChipSx, getTransactionTypeChipSx, getTransactionTypeColor } from "@interface/presenters/helpers"
 import CustomTableContainer from "@interface/ui/components/common/table/table.container"
-import { PAGES } from "@interface/presenters/constants"
+import { PAGES, MUI_NUMBER_OPERATORS as numberOperators, MUI_STRING_OPERATORS as stringOperators } from "@interface/presenters/constants"
 import { TRANSACTION_TYPE, USER_ACTIONS } from "@data/gateways/api/constants"
 import { ChevronRight } from "@mui/icons-material"
 
@@ -55,14 +50,6 @@ interface ILogRow {
   createdAt: string
   notes: string
 }
-
-const stringOperators = getGridStringOperators().filter((operator) =>
-  ["contains", "startsWith", "endsWith", "=", "isEmpty", "isNotEmpty"].includes(operator.value)
-)
-
-const numberOperators = getGridNumericOperators().filter((operator) =>
-  [">", ">=", "<", "<=", "=", "isEmpty", "isNotEmpty"].includes(operator.value)
-)
 
 const parseAmount = (value: string | null | undefined) => {
   if (!value) return 0
@@ -133,8 +120,7 @@ const tableColumns = (): GridColDef<ILogRow>[] => [
       <Chip
         label={params.row.transactionType}
         size="small"
-        color={params.row.transactionType === TRANSACTION_TYPE.INCOME.name ? "primary" : params.row.transactionType === TRANSACTION_TYPE.EXPENSES.name ? "error" : "warning"}
-        sx={{ fontWeight: 600, my: 1 }}
+        sx={{ ...getTransactionTypeChipSx(getTransactionTypeColor(params.row.transactionType)), my: 1 }}
       />
     )
   },
@@ -194,7 +180,7 @@ const tableColumns = (): GridColDef<ILogRow>[] => [
     flex: 0.7,
     filterable: false,
     renderCell: (params: GridRenderCellParams<ILogRow>) => (params.row.transactionType === TRANSACTION_TYPE.INCOME.name &&
-      params.row.action !== USER_ACTIONS.UPDATE.name ? <Box>{params.row.grossAmountLabel}</Box> : "")
+       <Box>{params.row.grossAmountLabel}</Box>)
   },
   {
     field: `${jsonOrderField}net_amount`,
@@ -212,7 +198,7 @@ const tableColumns = (): GridColDef<ILogRow>[] => [
     flex: 0.7,
     filterable: false,
     renderCell: (params: GridRenderCellParams<ILogRow>) => (params.row.transactionType === TRANSACTION_TYPE.INCOME.name &&
-      params.row.action !== USER_ACTIONS.UPDATE.name ? <Box>{params.row.debitMonthYear}</Box> : "")
+       <Box>{params.row.debitMonthYear}</Box> )
   },
   {
     field: `${jsonOrderField}category__name`,
@@ -221,7 +207,7 @@ const tableColumns = (): GridColDef<ILogRow>[] => [
     flex: 0.9,
     filterOperators: stringOperators,
     renderCell: (params: GridRenderCellParams<ILogRow>) => params.row.category && <Chip label={params.row.category?.name}
-      sx={{ backgroundColor: params.row.category?.color }} size="small" />
+      sx={getColoredChipSx(params.row.category?.color)} size="small" />
   },
 
   {
@@ -255,7 +241,7 @@ const tableColumns = (): GridColDef<ILogRow>[] => [
               <Chip
                 key={tag.id}
                 label={tag.name}
-                sx={{ backgroundColor: tag.color ?? 'primary' }}
+                sx={getColoredChipSx(tag.color)}
                 size="small"
               />
             ))}

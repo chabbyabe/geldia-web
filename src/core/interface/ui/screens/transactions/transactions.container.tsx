@@ -13,6 +13,7 @@ export const TransactionsContainer: React.FC<ITransactionsContainerViewModel> = 
   const currentPage = useAppSelector(state => state.transactionState.nextTransactionsPage);
   const selectedTransaction = useAppSelector(state => state.transactionState.currentTransaction);
   const paginationData = useAppSelector(state => state.transactionState.pagination);
+  const currentUser = useAppSelector(state => state.authState.user);
 
   const handleDelete = async (transactionId: number) => {
       await controller.deleteTransaction(transactionId)
@@ -28,5 +29,6 @@ export const TransactionsContainer: React.FC<ITransactionsContainerViewModel> = 
     selectedTransaction={selectedTransaction}
     handleActionMenu={controller.setCurrentTransaction.bind(controller)}
     removeCurrentTransaction={controller.removeCurrentTransaction.bind(controller)}
+    currentUser={currentUser}
   />
 }

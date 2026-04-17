@@ -1,6 +1,6 @@
 import React, { useState } from "react"
 import { BaseLayoutContainer } from "@interface/ui/components/common/layouts/base-layout/base-layout.container"
-import { PAGES, STRING_OPERATORS } from "@interface/presenters/constants"
+import { PAGES, MUI_STRING_OPERATORS as STRING_OPERATORS } from "@interface/presenters/constants"
 import { IStore } from "@domain/entities/store/store.entity"
 import { IStoreSearchParams } from "@domain/entities/store/search.entity"
 import { IFormStore } from "@domain/entities/formModels/store-form.entity"
@@ -140,7 +140,7 @@ const StoresView: React.FC<IStoresViewModel> = (props) => {
                 </IconButton>
               </span>
             </Tooltip>
-            <Tooltip title={isOwner ? "Delete" : "You are not allowed to delete this store."}>
+            <Tooltip title={isOwner ? "Delete" : "You don't have permission to delete this store."}>
               <span>
                 <IconButton
                   size="small"
