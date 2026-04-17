@@ -9,7 +9,6 @@ import {
   Store as StoreIcon,
   LocalOffer as LocalOfferIcon,
 } from "@mui/icons-material";
-import { IconComponentContainer } from "../../common/icon-component/icon-component.container";
 
 export interface ITransactionCardView {
   children?: React.ReactNode

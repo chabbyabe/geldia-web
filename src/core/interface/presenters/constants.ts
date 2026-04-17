@@ -110,9 +110,8 @@ export const ICON_MAP: Record<string,  React.ElementType> = {
   "Places": PlaceIcon,
   "Income": AccountBalanceWalletIcon,
   "Expenses": PaymentsIcon,
+  "Payments": PaymentsIcon,
 };
-
-
 
 export const MUI_STRING_OPERATORS = getGridStringOperators().filter((operator) =>
   ["contains", "startsWith", "endsWith", "=", "isEmpty", "isNotEmpty"].includes(operator.value)
