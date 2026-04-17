@@ -9,6 +9,7 @@ import { TooltipComponent, LegendComponent } from 'echarts/components';
 import { CanvasRenderer } from 'echarts/renderers';
 import { DateFilterContainer } from "@interface/ui/components/common/date-filter/date-filter.container";
 import { ICategoryOverviewFilterParams } from "@domain/entities/dashboard/filter.entity";
+import { formatCurrency } from "@interface/presenters/helpers";
 
 echarts.use([
   TooltipComponent,
@@ -28,7 +29,7 @@ export interface ICategoryOverviewView {
 const donutOption = (props: ICategoryOverviewView): EChartsOption => ({
   tooltip: {
     trigger: "item",
-    formatter: (params: any) => `${params.name}: ${params.data.formattedAmount}`,
+    formatter: (params: any) => `${params.name}: ${formatCurrency(params.data.amount)}`,
   },
   legend: {
     show: true,
@@ -46,12 +47,12 @@ const donutOption = (props: ICategoryOverviewView): EChartsOption => ({
         .map((item) => ({
           value: item.amount,
           name: item.name,
-          formattedAmount: item.formattedAmount,
+          amount: item.amount,
           itemStyle: item.color ? { color: item.color } : undefined,
         })),
       label: {
         formatter: (params: any) => {
-          return `${params.name}\n${params.data.formattedAmount}`;
+          return `${params.name}\n${formatCurrency(params.data.amount)}`;
         },
         overflow: 'truncate',
       },

@@ -108,6 +108,8 @@ export const ICON_MAP: Record<string,  React.ElementType> = {
   "Tags": LocalOfferIcon,
   "Stores": StorefrontIcon,
   "Places": PlaceIcon,
+  "Income": AccountBalanceWalletIcon,
+  "Expenses": PaymentsIcon,
 };
 
 

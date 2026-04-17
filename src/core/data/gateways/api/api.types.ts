@@ -151,9 +151,6 @@ export interface ITransactionModel extends IBaseAPIModel, ITimestampsModel {
   notes: string
   net_amount: number
   gross_amount: number
-  formatted_amount: string
-  formatted_net_amount: string
-  formatted_gross_amount: string
   debit_month_year: string
   external_transaction_id: number
   pair_transaction: IAccountSimpleModel
@@ -179,7 +176,6 @@ export interface ISummaryModel {
   icon: string
   color: string
   amount: number
-  formatted_amount: string
 }
 
 export interface ICategoryOverviewModel {
@@ -188,7 +184,6 @@ export interface ICategoryOverviewModel {
   color: string
   is_parent: boolean
   amount: number
-  formatted_amount: string
 }
 
 export interface IYearOverviewModel {
@@ -278,9 +273,6 @@ export interface ILogTransactionDataModel extends IBaseAPIModel {
   pair_transaction: unknown | null
   transaction_type: ILogTransactionTypeModel | null
   tags: ILogTagModel[]
-  formatted_amount: string
-  formatted_net_amount: string
-  formatted_gross_amount: string
   updated_at: string
   created_at: string
   deleted_at: string | null

@@ -239,9 +239,6 @@ const formatRetrieveLogsIntoResponse = () => {
             color: "#006CD1"
           },
           tags: [],
-          formatted_amount: "€0.00",
-          formatted_net_amount: "€2,400.00",
-          formatted_gross_amount: "€2,500.00",
           updated_at: "2026-04-01 12:40 PM",
           created_at: "2026-04-01 12:40 PM",
           deleted_at: null,
@@ -335,9 +332,6 @@ const formatRetrieveLogsIntoResponse = () => {
             color: "#006CD1"
           },
           tags: [],
-          formatted_amount: "€0.00",
-          formatted_net_amount: "€5,000.00",
-          formatted_gross_amount: "€10,000.00",
           updated_at: "2026-03-27 01:18 PM",
           created_at: "2026-03-27 01:18 PM",
           deleted_at: null,
@@ -567,21 +561,18 @@ const formatDashboardSummaryOverviewIntoResponse = () => {
         "icon": "Savings",
         "color": "#006CD1",
         "amount": "185489.00",
-        "formatted_amount": "€185,489.00"
     },
     {
         "name": "Expenses",
         "icon": "Payments",
         "color": "#E5484D",
         "amount": "293402.00",
-        "formatted_amount": "€293,402.00"
     },
     {
         "name": "Savings",
         "icon": "Balance",
         "color": "#F5A524",
         "amount": "49200.00",
-        "formatted_amount": "€49,200.00"
     }
   ]
 }
@@ -990,9 +981,6 @@ const formatTransactionIntoResponse = (data: any, transactionIdOverride?: number
     "notes": transactionForm.notes,
     "net_amount": transactionForm.netAmount,
     "gross_amount": transactionForm.grossAmount,
-    "formatted_amount": `${transactionForm.amount ?? 0}.00`,
-    "formatted_net_amount": `${transactionForm.netAmount ?? 0}.00`,
-    "formatted_gross_amount": `${transactionForm.grossAmount ?? 0}.00`,
     "debit_month_year": transactionForm.debitMonthYear,
     "external_transaction_id": transactionForm.externalTransactionId,
     "pair_transaction": transactionForm.pairTransaction

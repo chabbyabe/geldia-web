@@ -50,9 +50,6 @@ export interface ILogTransactionData {
   pairTransaction: ILogAccount | null
   transactionType: ILogTransactionType | null
   tags: ILogTag[]
-  formattedAmount: string
-  formattedNetAmount: string
-  formattedGrossAmount: string
   updatedAt: string
   createdAt: string
   deletedAt: string | null
