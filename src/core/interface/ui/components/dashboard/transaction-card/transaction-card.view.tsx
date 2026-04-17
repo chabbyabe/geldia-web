@@ -3,7 +3,7 @@ import React from "react";
 import { ICON_MAP, PAGES } from "@interface/presenters/constants";
 import { ITransaction } from "@domain/entities/transaction/transaction.entity";
 import { TRANSACTION_TYPE } from "@base/core/data/gateways/api/constants";
-import { getColoredChipSx } from "@interface/presenters/helpers";
+import { formatCurrency, getColoredChipSx } from "@interface/presenters/helpers";
 import {
   Place as PlaceIcon,
   Store as StoreIcon,
@@ -68,8 +68,8 @@ const TransactionCardView: React.FC<ITransactionCardView> = (props) => {
                     </Stack>
                     <Typography variant="body1" display="flex" justifyContent="flex-end" fontWeight="bold" color={item.transactionType?.color ?? "primary"}>
                       {
-                        item.transactionType?.name === TRANSACTION_TYPE.INCOME.name ?
-                          item.netAmount : item.amount
+                        formatCurrency(item.transactionType?.name === TRANSACTION_TYPE.INCOME.name ?
+                          item.netAmount : item.amount)
                       }
                     </Typography>
                   </Stack>
