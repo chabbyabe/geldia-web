@@ -4,7 +4,7 @@ import {
   Box,
   Typography
 } from '@mui/material';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from 'react-toastify';
@@ -31,11 +31,11 @@ export interface ITransactionModalView {
   formOptions: ITransactionInitial
   selectedTransaction: ITransaction | null
   defaultAccount: IAccount | null
-  handleFormSumbit: (values: IFormTransaction) => Promise<void> | void
+  handleFormSubmit: (values: IFormTransaction) => Promise<void> | void
   currentUser: IUser | null
 }
 
-const validationSchema = (accounts: IAccountSimple[]) =>
+const validationSchema = (accounts: IAccountSimple[], isCreate: boolean) =>
   Yup.object({
     account: Yup.number().required("Account is required"),
     transactionType: Yup.number().required("Transaction type is required"),
@@ -43,7 +43,9 @@ const validationSchema = (accounts: IAccountSimple[]) =>
     amount: Yup.number()
       .typeError("Amount must be a number")
       .when(["transactionType", "account"], {
-        is: (transactionType: number) => transactionType !== TRANSACTION_TYPE.INCOME.id,
+        is: (transactionType: number) =>
+          isCreate &&
+          transactionType !== TRANSACTION_TYPE.INCOME.id,
         then: (schema) =>
           schema
             .positive("Amount must be greater than 0")
@@ -55,33 +57,40 @@ const validationSchema = (accounts: IAccountSimple[]) =>
                 const { account } = this.parent;
                 if (!account) return true;
 
-                const selectedAccount = accounts!.find(
-                  (a: any) => a.id === account
-                );
+                const selectedAccount = accounts.find((a) => a.id === account);
                 if (!selectedAccount || value == null) return true;
+
                 return value <= (selectedAccount.balance || 0);
               }
             ),
         otherwise: (schema) => schema.notRequired(),
       }),
-    grossAmount: Yup.number().nullable().when("transactionType", {
-      is: (transactionType: number) => transactionType === TRANSACTION_TYPE.INCOME.id,
-      then: (schema) =>
-        schema
-          .typeError("Gross amount must be a number")
-          .test(
-            "greater-than-income",
-            "Gross amount must be greater than income",
-            function (value) {
-              const { income } = this.parent;
-              if (value == null || income == null) return true;
-              return value > income;
-            }
-          ),
-      otherwise: (schema) => schema.notRequired(),
-    }),
+
+    grossAmount: Yup.number()
+      .nullable()
+      .when("transactionType", {
+        is: (transactionType: number) =>
+          !isCreate &&
+          transactionType === TRANSACTION_TYPE.INCOME.id,
+        then: (schema) =>
+          schema
+            .typeError("Gross amount must be a number")
+            .test(
+              "greater-than-income",
+              "Gross amount must be greater than income",
+              function (value) {
+                const { netAmount } = this.parent;
+                if (value == null || netAmount == null) return true;
+                return value > netAmount;
+              }
+            ),
+        otherwise: (schema) => schema.notRequired(),
+      }),
+
     netAmount: Yup.number().when("transactionType", {
-      is: (transactionType: number) => transactionType === TRANSACTION_TYPE.INCOME.id,
+      is: (transactionType: number) =>
+        !isCreate &&
+        transactionType === TRANSACTION_TYPE.INCOME.id,
       then: (schema) =>
         schema
           .typeError("Income must be a number")
@@ -98,8 +107,10 @@ const validationSchema = (accounts: IAccountSimple[]) =>
           ),
       otherwise: (schema) => schema.notRequired(),
     }),
+
     pairTransaction: Yup.number().when("transactionType", {
-      is: (transactionType: number) => transactionType === TRANSACTION_TYPE.TRANSFER.id,
+      is: (transactionType: number) =>
+        transactionType === TRANSACTION_TYPE.TRANSFER.id,
       then: (schema) =>
         schema
           .required("Paired account is required")
@@ -113,18 +124,23 @@ const validationSchema = (accounts: IAccountSimple[]) =>
           ),
       otherwise: (schema) => schema.notRequired(),
     }),
+
     debitMonthYear: Yup.string().when("grossAmount", {
       is: (grossAmount: number | null) =>
-        grossAmount !== null && grossAmount !== null,
+        !isCreate && grossAmount != null,
       then: (schema) =>
-        schema.required("Month and year is required when gross amount is provided"),
+        schema.required(
+          "Month and year is required when gross amount is provided"
+        ),
       otherwise: (schema) => schema.notRequired(),
     }),
+
     transactionAt: Yup.string().required("Date is required"),
+
     category: Yup.string()
       .trim()
       .required("Category is required"),
-  })
+  });
 
 const getInitialValues = (transaction: ITransaction | null, defaultAccount: IAccount | null, currentUser: IUser | null): IFormTransaction => ({
   name: transaction?.name ?? "",
@@ -134,7 +150,7 @@ const getInitialValues = (transaction: ITransaction | null, defaultAccount: IAcc
   account: transaction?.account?.id ?? defaultAccount?.id ?? null,
   category: transaction?.category?.name ?? null,
   transactionType: transaction?.transactionType?.id ?? null,
-  amount: transaction?.amount ?? 0,
+  amount: transaction?.amount ?? null,
   notes: transaction?.notes ?? "",
   netAmount: transaction?.netAmount ?? null,
   grossAmount: transaction?.grossAmount ?? null,
@@ -175,9 +191,30 @@ const TransactionModalView: React.FC<ITransactionModalView> = (props) => {
     []
   );
 
+  const initialValues = useMemo(
+    () =>
+      getInitialValues(
+        props.selectedTransaction ?? null,
+        props.defaultAccount,
+        props.currentUser
+      ),
+    [props.selectedTransaction, props.defaultAccount, props.currentUser]
+  );
+
+  const schema = useMemo(
+    () =>
+      validationSchema(
+        props.formOptions.accounts,
+        !props.selectedTransaction
+      ),
+    [props.formOptions.accounts, props.selectedTransaction]
+  );
+
+
   const formik = useFormik<IFormTransaction>({
-    initialValues: getInitialValues(props.selectedTransaction ?? null, props.defaultAccount, props.currentUser),
-    validationSchema: validationSchema(props.formOptions.accounts),
+    initialValues: initialValues,
+    validationSchema: schema,
+    enableReinitialize: true,
     onSubmit: async (values) => {
       const isCreate = !props.selectedTransaction;
       const sanitizedValues: IFormTransaction = {
@@ -209,7 +246,7 @@ const TransactionModalView: React.FC<ITransactionModalView> = (props) => {
           sanitizedValues.debitMonthYear = null;
           sanitizedValues.pairTransaction = null;
         }
-        await props.handleFormSumbit(sanitizedValues);
+        await props.handleFormSubmit(sanitizedValues);
 
         toast.success(
           isCreate
@@ -261,7 +298,7 @@ const TransactionModalView: React.FC<ITransactionModalView> = (props) => {
 
   const selectedAccount = React.useMemo(
     () => props.formOptions.accounts.find((account) => account.id === formik.values.account) ?? null,
-    [props.formOptions.accounts, formik.values.account]
+    [formik.values.account]
   );
 
   const availableCategories = React.useMemo(() => {
@@ -298,14 +335,13 @@ const TransactionModalView: React.FC<ITransactionModalView> = (props) => {
   ]);
 
   React.useEffect(() => {
-    formik.resetForm({ values: getInitialValues(props.selectedTransaction, props.defaultAccount, props.currentUser) });
     if (isCreate) {
       setUseToday(true);
       formik.setFieldValue("transactionAt", getCurrentDateTime());
     } else {
       setUseToday(false);
     }
-  }, [props.selectedTransaction, props.defaultAccount, props.onClose]);
+  }, [props.selectedTransaction]);
 
   React.useEffect(() => {
     if (!selectedAccount && formik.values.category) {
