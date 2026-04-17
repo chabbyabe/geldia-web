@@ -1,14 +1,15 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import AccountsView from '@interface/ui/screens/accounts/accounts.view'
 import AccountsController from '@interface/ui/screens/accounts/accounts.controller';
 import { IFormAccount } from '@domain/entities/formModels/account-form.entity';
 import { useAppSelector } from '@interface/presenters/store/hooks';
 import { IAccount } from '@domain/entities/account/account.entity';
-import CategoriesController from '@interface/ui/screens/categories/categories.controller';
 import TransactionModalController from '@interface/ui/components/modals/transaction-modal/transaction-modal.controller';
 import { IFormCategory } from '@domain/entities/formModels/category-form.entity';
 import { ICategory } from '@domain/entities/category/category.entity';
 import DashboardController from '@interface/ui/screens/dashboard/dashboard.controller';
+import { ICategorySimple } from '@domain/entities/transaction/transaction.entity';
+import CategoriesController from '@interface/ui/screens/categories/categories.controller';
 
 export interface IAccountsContainerViewModel {
   children?: React.ReactNode
@@ -28,11 +29,34 @@ export const AccountsContainer: React.FC<IAccountsContainerViewModel> = (props) 
   const paginationData = useAppSelector(state => state.accountState.pagination);
   const currentUser = useAppSelector(state => state.authState.user);
   const transactionTypes = useAppSelector(state => state.transactionState.options.transactionTypes);
-  const categories = useAppSelector(state => state.categoryState.categories);
+  const categories = useAppSelector(state => state.categoryState.userCategories);
   const selectedCategory = useAppSelector(state => state.categoryState.currentCategory);
-  const categoryPagination = useAppSelector(state => state.categoryState.pagination);
-  const categorySearchParams = useAppSelector(state => state.categoryState.searchParams);
   const recentTransactions = useAppSelector(state => state.dashboardState.recentTransactions);
+
+  const categoryOptions: ICategorySimple[] = useMemo(
+    () => (categories?? []).flatMap((category) => {
+      const baseCategory: ICategorySimple = {
+        id: category.id,
+        name: category.name,
+        color: category.color,
+        icon: category.icon,
+        transactionType: category.transactionType,
+        parentCategory: category.parentCategory
+      }
+
+      const childCategories: ICategorySimple[] = (category.children ?? []).map((child) => ({
+        id: child.id,
+        name: child.name,
+        color: child.color,
+        icon: child.icon,
+        transactionType: child.transactionType,
+        parentCategory: child.parentCategory
+      }))
+
+      return [baseCategory, ...childCategories]
+    }),
+    [categories]
+  )
 
   useEffect(() => {
     controller.retrieveAccount(true, 1);
@@ -42,12 +66,7 @@ export const AccountsContainer: React.FC<IAccountsContainerViewModel> = (props) 
     transactionModalController.retrieveFormOptions()
     dashboardController.retrieveRecentTransactions()
     categoriesController.clearCurrentCategory()
-    categoriesController.retrieveCategories({
-      page: 1,
-      search: "",
-      ordering: "",
-      filterModel: ""
-    })
+    categoriesController.retrieveUserCategories()
   }, []);
 
   const handleDelete = async (account: IAccount) => {
@@ -63,10 +82,7 @@ export const AccountsContainer: React.FC<IAccountsContainerViewModel> = (props) 
   };
 
   const refreshCategories = async () => {
-    await categoriesController.retrieveCategories({
-      ...categorySearchParams,
-      page: categoryPagination.currentPageNumber
-    })
+    await categoriesController.retrieveUserCategories()
     await transactionModalController.retrieveFormOptions()
   }
 
@@ -98,7 +114,7 @@ export const AccountsContainer: React.FC<IAccountsContainerViewModel> = (props) 
     handleActionMenu={controller.setCurrentAccount.bind(controller)}
     currentUser={currentUser}
     recentTransactions={recentTransactions}
-    categoryOptions={categories}
+    categoryOptions={categoryOptions}
     categories={categories}
     selectedCategory={selectedCategory}
     transactionTypes={transactionTypes}

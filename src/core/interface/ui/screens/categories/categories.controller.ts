@@ -11,6 +11,7 @@ import UpdateCategoryUseCase from "@domain/usecases/categories/update-category.u
 import RetrieveTransactionFormOptionsUseCase from "@domain/usecases/transactions/retrieve-form-options.usecase"
 import TransactionApiGateway from "@data/gateways/api/services/transaction.gateway"
 import TransactionRepository from "@data/gateways/api/services/transaction.repository"
+import RetrieveUserCategoriesUseCase from "@base/core/domain/usecases/categories/retrieve-user-categories.usecase"
 
 export default class CategoriesController {
   private readonly retrieveCategoriesUseCase: RetrieveCategoriesUseCase
@@ -20,6 +21,7 @@ export default class CategoriesController {
   private readonly getCategoryUseCase: GetCategoryUseCase
   private readonly retrieveFormOptionsUseCase: RetrieveTransactionFormOptionsUseCase
   private readonly categoryRepository: CategoryRepository
+  private readonly retrieveUserCategory: RetrieveUserCategoriesUseCase
 
   constructor() {
     this.categoryRepository = new CategoryRepository()
@@ -46,6 +48,10 @@ export default class CategoriesController {
     this.retrieveFormOptionsUseCase = new RetrieveTransactionFormOptionsUseCase(
       new TransactionApiGateway(),
       new TransactionRepository()
+    )
+    this.retrieveUserCategory = new RetrieveUserCategoriesUseCase(
+      new CategoryApiGateway(),
+      this.categoryRepository
     )
   }
 
@@ -75,5 +81,9 @@ export default class CategoriesController {
 
   async setCurrentCategory(id: number) {
     await this.getCategoryUseCase.execute(id)
+  }
+
+  async retrieveUserCategories() {
+    await this.retrieveUserCategory.execute()
   }
 }

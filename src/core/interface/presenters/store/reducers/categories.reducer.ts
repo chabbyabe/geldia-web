@@ -6,6 +6,7 @@ import { ICategorySearchParams } from "@domain/entities/category/search.entity"
 
 interface ICategoryState {
   categories: ICategory[]
+  userCategories: ICategory[]
   currentCategory: ICategory | null
   pagination: IBasePagedListEntity
   searchParams: ICategorySearchParams
@@ -13,6 +14,7 @@ interface ICategoryState {
 
 const initialState: ICategoryState = {
   categories: [],
+  userCategories: [],
   currentCategory: null,
   pagination: {
     count: 0,
@@ -134,7 +136,10 @@ export const categorySlice = createSlice({
       const categoryId = state.currentCategory?.id
       state.categories = removeCategory(state.categories, categoryId)
       state.currentCategory = null
-    }
+    },
+    retrieveUserCategories(state, action: PayloadAction<ICategory[]>) {
+      state.userCategories = action.payload
+    }, 
   }
 })
 
@@ -144,7 +149,8 @@ export const {
   clearCurrentCategory,
   addNewCategory,
   updateCategory,
-  deleteCategory
+  deleteCategory,
+  retrieveUserCategories
 } = categorySlice.actions
 
 export default categorySlice.reducer

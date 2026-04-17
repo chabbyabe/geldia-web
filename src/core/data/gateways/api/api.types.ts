@@ -135,6 +135,7 @@ export interface ICategoryListItemModel extends IBaseAPIModel {
   name: string
   color: string | null
   icon: string | null
+  notes: string | null
   transaction_type: ITransactionTypeModel | null
   parent_category: ICategorySimpleModel | null
 }

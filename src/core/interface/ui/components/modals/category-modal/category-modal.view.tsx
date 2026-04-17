@@ -87,7 +87,11 @@ const CategoryModalView: React.FC<ICategoryModalView> = (props) => {
       } catch (error) {
         if (error instanceof FormRequestError) {
           setErrors(error.data)
-          toast.error(`Unable to ${isCreate ? "create" : "edit"} category.`)
+          if (error?.data.nonFieldErrors?.length) {
+            toast.error(error.data.nonFieldErrors[0]);
+          } else {
+            toast.error(`Unable to ${isCreate ? "create" : "edit"} category.`)
+          }
           return
         }
         throw error

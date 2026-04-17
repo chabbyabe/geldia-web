@@ -83,7 +83,7 @@ const formInitialValues = (
     name: selectedAccount?.name ?? "",
     icon: selectedAccount?.icon ?? "Savings",
     color: selectedAccount?.color ?? "#006CD1",
-    balance: selectedAccount?.balance ?? 0,
+    balance: selectedAccount?.balance ?? null,
     countInAssets: selectedAccount?.countInAssets ?? false,
     isDefault: selectedAccount?.isDefault ?? false,
     isShared: selectedAccount?.isShared ?? false,
@@ -373,7 +373,7 @@ const AccountModalView: React.FC<IAccountModalView> = (props) => {
                   <Autocomplete
                     disableCloseOnSelect
                     multiple
-                    sx={{ width: "100%", minWidth: 500, maxWidth: 500 }}
+                    sx={{ width: "100%", minWidth: 500, maxWidth: 500}}
                     options={props.categoryOptions}
                     value={selectedCategoryOptions}
                     onChange={(_, nextValue) => {

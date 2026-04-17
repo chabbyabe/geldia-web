@@ -18,6 +18,7 @@ export const PLACE_URL = `/ledger/places/`
 export const DASHBOARD_URL = `/ledger/dashboard/`
 export const REPORT_URL = `/ledger/reports/`
 export const LOGS_TRANSACTION_URL = `/ledger/logs/transactions/`
+export const USER_SETTINGS_URL = `/users/settings/`
 
 export const API_URL = {
   DASHBOARD : {
@@ -33,7 +34,8 @@ export const API_URL = {
     expenseReport: `${REPORT_URL}expenses-report/`
   },
   CATEGORY: {
-    base: CATEGORY_URL
+    base: CATEGORY_URL,
+    userCategory: `${USER_SETTINGS_URL}categories/`
   },
   TAG: {
     base: TAG_URL

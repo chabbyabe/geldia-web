@@ -8,7 +8,8 @@ import {
   deleteCategory,
   initializeCategories,
   setCurrentCategory,
-  updateCategory
+  updateCategory,
+  retrieveUserCategories,
 } from "@interface/presenters/store/reducers/categories.reducer"
 
 export default class CategoryRepository {
@@ -35,4 +36,9 @@ export default class CategoryRepository {
   deleteCategory() {
     store.dispatch(deleteCategory())
   }
+
+  setUserCategories(categories: ICategory[]) {
+    store.dispatch(retrieveUserCategories(categories))
+  }
+
 }
