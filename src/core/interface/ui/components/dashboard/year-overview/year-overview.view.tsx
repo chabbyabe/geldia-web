@@ -189,8 +189,8 @@ const YearOverviewView: React.FC<IYearOverviewView> = (props) => {
   };
 
   useEffect(() => {
-    setSelectedYear(props.filterParams.year);
-  }, [props.filterParams.year]);
+    setSelectedYear(props.filterParams?.year ?? dayjs().year().toString());
+  }, [props.filterParams]);
 
   useEffect(() => {
     fetchData(selectedYear);
