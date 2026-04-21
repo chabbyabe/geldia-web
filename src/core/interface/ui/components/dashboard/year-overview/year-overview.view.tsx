@@ -51,7 +51,7 @@ const YearOverviewView: React.FC<IYearOverviewView> = (props) => {
 
   const years = useMemo(() => getYearRange(), []);
 
-  const [selectedYear, setSelectedYear] = useState(props.filterParams.year);
+  const [selectedYear, setSelectedYear] = useState(props.filterParams.year ?? dayjs().year().toString());
 
   const currencyFormatter = useCallback(
     (value: any) => formatCurrency(value),
