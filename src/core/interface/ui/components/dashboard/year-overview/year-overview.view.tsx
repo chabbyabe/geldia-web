@@ -174,7 +174,7 @@ const YearOverviewView: React.FC<IYearOverviewView> = (props) => {
   const fetchData = useCallback(
     async (filterYear: string) => {
       try {
-        await props.onFilterChange({ year: filterYear });
+        await props.onFilterChange({ year: filterYear ?? dayjs().year().toString() } as IYearOverviewFilterParams);
       } catch (err) {
         console.error(err);
       }

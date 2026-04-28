@@ -77,7 +77,6 @@ export default class TransactionsController {
 
   async retrieveTransactions(params: ITransactionSearchParams) {
     await this.retrieveTransactionsUseCase.execute(params)
-    await this._refreshAfterTransactionChange()
   }
 
   removeCurrentTransaction() {
@@ -90,32 +89,13 @@ export default class TransactionsController {
 
   async createTransaction(data: IFormTransaction) {
     await this.createTransactionUseCase.execute(data)
-    await this._refreshAfterTransactionChange()
   }
 
   async updateTransaction(id: number, data: IFormTransaction) {
     await this.updateTransactionUseCase.execute(id, data)
-    await this._refreshAfterTransactionChange()
   }
 
   async deleteTransaction(transactionId: number) {
     await this.deleteTransactionUseCase.execute(transactionId)
-  }
-
-  private async _refreshAfterTransactionChange() {
-    const filters = store.getState().dashboardState.filters;
-    await Promise.all([
-      this.retrieveAccountUseCase.execute(true, 1),
-      this.retrieveSummaryOverviewUseCase.execute(),
-      this.retrieveRecentTransactionsUseCase.execute(),
-      this.retrieveYearOverviewUseCase.execute({
-        year: filters.yearOverview.year
-      }),
-      this.retrieveCategoryOverviewUseCase.execute({
-        filterBy: filters.categoryOverview.filterBy,
-        startDate: null,
-        endDate: null
-      })
-    ])
   }
 }
