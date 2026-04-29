@@ -2,8 +2,9 @@ const path = require("path");
 
 module.exports = {
   webpack: {
-    configure: (config, { env }) => {
-      const isProd = env === "production";
+    configure: (config) => {
+      const stage = process.env.REACT_APP_STAGE || "development";
+      const isProd = stage === "production";
 
       config.resolve.alias = {
         ...config.resolve.alias,
