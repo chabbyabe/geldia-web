@@ -12,7 +12,6 @@ import GetTransactionUseCase from "@domain/usecases/transactions/get-transaction
 import CreateTransactionUseCase from "@domain/usecases/transactions/create-transaction.usecase"
 import UpdateTransactionUseCase from "@base/core/domain/usecases/transactions/update-transactions.usecase"
 import DeleteTransactionUseCase from "@base/core/domain/usecases/transactions/delete-transaction.usecase"
-import RetrieveRecentTransactionsUseCase from "@domain/usecases/dashboard/retrieve-recent-transactions.usecase"
 import DashboardApiGateway from "@data/gateways/api/services/dashboard.gateway"
 import DashboardRepository from "@data/gateways/api/services/dashboard.repository"
 import RetrieveYearOverviewUseCase from "@domain/usecases/dashboard/retrieve-year-overview.usecase"
@@ -27,7 +26,6 @@ export default class TransactionsController {
   private readonly createTransactionUseCase: CreateTransactionUseCase
   private readonly updateTransactionUseCase: UpdateTransactionUseCase
   private readonly deleteTransactionUseCase: DeleteTransactionUseCase
-  private readonly retrieveRecentTransactionsUseCase: RetrieveRecentTransactionsUseCase
   private readonly retrieveYearOverviewUseCase: RetrieveYearOverviewUseCase
   private readonly retrieveCategoryOverviewUseCase: RetrieveCategoryOverviewUseCase
   private readonly retrieveSummaryOverviewUseCase: RetrieveSummaryOverviewUseCase
@@ -45,10 +43,9 @@ export default class TransactionsController {
     this.retrieveTransactionsUseCase = new RetrieveTransactionsUseCase(transactionGateway, transactionRepository)
     this.retrieveAccountUseCase = new retrieveAccountsUseCase(accountGateway, accountRepository)
     this.getTransactionUseCase = new GetTransactionUseCase(transactionGateway, transactionRepository)
-    this.createTransactionUseCase = new CreateTransactionUseCase(transactionGateway, transactionRepository)
+    this.createTransactionUseCase = new CreateTransactionUseCase(transactionGateway, transactionRepository, dashboardRepository)
     this.updateTransactionUseCase = new UpdateTransactionUseCase(transactionGateway, transactionRepository)
     this.deleteTransactionUseCase = new DeleteTransactionUseCase(transactionGateway, transactionRepository)
-    this.retrieveRecentTransactionsUseCase = new RetrieveRecentTransactionsUseCase(dashboardGateway, dashboardRepository)
     this.retrieveYearOverviewUseCase = new RetrieveYearOverviewUseCase(dashboardGateway, dashboardRepository)
     this.retrieveCategoryOverviewUseCase = new RetrieveCategoryOverviewUseCase(dashboardGateway, dashboardRepository)
     this.retrieveSummaryOverviewUseCase = new RetrieveSummaryOverviewUseCase(dashboardGateway, dashboardRepository)
@@ -86,7 +83,6 @@ export default class TransactionsController {
     await Promise.all([
       this.retrieveAccountUseCase.execute(),
       this.retrieveSummaryOverviewUseCase.execute(),
-      this.retrieveRecentTransactionsUseCase.execute(),
       this.retrieveYearOverviewUseCase.execute({ year: new Date().getFullYear().toString() }),
       this.retrieveCategoryOverviewUseCase.execute({ startDate: null, endDate: null, filterBy: DATE_RANGES.MONTH })
     ])

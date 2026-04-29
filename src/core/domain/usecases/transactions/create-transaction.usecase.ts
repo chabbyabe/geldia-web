@@ -9,16 +9,20 @@ export interface ICreateTransactionRepository {
   setTransaction: (transaction: ITransaction) => void
 }
 
+export interface ISetRecentTransactionRepositoty {
+  updateRecentTransactions: (transaction: ITransaction) => void
+}
+
 export default class CreateTransactionUseCase {
   constructor(
     private readonly dataGateway: ICreateTransactionDataGateway,
     private readonly dataRepository: ICreateTransactionRepository,
-    
+    private readonly dashboardRepository: ISetRecentTransactionRepositoty
   ) {
   }
   async execute(transactionData: IFormTransaction) {
     const newData = await this.dataGateway.createTransaction(transactionData)
-
     await this.dataRepository.setTransaction(newData)
+    this.dashboardRepository.updateRecentTransactions(newData)
   }
 }

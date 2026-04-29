@@ -2,7 +2,8 @@ import { ITransaction } from "@domain/entities/transaction/transaction.entity"
 import { ISummary } from "@domain/entities/dashboard/summary-overview.entity"
 import { 
   setSummaryOverview, setRecentTransactions, setCategoryOverview, 
-  setYearOverview
+  setYearOverview,
+  updateRecentTransactions
 } from "@interface/presenters/store/reducers/dashboard.reducer"
 import { store } from "@interface/presenters/store/store"
 import { ICategoryOverview } from "@domain/entities/dashboard/category-overview.entity"
@@ -22,5 +23,9 @@ export default class DashboardRepository {
 
   setYearOverview(overview: IYearOverview[], params: IYearOverviewFilterParams) {
     store.dispatch(setYearOverview({overview, params}))
+  }
+
+  updateRecentTransactions(transactions: ITransaction) {
+    store.dispatch(updateRecentTransactions(transactions))
   }
 }

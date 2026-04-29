@@ -11,12 +11,14 @@ import {
 } from '@interface/presenters/store/reducers/transactions.reducer'
 import { createMockTransactionFormOption } from '@base/core/test/mocks/form-option.mock'
 import { createMockTransactionForm } from '@base/core/test/mocks/transaction.mock'
+import DashboardRepository from '@base/core/data/gateways/api/services/dashboard.repository'
 
 
 describe('Test CreateTransactionUseCase', () => {
   let gateway: TransactionApiGateway
   let repo: TransactionRepository
   let useCase: CreateTransactionUseCase
+  let dashboardRepo : DashboardRepository
 
   const optionsData = createMockTransactionFormOption()
   const transactionData = {
@@ -37,7 +39,8 @@ describe('Test CreateTransactionUseCase', () => {
   beforeEach(() => {
     gateway = new TransactionApiGateway()
     repo = new TransactionRepository()
-    useCase = new CreateTransactionUseCase(gateway, repo)
+    dashboardRepo = new DashboardRepository()
+    useCase = new CreateTransactionUseCase(gateway, repo, dashboardRepo)
 
     store.dispatch(
       initializeTransactions({

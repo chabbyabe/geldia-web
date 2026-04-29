@@ -45,6 +45,10 @@ export const dashboardSlice = createSlice({
     setRecentTransactions(state, action: PayloadAction<ITransaction[]>) {
       state.recentTransactions = [...action.payload]
     },
+    updateRecentTransactions(state, action: PayloadAction<ITransaction>) {
+      const newTransaction = action.payload
+      state.recentTransactions = [newTransaction, ...state.recentTransactions].slice(0, 5);
+    },
     setCategoryOverview(state, action: PayloadAction<{
       categories: ICategoryOverview[],
       params: ICategoryOverviewFilterParams
@@ -75,6 +79,7 @@ export const {
   setSummaryOverview,
   setRecentTransactions,
   setCategoryOverview,
-  setYearOverview
+  setYearOverview,
+  updateRecentTransactions
 } = dashboardSlice.actions
 export default dashboardSlice.reducer
