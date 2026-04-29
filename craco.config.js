@@ -2,15 +2,62 @@ const path = require("path");
 
 module.exports = {
   webpack: {
-    alias: {
-      "@base": path.resolve(__dirname, "src/"),
-      "@core": path.resolve(__dirname, "src/core"),
-      "@data": path.resolve(__dirname, "src/core/data"),
-      "@domain": path.resolve(__dirname, "src/core/domain"),
-      "@interface": path.resolve(__dirname, "src/core/interface"),
-      "@screens": path.resolve(__dirname, "src/core/interface/ui/screens"),
-    }
+    configure: (config, { env }) => {
+      const isProd = env === "production";
+
+      config.resolve.alias = {
+        ...config.resolve.alias,
+        "@base": path.resolve(__dirname, "src/"),
+        "@core": path.resolve(__dirname, "src/core"),
+        "@data": path.resolve(__dirname, "src/core/data"),
+        "@domain": path.resolve(__dirname, "src/core/domain"),
+        "@interface": path.resolve(__dirname, "src/core/interface"),
+        "@screens": path.resolve(
+          __dirname,
+          "src/core/interface/ui/screens"
+        ),
+      };
+
+      if (!isProd) {
+        // faster rebuilds
+        config.cache = {
+          type: "filesystem",
+        };
+
+        // disable expensive source maps
+        config.devtool = "eval-cheap-module-source-map";
+      }
+
+      if (isProd) {
+        // reduce memory usage during build
+        config.devtool = false;
+
+        config.optimization.splitChunks = {
+          chunks: "all",
+          maxSize: 200000,
+          cacheGroups: {
+            vendors: {
+              test: /[\\/]node_modules[\\/]/,
+              priority: -10,
+              reuseExistingChunk: true,
+            },
+          },
+        };
+
+        // limit parallelism (prevents OOM)
+        if (config.optimization.minimizer) {
+          config.optimization.minimizer.forEach((plugin) => {
+            if (plugin.constructor?.name === "TerserPlugin") {
+              plugin.options.parallel = 2;
+            }
+          });
+        }
+      }
+
+      return config;
+    },
   },
+
   jest: {
     configure: {
       moduleNameMapper: {
