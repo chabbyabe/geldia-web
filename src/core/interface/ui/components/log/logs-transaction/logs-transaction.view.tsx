@@ -133,7 +133,7 @@ const tableColumns = (): GridColDef<ILogRow>[] => [
     renderCell: (params: GridRenderCellParams<ILogRow>) =>
       <Box sx={{ lineHeight: 1, my: 1 }}>{params.row.account}
         <Stack direction="row">
-          {params.row.action !== USER_ACTIONS.UPDATE.name &&
+          {params.row.action === USER_ACTIONS.CREATE.name &&
             <>
               <Typography color="text.secondary" variant="body2">{params.row.previousBalanceLabel}</Typography>
               <ChevronRight fontSize="small" />
