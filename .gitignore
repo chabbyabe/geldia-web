@@ -18,6 +18,10 @@
 .env.test.local
 .env.production.local
 .env
+.env.production
+.env.staging
+.env.test
+.env.testing
 
 .trunk/*
 
