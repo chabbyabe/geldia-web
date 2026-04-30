@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import AccountsController from '@interface/ui/screens/accounts/accounts.controller';
 import TransactionsController from '@interface/ui/screens/transactions/transactions.controller';
@@ -7,14 +7,15 @@ import { useAppSelector } from '@interface/presenters/store/hooks';
 import { ITransactionSearchParams } from '@domain/entities/transaction/search.entity';
 import { GridFilterModel } from '@mui/x-data-grid';
 import { PAGES } from '@interface/presenters/constants';
+import TransactionImportModal from '@interface/ui/components/modals/transaction-import-modal/transaction-import-modal';
 
 export const AccountTransactionsContainer: React.FC = () => {
   const navigate = useNavigate();
   const { accountId } = useParams();
   const parsedAccountId = Number(accountId);
 
-  const accountsController = new AccountsController();
-  const transactionsController = new TransactionsController();
+  const accountsController = useMemo(() => new AccountsController(), []);
+  const transactionsController = useMemo(() => new TransactionsController(), []);
 
   const transactionsData = useAppSelector(state => state.transactionState.transactions);
   const currentPage = useAppSelector(state => state.transactionState.nextTransactionsPage);
@@ -22,6 +23,7 @@ export const AccountTransactionsContainer: React.FC = () => {
   const paginationData = useAppSelector(state => state.transactionState.pagination);
   const selectedAccount = useAppSelector(state => state.accountState.currentAccount);
   const currentUser = useAppSelector(state => state.authState.user);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     if (!Number.isFinite(parsedAccountId)) {
@@ -31,9 +33,9 @@ export const AccountTransactionsContainer: React.FC = () => {
 
     accountsController.setCurrentAccount(parsedAccountId);
     transactionsController.removeCurrentTransaction();
-  }, [parsedAccountId, navigate]);
+  }, [accountsController, parsedAccountId, navigate, transactionsController]);
 
-  const getAccountFilterModel = (filterModel?: string) => {
+  const getAccountFilterModel = useCallback((filterModel?: string) => {
     let parsedFilterModel: GridFilterModel = { items: [] };
 
     if (filterModel) {
@@ -57,23 +59,35 @@ export const AccountTransactionsContainer: React.FC = () => {
         }
       ]
     });
-  };
+  }, [parsedAccountId]);
 
-  const handlePagination = async (params: ITransactionSearchParams) => {
+  const handlePagination = useCallback(async (params: ITransactionSearchParams) => {
     await transactionsController.retrieveTransactions({
       ...params,
       page: params.page ?? 1,
       filterModel: getAccountFilterModel(params.filterModel)
     });
-  };
+  }, [getAccountFilterModel, transactionsController]);
 
-  const handleDelete = async (transactionId: number) => {
+  const handleDelete = useCallback(async (transactionId: number) => {
     await transactionsController.deleteTransaction(transactionId);
-  };
+  }, [transactionsController]);
 
-  const handleBack = () => {
+  const handleBack = useCallback(() => {
     navigate(PAGES.ACCOUNTS.path);
-  };
+  }, [navigate]);
+
+  const handleImported = useCallback(async () => {
+    setReloadKey((currentValue) => currentValue + 1);
+  }, []);
+
+  const handleActionMenu = useCallback(async (...args: Parameters<TransactionsController['setCurrentTransaction']>) => {
+    await transactionsController.setCurrentTransaction(...args);
+  }, [transactionsController]);
+
+  const removeCurrentTransaction = useCallback(() => {
+    transactionsController.removeCurrentTransaction();
+  }, [transactionsController]);
 
   const currentPageLabel = selectedAccount?.name
     ? `Account: ${selectedAccount.name}`
@@ -81,14 +95,15 @@ export const AccountTransactionsContainer: React.FC = () => {
 
   return (
     <TransactionsView
+      reloadKey={reloadKey}
       transactions={transactionsData}
       handleDelete={handleDelete}
       currentPage={currentPage}
       pagination={paginationData}
       handlePagination={handlePagination}
       selectedTransaction={selectedTransaction}
-      handleActionMenu={transactionsController.setCurrentTransaction.bind(transactionsController)}
-      removeCurrentTransaction={transactionsController.removeCurrentTransaction.bind(transactionsController)}
+      handleActionMenu={handleActionMenu}
+      removeCurrentTransaction={removeCurrentTransaction}
       currentPageLabel={currentPageLabel}
       sidebarCurrentPageLabel={PAGES.ACCOUNTS.label}
       buttonName={PAGES.TRANSACTIONS.label}
@@ -97,6 +112,11 @@ export const AccountTransactionsContainer: React.FC = () => {
       backButtonLabel="Back to Accounts"
       defaultAccount={selectedAccount}
       currentUser={currentUser}
-    />
+    >
+      <TransactionImportModal
+        account={selectedAccount}
+        onImported={handleImported}
+      />
+    </TransactionsView>
   );
 };

@@ -18,6 +18,7 @@ import RetrieveYearOverviewUseCase from "@domain/usecases/dashboard/retrieve-yea
 import RetrieveCategoryOverviewUseCase from "@domain/usecases/dashboard/retrieve-category-overview.usecase"
 import RetrieveSummaryOverviewUseCase from "@domain/usecases/dashboard/retrieve-summary-overview.usecase"
 import { DATE_RANGES } from "@base/core/data/gateways/api/constants"
+import ImportTransactionsUseCase from "@domain/usecases/transactions/import-transactions.usecase"
 
 export default class TransactionsController {
   private readonly retrieveTransactionsUseCase: RetrieveTransactionsUseCase
@@ -26,6 +27,7 @@ export default class TransactionsController {
   private readonly createTransactionUseCase: CreateTransactionUseCase
   private readonly updateTransactionUseCase: UpdateTransactionUseCase
   private readonly deleteTransactionUseCase: DeleteTransactionUseCase
+  private readonly importTransactionsUseCase: ImportTransactionsUseCase
   private readonly retrieveYearOverviewUseCase: RetrieveYearOverviewUseCase
   private readonly retrieveCategoryOverviewUseCase: RetrieveCategoryOverviewUseCase
   private readonly retrieveSummaryOverviewUseCase: RetrieveSummaryOverviewUseCase
@@ -46,6 +48,7 @@ export default class TransactionsController {
     this.createTransactionUseCase = new CreateTransactionUseCase(transactionGateway, transactionRepository, dashboardRepository)
     this.updateTransactionUseCase = new UpdateTransactionUseCase(transactionGateway, transactionRepository)
     this.deleteTransactionUseCase = new DeleteTransactionUseCase(transactionGateway, transactionRepository)
+    this.importTransactionsUseCase = new ImportTransactionsUseCase(transactionGateway)
     this.retrieveYearOverviewUseCase = new RetrieveYearOverviewUseCase(dashboardGateway, dashboardRepository)
     this.retrieveCategoryOverviewUseCase = new RetrieveCategoryOverviewUseCase(dashboardGateway, dashboardRepository)
     this.retrieveSummaryOverviewUseCase = new RetrieveSummaryOverviewUseCase(dashboardGateway, dashboardRepository)
@@ -53,7 +56,7 @@ export default class TransactionsController {
 
   async retrieveTransactions(params: ITransactionSearchParams) {
     await this.retrieveTransactionsUseCase.execute(params)
-    this._refreshDashboardData()
+    // this._refreshDashboardData()
   }
 
   removeCurrentTransaction() {
@@ -77,6 +80,12 @@ export default class TransactionsController {
   async deleteTransaction(transactionId: number) {
     await this.deleteTransactionUseCase.execute(transactionId)
     this._refreshDashboardData()
+  }
+
+  async importTransactions(file: File, accountId: number) {
+    const result = await this.importTransactionsUseCase.execute(file, accountId)
+    // await this._refreshDashboardData()
+    return result
   }
 
   private async _refreshDashboardData() {

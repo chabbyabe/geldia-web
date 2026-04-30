@@ -172,6 +172,12 @@ export interface ITransactionFormInitialDataModel {
   tags: ITagSimpleModel[]
 }
 
+export interface ITransactionImportResultModel {
+  created_count: number
+  skipped_count: number
+  created_ids: number[]
+}
+
 export interface ISummaryModel {
   name: string
   icon: string

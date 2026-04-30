@@ -17,6 +17,7 @@ export interface ICustomTableContainer<T = any, P = any> {
   invisibleColumns?: GridColumnVisibilityModel
   hideAddButton?: boolean
   hideFilter?: boolean
+  reloadKey?: number
 }
 
 type RowWithId = { id: string | number };
@@ -34,6 +35,7 @@ export const CustomTableContainer = <T extends RowWithId, P extends any>(props: 
       invisibleColumns={props.invisibleColumns ?? {}}
       hideAddButton={props.hideAddButton ?? false}
       hideFilter={props.hideFilter ?? false}
+      reloadKey={props.reloadKey}
     />
   );
 };

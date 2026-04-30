@@ -2,7 +2,7 @@ import { IBasePagedListEntity } from "@base/core/domain/entities/base/base.paged
 import { DataGrid, GridColDef, GridColumnVisibilityModel, GridFilterModel, GridSortModel, GridToolbarProps } from "@mui/x-data-grid";
 import { Box, Button, Pagination, Stack, TextField, Menu, MenuItem, FormControl, InputLabel, Select, SelectChangeEvent } from '@mui/material';
 import { Add } from "@mui/icons-material";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { Toolbar, ColumnsPanelTrigger, FilterPanelTrigger, ExportCsv, ExportPrint } from '@mui/x-data-grid';
 import { ToolbarButton } from '@mui/x-data-grid';
 import {
@@ -26,6 +26,7 @@ export interface ICustomTableViewModel<T = any, P = any> {
   invisibleColumns: GridColumnVisibilityModel
   hideAddButton?: boolean
   hideFilter?: boolean
+  reloadKey?: number
 }
 
 type RowWithId = { id: string | number };
@@ -112,7 +113,20 @@ const CustomTablePagination: React.FC<any> = function (footer: any) {
 }
 
 export const CustomTableView = <T extends RowWithId, P extends any>(props: ICustomTableViewModel<T, P>) => {
-
+  const {
+    children,
+    tableData,
+    pagination,
+    tableColumns,
+    handlePagination,
+    handleFormModal,
+    buttonName,
+    disableColumnSelector,
+    invisibleColumns,
+    hideAddButton,
+    hideFilter,
+    reloadKey,
+  } = props;
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
@@ -122,14 +136,14 @@ export const CustomTableView = <T extends RowWithId, P extends any>(props: ICust
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
   const gridRootRef = React.useRef<HTMLDivElement>(null);
 
-  const fetchData = async (page?: number) => {
+  const fetchData = useCallback(async (page?: number) => {
     setLoading(true);
     try {
       const ordering =
         sortModel.length > 0
           ? `${sortModel[0].sort === 'desc' ? '-' : ''}${sortModel[0].field}`
           : '';
-      await props.handlePagination({
+      await handlePagination({
         page: page,
         search: searchText,
         ordering: ordering,
@@ -143,11 +157,19 @@ export const CustomTableView = <T extends RowWithId, P extends any>(props: ICust
     } finally {
       setLoading(false);
     }
-  };
+  }, [
+    endDate,
+    filterDate,
+    filterModel,
+    handlePagination,
+    searchText,
+    sortModel,
+    startDate,
+  ]);
 
   useEffect(() => {
     fetchData();
-  }, [sortModel, searchText, filterModel, filterDate, startDate, endDate]);
+  }, [fetchData, reloadKey]);
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     setSearchText(event.target.value);
@@ -193,21 +215,22 @@ export const CustomTableView = <T extends RowWithId, P extends any>(props: ICust
   return (
     <Stack ref={gridRootRef}>
       <Stack direction="row" gap={2} flexWrap="wrap" alignItems="center" justifyContent="space-between" mb={2}>
-        {!props.hideAddButton ? (
-          <Button
-            onClick={() => props.handleFormModal?.(true)}
-            variant="contained"
-            startIcon={<Add />}
-            size="large"
-          >
-            {"Add " + props.buttonName}
-          </Button>
-        ) : (
-          <Box />
-        )}
+        <Stack direction="row" gap={2} flexWrap="wrap">
+          {!hideAddButton ? (
+            <Button
+              onClick={() => handleFormModal?.(true)}
+              variant="contained"
+              startIcon={<Add />}
+              size="large"
+            >
+              {"Add " + buttonName}
+            </Button>
+          ) : null}
+          {children}
+        </Stack>
 
         <Stack direction="row" spacing={2} alignItems="center">
-          {!props.hideFilter ?
+          {!hideFilter ?
             <>
               <FormControl size="small" sx={{ minWidth: 150 }}>
                 <InputLabel>Filter</InputLabel>
@@ -257,12 +280,12 @@ export const CustomTableView = <T extends RowWithId, P extends any>(props: ICust
 
       <Box sx={{ height: "80vh", width: '100%' }}>
         <DataGrid
-          rows={props.tableData ?? []}
-          columns={props.tableColumns}
+          rows={tableData ?? []}
+          columns={tableColumns}
           getRowId={(row) => row.id}
-          rowCount={props.pagination?.count ?? 0}
-          columnVisibilityModel={{ ...props.invisibleColumns }}
-          disableColumnSelector={props.disableColumnSelector}
+          rowCount={pagination?.count ?? 0}
+          columnVisibilityModel={{ ...invisibleColumns }}
+          disableColumnSelector={disableColumnSelector}
           getRowHeight={() => "auto"}
           paginationMode="server"
           sortingMode="server"
@@ -283,7 +306,7 @@ export const CustomTableView = <T extends RowWithId, P extends any>(props: ICust
           slots={{
             footer: () => (
               <CustomTablePagination
-                pagination={props.pagination}
+                pagination={pagination}
                 onChangePage={onChangePage}
               />
             ),

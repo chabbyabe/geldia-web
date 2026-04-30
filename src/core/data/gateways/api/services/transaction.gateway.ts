@@ -1,10 +1,11 @@
-import { ITransactionModel, IPagedAPIViewModel, ITransactionFormInitialDataModel } from '@data/gateways/api/api.types'
+import { ITransactionModel, IPagedAPIViewModel, ITransactionFormInitialDataModel, ITransactionImportResultModel } from '@data/gateways/api/api.types'
 import { Api } from '@data/infra/api.base'
 import { TRANSACTION_URL } from '@data/gateways/api/constants'
 import { BadRequest } from '@data/infra/api.error'
 import { FormRequestError } from '@domain/entities/formModels/errors.entity'
 import { IFormTransaction } from '@domain/entities/formModels/transaction-form.entity'
 import TransactionEntity, { ITransaction } from '@domain/entities/transaction/transaction.entity'
+import { ITransactionImportResult } from '@domain/entities/transaction/transaction-import.entity'
 import { mapPagedTransactionAttributes, mapTransactionAttributes, mapTransactionFormInitialDataAttributes } from './mappers/transaction.mappers'
 import PagedTransactionEntity, { IPagedTransactionEntity } from '@domain/entities/transaction/paged.transaction.entity'
 import { mapErrorAttributes } from './mappers/error.mappers'
@@ -114,5 +115,32 @@ export default class TransactionApiGateway extends Api {
 
   private _mapInitialDataFromResponse(response: ITransactionFormInitialDataModel): ITransactionInitial {
     return mapTransactionFormInitialDataAttributes(response);
+  }
+
+  async importTransactions(file: File, accountId: number): Promise<ITransactionImportResult> {
+    try {
+      const response = await this._importTransactions(file, accountId)
+      return this._mapImportResultFromResponse(response)
+    } catch (error) {
+      if (error instanceof BadRequest) {
+        throw new FormRequestError(error.message, error.data)
+      }
+      throw error
+    }
+  }
+
+  private async _importTransactions(file: File, accountId: number): Promise<ITransactionImportResultModel> {
+    return await this.upload(`${TRANSACTION_URL}import/`, {
+      file,
+      account_id: accountId,
+    })
+  }
+
+  private _mapImportResultFromResponse(response: ITransactionImportResultModel): ITransactionImportResult {
+    return {
+      createdCount: response.created_count,
+      skippedCount: response.skipped_count,
+      createdIds: response.created_ids,
+    }
   }
 }

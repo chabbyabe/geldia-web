@@ -253,8 +253,8 @@ const tableColumns = (): GridColDef<ILogRow>[] => [
   {
     field: `${jsonOrderField}notes`,
     headerName: "Note",
-    minWidth: 150,
-    flex: 0.8,
+    minWidth: 500,
+    flex: 1,
     filterOperators: stringOperators,
     renderCell: (params: GridRenderCellParams<ILogRow>) => <Box>{params.row.notes}</Box>
   },
@@ -269,10 +269,10 @@ const tableColumns = (): GridColDef<ILogRow>[] => [
   {
     field: `${jsonOrderField}transaction_at`,
     headerName: "Transaction At",
-    minWidth: 170,
+    minWidth: 120,
     flex: 0.9,
     filterable: false,
-    renderCell: (params: GridRenderCellParams<ILogRow>) => <Box>{params.row.transactionAt}</Box>
+    renderCell: (params: GridRenderCellParams<ILogRow>) => <Box>{params.row.transactionAt.substring(0, 10)}</Box>
   },
   {
     field: "created_at",
@@ -280,7 +280,8 @@ const tableColumns = (): GridColDef<ILogRow>[] => [
     minWidth: 170,
     flex: 0.9,
     filterable: false,
-    renderCell: (params: GridRenderCellParams<ILogRow>) => <Box>{params.row.createdAt}</Box>
+    renderCell: (params: GridRenderCellParams<ILogRow>) => params.row.createdAt && 
+      <Box>{params.row.createdAt.substring(0, 10)} <br/> <Typography variant="body2" color="text.secondary" lineHeight={1}>{params.row.createdAt.substring(11, 19)} </Typography></Box>
   },
 ]
 

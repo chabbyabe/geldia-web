@@ -12,7 +12,7 @@ import { ArrowBack } from '@mui/icons-material';
 import { TransactionModalContainer } from '@interface/ui/components/modals/transaction-modal/transaction-modal.container';
 import { ITransactionSearchParams } from '@domain/entities/transaction/search.entity';
 import CustomTableContainer from '@interface/ui/components/common/table/table.container';
-import { formatDateTime, getColoredChipSx, getTransactionTypeChipSx } from '@interface/presenters/helpers';
+import { formatCurrency, formatDateTime, getColoredChipSx, getTransactionTypeChipSx } from '@interface/presenters/helpers';
 import { TRANSACTION_TYPE } from '@data/gateways/api/constants';
 import { PAGES, MUI_STRING_OPERATORS as stringOperators, MUI_NUMBER_OPERATORS as numberOperators } from '@interface/presenters/constants';
 import { ITransaction } from '@domain/entities/transaction/transaction.entity';
@@ -38,6 +38,7 @@ export interface ITransactionsViewModel {
   backButtonLabel?: string
   defaultAccount?: IAccount | null
   currentUser: IUser | null
+  reloadKey?: number
 }
 
 const tableColumns = (
@@ -104,7 +105,7 @@ const tableColumns = (
             >
               <AccordionSummary expandIcon={<ExpandMore />}>
                 <Typography variant="body1">
-                  {row.amount ?? "-"}
+                  {formatCurrency(row.amount) ?? "-"}
                 </Typography>
               </AccordionSummary>
               <Divider />
@@ -144,22 +145,17 @@ const tableColumns = (
                 width: "100%",
                 backgroundColor: "transparent",
                 "&:before": { display: "none" }
-              }}
-            >
-
+              }}>
               <AccordionSummary
                 expandIcon={<ExpandMore />}
-                sx={{ minHeight: 40 }}
-              >
+                sx={{ minHeight: 40 }}>
                 <Typography variant="body1" color="error" fontWeight="bold">
-                  {row.amount ?? "-"}
+                  {formatCurrency(row.amount) ?? "-"}
                 </Typography>
               </AccordionSummary>
               <Divider />
 
               <AccordionDetails>
-
-
                 <Stack gap={1}>
                   <Stack direction="row" justifyContent="space-between" alignItems="center">
                     <Stack direction="column">
@@ -185,14 +181,12 @@ const tableColumns = (
                 width: "100%",
                 backgroundColor: "transparent",
                 "&:before": { display: "none" }
-              }}
-            >
+              }}>
               <AccordionSummary
                 expandIcon={<ExpandMore />}
-                sx={{ minHeight: 40 }}
-              >
+                sx={{ minHeight: 40 }}>
                 <Typography variant="body1" fontWeight="bold">
-                  {row.netAmount ?? "-"}
+                  {formatCurrency(row.netAmount) ?? "-"}
                 </Typography>
               </AccordionSummary>
               <Divider />
@@ -247,7 +241,7 @@ const tableColumns = (
         if (!params.row.amount) return "";
         return (
           <Box sx={{ textAlign: "right" }}>
-            {params.row.amount}
+            {formatCurrency(params.row.amount ?? 0)}
           </Box>
         );
       }
@@ -329,7 +323,7 @@ const tableColumns = (
       },
     },
     {
-      field: 'notes', headerName: 'Notes', minWidth: 150, flex: 1, filterOperators: stringOperators, sortable: false,
+      field: 'notes', headerName: 'Notes', minWidth: 600, flex: 1, filterOperators: stringOperators, sortable: false,
       renderCell: (params: GridRenderCellParams<ITransaction>) => {
         return <Typography sx={{ my: 1 }} variant="body2"> {params.row.notes} </Typography>
       }
@@ -380,10 +374,11 @@ const TransactionsView: React.FC<ITransactionsViewModel> = (props) => {
   const currentPageLabel = props.currentPageLabel ?? PAGES.TRANSACTIONS.label;
   const buttonName = props.buttonName ?? PAGES.TRANSACTIONS.label;
   const backButtonLabel = props.backButtonLabel ?? 'Back';
+  const removeCurrentTransaction = props.removeCurrentTransaction;
 
   useEffect(() => {
-    props.removeCurrentTransaction();
-  }, [openCreateEditModal]);
+    removeCurrentTransaction();
+  }, [openCreateEditModal, removeCurrentTransaction]);
 
   return (
     <BaseLayoutContainer currentPage={currentPageLabel} sidebarCurrentPage={props.sidebarCurrentPageLabel}>
@@ -408,13 +403,16 @@ const TransactionsView: React.FC<ITransactionsViewModel> = (props) => {
             handleFormModal={setOpenCreateEditModal}
             hideAddButton={props.hideAddButton ?? false}
             disableColumnSelector={true}
+            reloadKey={props.reloadKey}
             invisibleColumns={{
               net_amount: false,
               gross_amount: false,
               amount: false,
               debit_month_year: false
             }}
-          />
+          >
+            {props.children}
+          </CustomTableContainer>
         </Stack>
       </Container>
       <>
