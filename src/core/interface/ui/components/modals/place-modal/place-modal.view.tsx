@@ -126,7 +126,6 @@ const PlaceModalView: React.FC<IPlaceModalView> = (props) => {
             <Grid size={12}>
               <TextField
                 fullWidth
-                required
                 id="classification"
                 name="classification"
                 label="Place Classification"

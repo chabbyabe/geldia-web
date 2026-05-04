@@ -126,7 +126,6 @@ const StoreModalView: React.FC<IStoreModalView> = (props) => {
             <Grid size={12}>
               <TextField
                 fullWidth
-                required
                 id="classification"
                 name="classification"
                 label="Store Classification"
