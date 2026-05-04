@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react"
+import { useCallback, useEffect, useMemo } from "react"
 import { IFormTag } from "@domain/entities/formModels/tag-form.entity"
 import { ITag } from "@domain/entities/tag/tag.entity"
 import { useAppSelector } from "@interface/presenters/store/hooks"
@@ -38,6 +38,18 @@ export const TagsContainer: React.FC = () => {
     })
   }
 
+  const handlePagination = useCallback(async (...args: Parameters<TagsController["retrieveTags"]>) => {
+    await controller.retrieveTags(...args)
+  }, [controller])
+
+  const handleActionMenu = useCallback(async (...args: Parameters<TagsController["setCurrentTag"]>) => {
+    await controller.setCurrentTag(...args)
+  }, [controller])
+
+  const clearCurrentTag = useCallback(() => {
+    controller.clearCurrentTag()
+  }, [controller])
+
   return (
     <TagsView
       tags={tags}
@@ -45,9 +57,9 @@ export const TagsContainer: React.FC = () => {
       pagination={pagination}
       handleSubmit={handleSubmit}
       handleDelete={handleDelete}
-      handlePagination={controller.retrieveTags.bind(controller)}
-      handleActionMenu={controller.setCurrentTag.bind(controller)}
-      clearCurrentTag={controller.clearCurrentTag.bind(controller)}
+      handlePagination={handlePagination}
+      handleActionMenu={handleActionMenu}
+      clearCurrentTag={clearCurrentTag}
       currentUser={currentUser}
     />
   )

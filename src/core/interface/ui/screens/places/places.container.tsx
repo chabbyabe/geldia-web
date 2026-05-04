@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react"
+import { useCallback, useEffect, useMemo } from "react"
 import { IFormPlace } from "@domain/entities/formModels/place-form.entity"
 import { IPlace } from "@domain/entities/place/place.entity"
 import { useAppSelector } from "@interface/presenters/store/hooks"
@@ -38,6 +38,18 @@ export const PlacesContainer: React.FC = () => {
     })
   }
 
+  const handlePagination = useCallback(async (...args: Parameters<PlacesController["retrievePlaces"]>) => {
+    await controller.retrievePlaces(...args)
+  }, [controller])
+
+  const handleActionMenu = useCallback(async (...args: Parameters<PlacesController["setCurrentPlace"]>) => {
+    await controller.setCurrentPlace(...args)
+  }, [controller])
+
+  const clearCurrentPlace = useCallback(() => {
+    controller.clearCurrentPlace()
+  }, [controller])
+
   return (
     <PlacesView
       places={places}
@@ -45,9 +57,9 @@ export const PlacesContainer: React.FC = () => {
       pagination={pagination}
       handleSubmit={handleSubmit}
       handleDelete={handleDelete}
-      handlePagination={controller.retrievePlaces.bind(controller)}
-      handleActionMenu={controller.setCurrentPlace.bind(controller)}
-      clearCurrentPlace={controller.clearCurrentPlace.bind(controller)}
+      handlePagination={handlePagination}
+      handleActionMenu={handleActionMenu}
+      clearCurrentPlace={clearCurrentPlace}
       currentUser={currentUser}
     />
   )

@@ -1,4 +1,4 @@
-import { useEffect } from "react"
+import { useCallback, useEffect, useMemo } from "react"
 import { useAppSelector } from "@interface/presenters/store/hooks"
 import CategoriesController from "./categories.controller"
 import CategoriesView from "./categories.view"
@@ -6,7 +6,7 @@ import { IFormCategory } from "@domain/entities/formModels/category-form.entity"
 import { ICategory } from "@domain/entities/category/category.entity"
 
 export const CategoriesContainer: React.FC = () => {
-  const controller = new CategoriesController()
+  const controller = useMemo(() => new CategoriesController(), [])
   const categories = useAppSelector((state) => state.categoryState.categories)
   const selectedCategory = useAppSelector((state) => state.categoryState.currentCategory)
   const pagination = useAppSelector((state) => state.categoryState.pagination)
@@ -16,7 +16,7 @@ export const CategoriesContainer: React.FC = () => {
   useEffect(() => {
     controller.retrieveFormOptions()
     controller.clearCurrentCategory()
-  }, [])
+  }, [controller])
 
   const handleSubmit = async (values: IFormCategory) => {
     if (selectedCategory) {
@@ -39,6 +39,18 @@ export const CategoriesContainer: React.FC = () => {
     })
   }
 
+  const handlePagination = useCallback(async (...args: Parameters<CategoriesController["retrieveCategories"]>) => {
+    await controller.retrieveCategories(...args)
+  }, [controller])
+
+  const handleActionMenu = useCallback(async (...args: Parameters<CategoriesController["setCurrentCategory"]>) => {
+    await controller.setCurrentCategory(...args)
+  }, [controller])
+
+  const clearCurrentCategory = useCallback(() => {
+    controller.clearCurrentCategory()
+  }, [controller])
+
   return (
     <CategoriesView
       categories={categories}
@@ -47,9 +59,9 @@ export const CategoriesContainer: React.FC = () => {
       transactionTypes={transactionTypes}
       handleSubmit={handleSubmit}
       handleDelete={handleDelete}
-      handlePagination={controller.retrieveCategories.bind(controller)}
-      handleActionMenu={controller.setCurrentCategory.bind(controller)}
-      clearCurrentCategory={controller.clearCurrentCategory.bind(controller)}
+      handlePagination={handlePagination}
+      handleActionMenu={handleActionMenu}
+      clearCurrentCategory={clearCurrentCategory}
     />
   )
 }

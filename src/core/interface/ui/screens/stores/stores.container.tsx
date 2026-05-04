@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react"
+import { useCallback, useEffect, useMemo } from "react"
 import { IFormStore } from "@domain/entities/formModels/store-form.entity"
 import { IStore } from "@domain/entities/store/store.entity"
 import { useAppSelector } from "@interface/presenters/store/hooks"
@@ -38,6 +38,18 @@ export const StoresContainer: React.FC = () => {
     })
   }
 
+  const handlePagination = useCallback(async (...args: Parameters<StoresController["retrieveStores"]>) => {
+    await controller.retrieveStores(...args)
+  }, [controller])
+
+  const handleActionMenu = useCallback(async (...args: Parameters<StoresController["setCurrentStore"]>) => {
+    await controller.setCurrentStore(...args)
+  }, [controller])
+
+  const clearCurrentStore = useCallback(() => {
+    controller.clearCurrentStore()
+  }, [controller])
+
   return (
     <StoresView
       stores={stores}
@@ -45,9 +57,9 @@ export const StoresContainer: React.FC = () => {
       pagination={pagination}
       handleSubmit={handleSubmit}
       handleDelete={handleDelete}
-      handlePagination={controller.retrieveStores.bind(controller)}
-      handleActionMenu={controller.setCurrentStore.bind(controller)}
-      clearCurrentStore={controller.clearCurrentStore.bind(controller)}
+      handlePagination={handlePagination}
+      handleActionMenu={handleActionMenu}
+      clearCurrentStore={clearCurrentStore}
       currentUser={currentUser}  
     />
   )
