@@ -32,14 +32,13 @@ export const formatDateTime = (
 export const formatToTitleCase = (value: string) => {
   if (!value) return "";
 
-  return value
-    .toString()
-    .trim()
-    .toLowerCase()
-    .split(" ")
-    .filter(word => word !== "")
+  const words = value.trim().split(/\s+/);
+
+  return words
     .map(word =>
-      word.charAt(0).toUpperCase() + word.slice(1)
+      word === word.toLowerCase()
+        ? word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        : word
     )
     .join(" ");
 };

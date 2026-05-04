@@ -103,6 +103,14 @@ const tableColumns = (): GridColDef<ILogRow>[] => [
     }
   },
   {
+    field: `${jsonOrderField}transaction_at`,
+    headerName: "Date & Time",
+    minWidth: 100,
+    flex: 0.9,
+    filterable: false,
+    renderCell: (params: GridRenderCellParams<ILogRow>) => <Box>{params.row.transactionAt.substring(0, 10)}</Box>
+  },
+  {
     field: `${jsonOrderField}name`,
     headerName: "Transaction Name",
     minWidth: 180,
@@ -176,7 +184,7 @@ const tableColumns = (): GridColDef<ILogRow>[] => [
   {
     field: `${jsonOrderField}gross_amount`,
     headerName: "Gross",
-    minWidth: 120,
+    minWidth: 100,
     flex: 0.7,
     filterable: false,
     renderCell: (params: GridRenderCellParams<ILogRow>) => (params.row.transactionType === TRANSACTION_TYPE.INCOME.name &&
@@ -185,7 +193,7 @@ const tableColumns = (): GridColDef<ILogRow>[] => [
   {
     field: `${jsonOrderField}net_amount`,
     headerName: "Net",
-    minWidth: 120,
+    minWidth: 100,
     flex: 0.7,
     filterable: false,
     renderCell: (params: GridRenderCellParams<ILogRow>) => (params.row.transactionType === TRANSACTION_TYPE.INCOME.name &&
@@ -194,7 +202,7 @@ const tableColumns = (): GridColDef<ILogRow>[] => [
   {
     field: `${jsonOrderField}debit_month_year`,
     headerName: "DebitMY",
-    minWidth: 120,
+    minWidth: 110,
     flex: 0.7,
     filterable: false,
     renderCell: (params: GridRenderCellParams<ILogRow>) => (params.row.transactionType === TRANSACTION_TYPE.INCOME.name &&
@@ -229,7 +237,7 @@ const tableColumns = (): GridColDef<ILogRow>[] => [
   {
     field: "tags",
     headerName: "Tags",
-    minWidth: 160,
+    minWidth: 130,
     flex: 0.9,
     filterable: false,
     sortable: false,
@@ -261,23 +269,15 @@ const tableColumns = (): GridColDef<ILogRow>[] => [
   {
     field: "performed_by__name",
     headerName: "Performed By",
-    minWidth: 190,
+    minWidth: 150,
     flex: 1,
     filterable: false,
     renderCell: (params: GridRenderCellParams<ILogRow>) => <Box>{params.row.performedBy}</Box>
   },
   {
-    field: `${jsonOrderField}transaction_at`,
-    headerName: "Transaction At",
-    minWidth: 120,
-    flex: 0.9,
-    filterable: false,
-    renderCell: (params: GridRenderCellParams<ILogRow>) => <Box>{params.row.transactionAt.substring(0, 10)}</Box>
-  },
-  {
     field: "created_at",
     headerName: "Log Created",
-    minWidth: 170,
+    minWidth: 100,
     flex: 0.9,
     filterable: false,
     renderCell: (params: GridRenderCellParams<ILogRow>) => params.row.createdAt && 
