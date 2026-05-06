@@ -97,7 +97,7 @@ export const TransactionImportModal: React.FC<ITransactionImportModalProps> = (p
             </Alert>
 
             <Typography variant="body2" color="text.secondary">
-              You can upload bank export files in CSV, TXT, TSV, or other plain-text formats. At the moment, only ING Bank is supported.
+              You can upload bank export files in CSV. At the moment, only ING Bank CSV export is supported.
             </Typography>
 
             <Button variant="contained" component="label">

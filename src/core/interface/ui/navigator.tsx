@@ -20,17 +20,27 @@ import { CategoriesContainer } from '@screens/categories/categories.container'
 import { TagsContainer } from '@screens/tags/tags.container'
 import { StoresContainer } from '@screens/stores/stores.container'
 import { PlacesContainer } from '@screens/places/places.container'
+import { SettingsContainer } from '@screens/settings/settings.container'
 
 export const Navigator = () => {
   const currentUser = useAppSelector(state => state.authState.user);
+  const initialized = useAppSelector(state => state.authState.initialized);
 
   const PrivateRoute: React.FC<{ element: any }> = (props) => {
-    return props.element;
+    if (!initialized) {
+      return null
+    }
+
+    return Boolean(currentUser) ? <Navigate to={PAGES.DASHBOARD.path} /> : props.element;
   }
 
   const AlreadyLoggedInRoute: React.FC<{ element: any, needAdmin?: boolean }> = (props) => {
     const userInfo = currentUser;
-    return Boolean(userInfo) ? props.element : <Navigate to='/' /> ;
+    if (!initialized) {
+      return null
+    }
+
+    return Boolean(userInfo) ? props.element : <Navigate to={PAGES.LOGIN.path} /> ;
   }
   return (
     <BrowserRouter>
@@ -48,6 +58,7 @@ export const Navigator = () => {
         <Route path={PAGES.TAGS.path} element={<AlreadyLoggedInRoute element={<TagsContainer />} />} />
         <Route path={PAGES.STORES.path} element={<AlreadyLoggedInRoute element={<StoresContainer />} />} />
         <Route path={PAGES.PLACES.path} element={<AlreadyLoggedInRoute element={<PlacesContainer />} />} />
+        <Route path={PAGES.SETTINGS.path} element={<AlreadyLoggedInRoute element={<SettingsContainer />} />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </BrowserRouter>

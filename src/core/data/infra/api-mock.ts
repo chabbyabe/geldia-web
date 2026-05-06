@@ -3,6 +3,7 @@ import {
   ACCOUNT_URL,
   API_URL,
   CATEGORY_URL,
+  COMPANY_URL,
   LOGIN_URL,
   LOGS_TRANSACTION_URL,
   LOGOUT_URL,
@@ -44,6 +45,10 @@ const MOCK_URLS = {
     BASE: CATEGORY_URL,
     DETAIL: new RegExp(`^${escapeRegExpForApiRequest(CATEGORY_URL)}\\d+/$`),
     USER_CATEGORY: API_URL.CATEGORY.userCategory,
+  },
+  COMPANY: {
+    BASE: COMPANY_URL,
+    DETAIL: new RegExp(`^${escapeRegExpForApiRequest(COMPANY_URL)}\\d+/$`),
   },
   TAG: {
     BASE: TAG_URL,
@@ -95,6 +100,11 @@ export const mockAPIResponses = (
     mock.onPatch(MOCK_URLS.CATEGORY.DETAIL).reply(400, getGeneralErrorResponse(baseDataRes))
     mock.onDelete(MOCK_URLS.CATEGORY.DETAIL).reply(400, getGeneralErrorResponse(baseDataRes))
     mock.onGet(MOCK_URLS.CATEGORY.USER_CATEGORY).reply(400, getGeneralErrorResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.COMPANY.BASE).reply(400, getGeneralErrorResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.COMPANY.DETAIL).reply(400, getGeneralErrorResponse(baseDataRes))
+    mock.onPost(MOCK_URLS.COMPANY.BASE).reply(400, getGeneralErrorResponse(baseDataRes))
+    mock.onPatch(MOCK_URLS.COMPANY.DETAIL).reply(400, getGeneralErrorResponse(baseDataRes))
+    mock.onDelete(MOCK_URLS.COMPANY.DETAIL).reply(400, getGeneralErrorResponse(baseDataRes))
     mock.onGet(MOCK_URLS.TAG.BASE).reply(400, getGeneralErrorResponse(baseDataRes))
     mock.onGet(MOCK_URLS.TAG.DETAIL).reply(400, getGeneralErrorResponse(baseDataRes))
     mock.onPost(MOCK_URLS.TAG.BASE).reply(400, getGeneralErrorResponse(baseDataRes))
@@ -153,6 +163,15 @@ export const mockAPIResponses = (
     })
     mock.onDelete(MOCK_URLS.CATEGORY.DETAIL).reply(204)
     mock.onGet(MOCK_URLS.CATEGORY.USER_CATEGORY).reply(200, formatUserCategoryDetailIntoResponse())
+    mock.onGet(MOCK_URLS.COMPANY.BASE).reply(200, formatRetrieveCompaniesIntoResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.COMPANY.DETAIL).reply((config) => {
+      return [200, formatCompanyIntoResponse(baseDataRes, getIdFromUrl(config.url))]
+    })
+    mock.onPost(MOCK_URLS.COMPANY.BASE).reply(201, formatCompanyIntoResponse(baseDataRes))
+    mock.onPatch(MOCK_URLS.COMPANY.DETAIL).reply((config) => {
+      return [200, formatCompanyIntoResponse(baseDataRes, getIdFromUrl(config.url))]
+    })
+    mock.onDelete(MOCK_URLS.COMPANY.DETAIL).reply(204)
     // Tags
     mock.onGet(MOCK_URLS.TAG.BASE).reply(200, formatRetrieveTagsIntoResponse())
     mock.onGet(MOCK_URLS.TAG.DETAIL).reply((config) => {
@@ -744,6 +763,85 @@ const formatIncomeReportIntoResponse = (data: IReportFilterParams) => {
         ]
       }
     ] : []
+  }
+}
+
+const getMockCompanies = (data: any) => {
+  return data?.companies ?? [
+    {
+      id: 5,
+      created_by: {
+        id: 1,
+        name: "abe",
+        first_name: "abe first",
+        last_name: "abe last name",
+        username: "abe",
+        email: "abe@example.com"
+      },
+      updated_by: null,
+      is_current: false,
+      joined_at: null,
+      resigned_at: null,
+      updated_at: "2026-05-04 12:12 PM",
+      created_at: "2026-05-04 12:12 PM",
+      deleted_at: null,
+      name: "Abe",
+      deleted_by: null
+    },
+    {
+      id: 2,
+      created_by: {
+        id: 1,
+        name: "abe",
+        first_name: "abe first",
+        last_name: "abe last name",
+        username: "abe",
+        email: "abe@example.com"
+      },
+      updated_by: null,
+      is_current: false,
+      joined_at: null,
+      resigned_at: null,
+      updated_at: "2026-05-04 11:42 AM",
+      created_at: "2026-05-04 11:42 AM",
+      deleted_at: null,
+      name: "Sample",
+      deleted_by: null
+    }
+  ]
+}
+
+const formatRetrieveCompaniesIntoResponse = (data: any) => {
+  return getMockCompanies(data)
+}
+
+const formatCompanyIntoResponse = (data: any, id: number = 73) => {
+  const companies = getMockCompanies(data)
+  const existingCompany = companies.find((company: { id: number }) => company.id === id)
+
+  if (existingCompany) {
+    return existingCompany
+  }
+
+  return {
+    id,
+    created_by: {
+      id: 1,
+      name: "abe",
+      first_name: "abe first",
+      last_name: "abe last name",
+      username: "abe",
+      email: "abe@example.com"
+    },
+    updated_by: null,
+    is_current: data?.isCurrent ?? false,
+    joined_at: data?.joinedAt ?? null,
+    resigned_at: data?.resignedAt ?? null,
+    updated_at: "2026-05-04 12:12 PM",
+    created_at: "2026-05-04 12:12 PM",
+    deleted_at: null,
+    name: data?.name ?? "Sample",
+    deleted_by: null
   }
 }
 

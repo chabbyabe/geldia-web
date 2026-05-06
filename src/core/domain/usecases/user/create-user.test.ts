@@ -14,6 +14,7 @@ describe('Test create user use case', () => {
     'firstName': faker.person.firstName(),
     'lastName': faker.person.lastName(),
     'username': faker.internet.userName(),
+    'email': faker.internet.email(),
     'password1': "r@ndomPassW0rd123",
     'password2': "r@ndomPassW0rd123",
   }

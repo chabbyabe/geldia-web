@@ -21,7 +21,7 @@ export default class LoginUserUseCase {
   async execute(userData: IFormLogin) {
     try {
       const resp = await this.dataGateway.login(userData)
-      this.dataRepository.setUser({ 'user': resp })
+      this.dataRepository.setUser({ user: resp, initialized: true })
       return resp
     } catch (error) {
       if (error instanceof BadRequest) {

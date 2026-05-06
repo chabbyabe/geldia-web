@@ -2,7 +2,8 @@ import { PayloadAction, createSlice } from "@reduxjs/toolkit";
 import { IAuthState } from "@domain/entities/auth/auth.entity";
 
 const initialState: IAuthState = {
-  user: null
+  user: null,
+  initialized: false
 }
 
 export const authSlice = createSlice({
@@ -11,9 +12,14 @@ export const authSlice = createSlice({
   reducers: {
     setUser(state, action: PayloadAction<IAuthState>) {
       state.user = action.payload.user
-      },
+      state.initialized = true
+    },
     clearUser(state) {
       state.user = null
+      state.initialized = true
+    },
+    setInitialized(state, action: PayloadAction<boolean>) {
+      state.initialized = action.payload
     }
   },
 })
@@ -22,5 +28,6 @@ export const authSlice = createSlice({
 export const {
   setUser,
   clearUser,
+  setInitialized,
 } = authSlice.actions
 export default authSlice.reducer

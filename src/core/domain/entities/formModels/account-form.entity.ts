@@ -9,6 +9,7 @@ export interface IFormAccount {
   countInAssets: boolean
   isDefault: boolean
   isShared: boolean
+  isSavings: boolean
   notes: string | null
   user: IUser | null
   sharedUsers: IUser[] | null

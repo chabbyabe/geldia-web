@@ -20,7 +20,8 @@ import {
   Category as CategoryIcon,
   LocalOffer as LocalOfferIcon,
   Storefront as StorefrontIcon,
-  Place as PlaceIcon
+  Place as PlaceIcon,
+  ManageAccounts as ManageAccountsIcon,
 } from "@mui/icons-material";
 
 export interface ISidebarViewModel {
@@ -71,6 +72,12 @@ const primaryMenuList = (currentPage: string) : ISidebarItem[] => [
 ];
 
 const settingsMenuList = (currentPage: string): ISidebarItem[] => [
+  {
+    name: PAGES.SETTINGS.label,
+    isCurrentPage: currentPage === PAGES.SETTINGS.label,
+    icon: <ManageAccountsIcon />,
+    navigatePath: PAGES.SETTINGS.path,
+  },
   {
     name: PAGES.CATEGORIES.label,
     isCurrentPage: currentPage === PAGES.CATEGORIES.label,

@@ -13,6 +13,7 @@ import categoriesReducer from '@interface/presenters/store/reducers/categories.r
 import tagsReducer from '@interface/presenters/store/reducers/tags.reducer';
 import storesReducer from '@interface/presenters/store/reducers/stores.reducer';
 import placesReducer from '@interface/presenters/store/reducers/places.reducer';
+import companiesReducer from '@interface/presenters/store/reducers/companies.reducer';
 
 const reducer = combineReducers({
   authState: authReducer,
@@ -25,14 +26,28 @@ const reducer = combineReducers({
   categoryState: categoriesReducer,
   tagState: tagsReducer,
   storesState: storesReducer,
-  placesState: placesReducer
+  placesState: placesReducer,
+  companiesState: companiesReducer
 });
 
 const persistConfig = {
   key: 'root',
   version: 1,
   storage,
-  blacklist: [],
+  blacklist: [
+    'authState',
+    'userState',
+    'accountState',
+    'transactionState',
+    'dashboardState',
+    'reportState',
+    'logsState',
+    'categoryState',
+    'tagState',
+    'storesState',
+    'placesState',
+    'companiesState',
+  ],
 }
 const persistedReducer = persistReducer(persistConfig, reducer)
 

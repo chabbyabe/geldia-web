@@ -87,6 +87,7 @@ const formInitialValues = (
     countInAssets: selectedAccount?.countInAssets ?? false,
     isDefault: selectedAccount?.isDefault ?? false,
     isShared: selectedAccount?.isShared ?? false,
+    isSavings: selectedAccount?.isSavings ?? false,
     notes: selectedAccount?.notes ?? "",
     user: selectedAccount?.user ?? null,
     sharedUsers: selectedAccount?.sharedUsers ?? [],
@@ -116,7 +117,6 @@ const AccountModalView: React.FC<IAccountModalView> = (props) => {
     validationSchema,
     onSubmit: async (values, { resetForm, setErrors }) => {
       const action = isCreate ? 'create' : 'edit';
-
       try {
         await props.handleSubmit(values);
 
@@ -277,6 +277,16 @@ const AccountModalView: React.FC<IAccountModalView> = (props) => {
                       />
                     }
                     label="Default Account"
+                  />
+                  <FormControlLabel
+                    control={
+                      <Switch
+                        name="isSavings"
+                        checked={formik.values.isSavings}
+                        onChange={formik.handleChange}
+                      />
+                    }
+                    label="Savings Account"
                   />
 
                   <FormControlLabel

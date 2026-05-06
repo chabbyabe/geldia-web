@@ -11,6 +11,7 @@ export const createMockAccount = (overrides = {}) => {
     countInAssets: faker.datatype.boolean(),
     isDefault: faker.datatype.boolean(),
     isShared: faker.datatype.boolean(),
+    isSavings: faker.datatype.boolean(),
     notes: faker.lorem.sentence(),
     user: null,
     sharedUsers: [],

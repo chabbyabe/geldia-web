@@ -1,11 +1,7 @@
 import React from "react";
 import { alpha, Box, Grid, Paper, Stack } from "@mui/material";
 import {
-  ACCOUNT_ICONS,
-  CATEGORY_ICONS,
   COLOR_OPTIONS,
-  ICON_TYPE,
-  IconType,
 } from "@interface/presenters/constants";
 import { CheckCircle } from "@mui/icons-material";
 

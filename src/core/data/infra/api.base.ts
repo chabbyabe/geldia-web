@@ -3,6 +3,7 @@ import { type ApiConfig, API_CONFIG } from '@data/infra/api.config'
 import { getGeneralApiProblem } from '@data/infra/api.problem'
 import { API_WITH_CREDENTIALS } from '@base/config'
 import { objectToSnake } from "ts-case-convert";
+import { tokenStorage } from '@data/infra/token-storage';
 
 interface IApi {
   apiSauce: ApisauceInstance
@@ -29,7 +30,7 @@ export class Api implements IApi {
       withCredentials: API_WITH_CREDENTIALS
     })
     const addAuthHeader: RequestTransform = (request) => {
-      const token = sessionStorage.getItem('accessToken');
+      const token = tokenStorage.getAccessToken();
       if (token) {
         request.headers = {
           ...request.headers,

@@ -1,7 +1,7 @@
 import { PAGES } from '@interface/presenters/constants';
 import { BaseLayoutContainer } from '@interface/ui/components/common/layouts/base-layout/base-layout.container';
-import { Container, Grid, Button, Card, Typography, Box, Chip, Stack, Pagination } from '@mui/material';
-import { AccountBalance, Add as AddIcon, CheckBoxOutlined as CheckBoxIcon } from '@mui/icons-material';
+import { Container, Grid, Button, Card, Typography, Box, Chip, Stack, Pagination, Divider } from '@mui/material';
+import { AccountBalance, Add as AddIcon, CheckBoxOutlined as CheckBoxIcon, Savings } from '@mui/icons-material';
 import React, { useMemo, useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import AvatarGroup from '@mui/material/AvatarGroup';
@@ -153,7 +153,7 @@ const AccountsView: React.FC<IAccountsViewModel> = (props) => {
                           <Typography variant="h4" component="div" sx={{ fontWeight: "bold" }}>
                             {formatCurrency(account.balance)}
                           </Typography>
-                          {!account.isDefault && (
+                          {!account.isDefault && account.user?.id === props.currentUser?.id && (
                             <Box onClick={(event) => event.stopPropagation()}>
                               <ActionMenuContainer key={`action-menu-${account.id}`}
                                 handleDeleteModal={setOpenDeleteModal}
@@ -174,9 +174,12 @@ const AccountsView: React.FC<IAccountsViewModel> = (props) => {
                         )}
                       </Box>
 
-                      <Stack flexBasis="row" gap={1} flexWrap="wrap">
+                      <Stack direction="row" gap={1} alignItems="center" flexWrap="wrap">
                         {account.countInAssets && (
                           <Chip icon={<AccountBalance />} label="Count in Assets" size="small" />
+                        )}
+                         {account.isSavings && (
+                          <Chip icon={<Savings />} label="Savings" color="primary" size="small" />
                         )}
                         {account.isShared && (
                           <AvatarGroup max={4}>
@@ -184,8 +187,9 @@ const AccountsView: React.FC<IAccountsViewModel> = (props) => {
                               <Avatar key={`avatar-${user.id}-${account.id}`} alt={`${user.firstName} ${user.lastName}`} src="/static/images/avatar/1.jpg" />
                             ))}
                           </AvatarGroup>
-                        )}
+                        )} 
                       </Stack>
+                      <Divider sx={{ my: 1 }} />
 
                       <Stack spacing={1.5}>
                         <Box>

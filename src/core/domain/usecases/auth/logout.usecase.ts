@@ -14,11 +14,9 @@ export default class LogoutUserUseCase {
   }
   async execute() {
       try {
-          const resp = await this.dataGateway.logout()
+          return await this.dataGateway.logout()
+      } finally {
           this.dataRepository.clearUser()
-          return resp
-      } catch (error) {
-          throw error
       }
   }
-}
+} 

@@ -13,14 +13,20 @@ export interface INavbarContainerViewModel {
 
 export const NavbarContainer: React.FC<INavbarContainerViewModel> = (props) => {
   const controller = new NavbarController()
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   
-  const user = useAppSelector(state => state.authState.user ?? undefined);
+  const user = useAppSelector(state => state.authState.user ?? undefined)
+
   const handleLogout = async () => {
-    controller.logout()
-    toast.success('Successfully Logout!')
-    navigate(PAGES.LOGIN.path);
-  };
+    try {
+      await controller.logout()
+      toast.success('Successfully logged out!')
+    } catch (error) {
+      toast.error('Logged out locally, but we could not complete the server logout request.')
+    } finally {
+      navigate(PAGES.LOGIN.path)
+    }
+  }
 
   return <NavbarView
     onToggleSidebar={props.onToggleSidebar}

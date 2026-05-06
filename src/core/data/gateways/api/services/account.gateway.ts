@@ -20,6 +20,7 @@ export default class AccountApiGateway extends Api {
       countInAssets: accountDetail.countInAssets,
       isDefault: accountDetail.isDefault,
       isShared: accountDetail.isShared,
+      isSavings: accountDetail.isSavings,
       notes: accountDetail.notes,
       sharedUserIds: accountDetail.isShared ? (accountDetail.sharedUserIds ?? []) : [],
       categoryIds: accountDetail.categoryIds ?? []

@@ -13,6 +13,7 @@ import {
   AccountBox as AccountBoxIcon,
   TrendingUp as TrendingUpIcon,
   TrendingDown as TrendingDownIcon,
+  ManageAccounts as ManageAccountsIcon,
 } from '@mui/icons-material';
 import { getGridStringOperators, getGridNumericOperators } from '@mui/x-data-grid';
 import React from 'react';
@@ -66,6 +67,10 @@ export const PAGES = {
     label: 'Logs',
     path: '/logs',
   },
+  SETTINGS: {
+    label: 'Personal Settings',
+    path: '/settings',
+  },
 }
 
 export const COLOR_OPTIONS : string[] = [
@@ -104,6 +109,7 @@ export const CATEGORY_ICONS: Record<string,  React.ElementType> = {
 export const ICON_MAP: Record<string,  React.ElementType> = {
   ...CATEGORY_ICONS,
   "Logs": HistoryIcon,
+  "Personal Settings": ManageAccountsIcon,
   "Categories": CategoryIcon,
   "Tags": LocalOfferIcon,
   "Stores": StorefrontIcon,

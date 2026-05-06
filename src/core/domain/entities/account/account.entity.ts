@@ -17,6 +17,7 @@ export default class AccountEntity {
   countInAssets: boolean
   isDefault: boolean
   isShared: boolean
+  isSavings: boolean
   notes: string | null
   user: IUser | null
   sharedUsers: IUser[]
@@ -35,6 +36,7 @@ export default class AccountEntity {
     this.countInAssets = model.countInAssets ?? false;
     this.isDefault = model.isDefault;
     this.isShared = model.isShared;
+    this.isSavings = model.isSavings;
     this.notes = model.notes ?? null;
     this.user = model.user ?? null;
     this.sharedUsers = model.sharedUsers ?? [];

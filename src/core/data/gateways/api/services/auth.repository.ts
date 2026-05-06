@@ -1,5 +1,5 @@
 import { IAuthState } from "@domain/entities/auth/auth.entity"
-import { clearUser, setUser } from "@interface/presenters/store/reducers/auth.reducer"
+import { clearUser, setInitialized, setUser } from "@interface/presenters/store/reducers/auth.reducer"
 import { store } from "@interface/presenters/store/store"
 
 export default class AuthRepository {
@@ -8,5 +8,8 @@ export default class AuthRepository {
   }
   clearUser() {
     store.dispatch(clearUser())
+  }
+  setInitialized(isInitialized: boolean) {
+    store.dispatch(setInitialized(isInitialized))
   }
 }

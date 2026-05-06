@@ -4,6 +4,10 @@
 export const LOGIN_URL = `/users/auth/login/`
 export const LOGOUT_URL = `/users/auth/logout/`
 export const REGISTER_URL = `/users/auth/register`
+export const CURRENT_USER_URL = `/users/auth/user/`
+export const CHANGE_PASSWORD_URL = `/users/auth/password/change/`
+export const REQUEST_EMAIL_VERIFICATION_URL = `/users/auth/register/verify/`
+export const CONFIRM_EMAIL_VERIFICATION_URL = `/users/auth/register/verify/confirm/`
 
 /**
  *  URLS
@@ -19,6 +23,7 @@ export const DASHBOARD_URL = `/ledger/dashboard/`
 export const REPORT_URL = `/ledger/reports/`
 export const LOGS_TRANSACTION_URL = `/ledger/logs/transactions/`
 export const USER_SETTINGS_URL = `/users/settings/`
+export const COMPANY_URL = `${USER_SETTINGS_URL}companies/`
 
 export const API_URL = {
   DASHBOARD : {

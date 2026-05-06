@@ -51,4 +51,11 @@ describe('Test logout user use case', () => {
     const user = store.getState().authState.user
     expect(user).toBe(null)
   })
+
+  test('Clears local user even when the logout request fails', async () => {
+    mockAPIResponses(gateway.apiSauce.axiosInstance, true, { errorMessage: 'failed' })
+
+    await expect(useCase.execute()).rejects.toThrow()
+    expect(store.getState().authState.user).toBe(null)
+  })
 })

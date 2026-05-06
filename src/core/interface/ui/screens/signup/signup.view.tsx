@@ -7,6 +7,7 @@ import { FormRequestError } from '@domain/entities/formModels/errors.entity';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { PAGES } from '@interface/presenters/constants';
+import * as Yup from "yup";
 
 
 export interface ISignupViewModel {
@@ -14,33 +15,54 @@ export interface ISignupViewModel {
    handleSubmit: (values: IFormSignUp) => void
 }
 
+const validationSchema = Yup.object({
+   email: Yup.string()
+      .transform((value) => (value === '' ? undefined : value))
+      .email('Enter a valid email address')
+      .notRequired(),
+   password1: Yup.string()
+      .transform((value) => (value === '' ? undefined : value))
+      .min(8, 'Password should be of minimum 8 characters length')
+      .required('Password is required'),
+   password2: Yup.string()
+      .transform((value) => (value === '' ? undefined : value))
+      .min(8, 'Password should be of minimum 8 characters length')
+      .required('Password is required')
+      .oneOf([Yup.ref('password1'), ''], 'Passwords must match'),
+});
+
 const SignupView: React.FC<ISignupViewModel> = (props) => {
    const navigate = useNavigate();
 
-   const formik = useFormik({
-      initialValues: {
-         firstName: '',
-         lastName: '',
-         username: '',
-         password1: '',
-         password2: ''
-      },
-      onSubmit: async (values) => {
-         try {
-            await props.handleSubmit(values)
-            toast.success('Successfully Registered!')
-            navigate(PAGES.LOGIN.path);
-            
-         } catch (error) {
-            if (error instanceof FormRequestError) {
-               formik.setErrors(error.data);
-            } else {
-               throw Error("Uncaught exception while creating user")
+   const formik = useFormik(
+      {
+         validationSchema,
+         initialValues: {
+            firstName: '',
+            lastName: '',
+            username: '',
+            email: '',
+            password1: '',
+            password2: ''
+         },
+         onSubmit: async (values) => {
+            try {
+               await props.handleSubmit(values)
+               toast.success('You’re all set! Please check your email to verify your account and log in.')
+               navigate(PAGES.LOGIN.path);
+
+            } catch (error) {
+               if (error instanceof FormRequestError) {
+                  formik.setErrors(error.data);
+                  if ('nonFieldErrors' in error.data) {
+                     toast.error(error.data.nonFieldErrors[0])
+                  }
+               } else {
+                  throw Error("Uncaught exception while logging in user")
+               }
             }
-            toast.success(error.data);
-         }
-      },
-   });
+         },
+      });
 
    return (
       <ThemeProvider theme={defaultTheme}>
@@ -121,6 +143,22 @@ const SignupView: React.FC<ISignupViewModel> = (props) => {
                            onBlur={formik.handleBlur}
                            error={formik.touched.username && Boolean(formik.errors.username)}
                            helperText={formik.touched.username && formik.errors.username}
+                        />
+                     </Grid>
+                     <Grid size={12}>
+                        <TextField
+                           fullWidth
+                           required
+                           id="email"
+                           label="Email Address"
+                           name="email"
+                           type="email"
+                           autoComplete="email"
+                           value={formik.values.email}
+                           onChange={formik.handleChange}
+                           onBlur={formik.handleBlur}
+                           error={formik.touched.email && Boolean(formik.errors.email)}
+                           helperText={formik.touched.email && formik.errors.email}
                         />
                      </Grid>
                      <Grid size={12}>

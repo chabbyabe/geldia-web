@@ -48,7 +48,7 @@ const donutOption = (props: ICategoryOverviewView): EChartsOption => ({
           value: item.amount,
           name: item.name,
           amount: item.amount,
-          itemStyle: item.color ? { color: item.color } : undefined,
+          itemStyle: item.color ? { color: item.color} : undefined,
         })),
       label: {
         formatter: (params: any) => {

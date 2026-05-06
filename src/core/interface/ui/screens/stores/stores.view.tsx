@@ -74,7 +74,8 @@ const StoresView: React.FC<IStoresViewModel> = (props) => {
       renderCell: (params: GridRenderCellParams<IStore>) => {
         const isOwner = params.row.createdBy?.id === props.currentUser?.id
         return (
-          <Chip label={params.row.createdBy?.username ?? "System Generated"}
+          params.row.createdBy &&
+          <Chip label={params.row.createdBy?.username}
             size="small"
             color={isOwner ? "primary" : "default"}></Chip>
 
@@ -98,7 +99,7 @@ const StoresView: React.FC<IStoresViewModel> = (props) => {
       renderCell: (params: GridRenderCellParams<IStore>) => {
         const isOwner = params.row.updatedBy?.id === props.currentUser?.id
         return isOwner && (
-          <Chip label={params.row.updatedBy?.username ?? "System Generated"}
+          <Chip label={params.row.updatedBy?.username}
             size="small"
             color={isOwner ? "primary" : "default"}></Chip>
 

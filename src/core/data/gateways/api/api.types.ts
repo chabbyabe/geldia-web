@@ -33,11 +33,28 @@ export interface IErrorResponseModel {
   data?: any
 }
 
+export interface IMessageResponseModel {
+  detail: string
+}
+
+export interface ICompanyModel extends IBaseAPIModel, ITimestampsModel {
+  name: string
+  is_current: boolean | false
+  joined_at: string | null
+  resigned_at: string | null
+  created_by: IUserModel | null
+  updated_by: IUserModel | null
+  deleted_by: IUserModel | null
+}
+
 export interface IUserModel extends IBaseAPIModel {
   name: string
   username: string
+  email: string
+  email_verified?: boolean
   first_name: string
   last_name: string
+  company?: ICompanyModel | null
 }
 
 export interface IUserWithAccessTokenModel extends IBaseAPIModel {
@@ -58,6 +75,7 @@ export interface IAccountModel extends IBaseAPIModel, ITimestampsModel {
   count_in_assets: boolean,
   is_default: boolean,
   is_shared: boolean,
+  is_savings: boolean,
   notes: string,
   user: IUserModel,
   shared_users: IUserModel[],
@@ -82,7 +100,7 @@ export interface IStoreSimpleModel extends IBaseAPIModel {
   name: string
 }
 
-export interface IPlaceSimpleModel extends IBaseAPIModel{
+export interface IPlaceSimpleModel extends IBaseAPIModel {
   name: string
 }
 
@@ -100,7 +118,7 @@ export interface IPlaceModel extends IBaseAPIModel, ITimestampsModel {
   name: string
 }
 
-export interface ITagSimpleModel extends IBaseAPIModel{
+export interface ITagSimpleModel extends IBaseAPIModel {
   name: string
   color: string
 }
@@ -113,7 +131,7 @@ export interface ITagModel extends IBaseAPIModel, ITimestampsModel {
   color: string | null
 }
 
-export interface ICategorySimpleModel extends IBaseAPIModel, ITransactionTypeModel{
+export interface ICategorySimpleModel extends IBaseAPIModel, ITransactionTypeModel {
   transaction_type: ITransactionTypeModel | null
   parent_category: ICategorySimpleModel | null
 }
@@ -142,12 +160,12 @@ export interface ICategoryListItemModel extends IBaseAPIModel {
 
 export interface ITransactionModel extends IBaseAPIModel, ITimestampsModel {
   name: string
-  user: IUserModel 
+  user: IUserModel
   store: IStoreSimpleModel
   place: IPlaceSimpleModel
   account: IAccountSimpleModel
   tags: ITagSimpleModel[]
-  transaction_type: ITransactionTypeModel 
+  transaction_type: ITransactionTypeModel
   amount: number
   notes: string
   net_amount: number
@@ -155,7 +173,7 @@ export interface ITransactionModel extends IBaseAPIModel, ITimestampsModel {
   debit_month_year: string
   external_transaction_id: number
   pair_transaction: IAccountSimpleModel
-  is_recurring: boolean 
+  is_recurring: boolean
   is_refunded: boolean
   refunded_at: string
   transaction_at: string
@@ -200,7 +218,7 @@ export interface IYearOverviewModel {
   year: string
 }
 
-export interface ICompanyModel {
+export interface IIncomeReportCompanyModel {
   name: string
   gross_amount: number
   net_amount: number
@@ -208,10 +226,10 @@ export interface ICompanyModel {
 
 export interface IIncomeReportDataModel {
   month: number
-  month_label : string
+  month_label: string
   gross_amount: number
   net_amount: number
-  companies : ICompanyModel[] 
+  companies: IIncomeReportCompanyModel[]
 }
 
 export interface IIncomeReportModel {
