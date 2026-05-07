@@ -34,22 +34,13 @@ const ChildCategoryCard: React.FC<{
   return (
     <Paper variant="outlined" sx={{ p: 1.25, borderRadius: 2, minWidth: 220 }}>
       <Stack direction="row" justifyContent="space-between" spacing={1}>
-        <Stack spacing={0.75}>
-          <Stack direction="row" spacing={1} alignItems="center">
+          <Stack direction="row" flex={1} justifyItems="space-between" spacing={1} alignItems="center">
             {renderCategoryIcon(child.icon, child.color)}
             <Typography variant="body2" fontWeight={600}>{child.name}</Typography>
+            <Stack direction="row" sx={{ flexGrow: 1 }} justifyContent="flex-end" alignItems="center">
+              <Typography variant="body2" color="text.secondary">{truncateText(child.notes ?? '', 30)}</Typography>
+            </Stack>
           </Stack>
-          <Stack direction="row" spacing={1} flexWrap="wrap">
-            {child.transactionType && (
-              <Chip
-                label={child.transactionType.name}
-                size="small"
-                sx={getTransactionTypeChipSx(child.transactionType.color)}
-              />
-            )}
-            <Typography variant="body2" color="text.secondary">{truncateText(child.notes ?? '', 15)}</Typography>
-          </Stack>
-        </Stack>
         <Stack direction="row" spacing={0.5}>
           <Tooltip title="Edit child category">
             <IconButton size="small" onClick={() => void onEdit(child.id)}>
