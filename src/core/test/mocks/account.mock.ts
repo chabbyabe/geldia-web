@@ -20,6 +20,7 @@ export const createMockAccount = (overrides = {}) => {
     createdAt: faker.date.past().toISOString(),
     updatedAt: faker.date.recent().toISOString(),
     deletedAt: null,
+    transactions: [],
     ...overrides,
   });
 };

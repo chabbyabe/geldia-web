@@ -2,7 +2,7 @@ import { PAGES } from '@interface/presenters/constants';
 import { BaseLayoutContainer } from '@interface/ui/components/common/layouts/base-layout/base-layout.container';
 import { Container, Grid, Button, Card, Typography, Box, Chip, Stack, Pagination, Divider } from '@mui/material';
 import { AccountBalance, Add as AddIcon, CheckBoxOutlined as CheckBoxIcon, Savings } from '@mui/icons-material';
-import React, { useMemo, useState } from 'react';
+import React, { useState } from 'react';
 import Avatar from '@mui/material/Avatar';
 import AvatarGroup from '@mui/material/AvatarGroup';
 import { IFormAccount } from '@domain/entities/formModels/account-form.entity';
@@ -13,7 +13,7 @@ import { ActionMenuContainer } from '@interface/ui/components/common/action-menu
 import { AccountModalContainer } from '@interface/ui/components/modals/account-modal/account-modal.container';
 import DeleteConfirmationModal from '@interface/ui/components/modals/delete-confirmation-modal/delete-confirmation-modal.container';
 import { ICategory } from '@domain/entities/category/category.entity';
-import { ICategorySimple, ITransaction, ITransactionType } from '@domain/entities/transaction/transaction.entity';
+import { ICategorySimple, ITransactionType } from '@domain/entities/transaction/transaction.entity';
 import { IFormCategory } from '@domain/entities/formModels/category-form.entity';
 import { useNavigate } from 'react-router-dom';
 import { formatCurrency, getColoredChipSx, renderAccountIcon } from '@interface/presenters/helpers';
@@ -31,7 +31,6 @@ export interface IAccountsViewModel {
   handlePagination: (initializeList: boolean, page: number) => Promise<void>
   handleActionMenu: (actionId: number) => void
   currentUser: IUser | null
-  recentTransactions: ITransaction[]
   categoryOptions: ICategorySimple[]
   categories: ICategory[]
   selectedCategory: ICategory | null
@@ -46,25 +45,6 @@ const AccountsView: React.FC<IAccountsViewModel> = (props) => {
   const [openAccountModal, setOpenAccountModal] = useState(false);
   const [openDeleteModal, setOpenDeleteModal] = useState(false)
   const navigate = useNavigate();
-  const recentTransactionsByAccount = useMemo(() => {
-    const map = new Map<number, ITransaction[]>()
-
-    props.recentTransactions.forEach((transaction) => {
-      const accountId = transaction.account?.id
-
-      if (!accountId) {
-        return
-      }
-
-      const existingTransactions = map.get(accountId) ?? []
-
-      if (existingTransactions.length < 2) {
-        map.set(accountId, [...existingTransactions, transaction])
-      }
-    })
-
-    return map
-  }, [props.recentTransactions])
 
   const handleClickOpen = () => {
     setOpenAccountModal(true);
@@ -105,10 +85,9 @@ const AccountsView: React.FC<IAccountsViewModel> = (props) => {
 
         <Grid container sx={{ mt: 5 }} rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }}>
           {props?.accounts.length > 0 ? (props.accounts.map((account) => {
-            const recentTransactions = recentTransactionsByAccount.get(account.id) ?? []
             const accountCategories = (account.categories ?? []).slice(0, 5)
             const hiddenCategoryCount = Math.max((account.categories ?? []).length - accountCategories.length, 0)
-
+            const recentTransactions = account.transactions ?? [];
             return (
             <Grid container gap={2} rowSpacing={2} columnSpacing={{ xs: 1, sm: 2, md: 3 }} key={`${account.id}`}>
               <Card

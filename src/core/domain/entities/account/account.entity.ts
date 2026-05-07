@@ -2,9 +2,10 @@ import { IBaseAPIModel } from "@data/gateways/api/api.types";
 import { IFormAccount } from "@domain/entities/formModels/account-form.entity"
 import { IBaseDataModelEntity } from "@domain/entities/base/base.entity";
 import { IUser } from "@domain/entities/user/user.entity";
-import { ICategorySimple } from "@domain/entities/transaction/transaction.entity";
+import { ICategorySimple, ITransaction } from "@domain/entities/transaction/transaction.entity";
 
 export interface IAccount extends IFormAccount,IBaseAPIModel, IBaseDataModelEntity {
+  transactions: ITransaction[]
   hasTransactions: boolean
 }
 
@@ -26,6 +27,7 @@ export default class AccountEntity {
   updatedAt: string | null
   deletedAt: string | null
   categories: ICategorySimple[]
+  transactions: ITransaction[] | []
 
   constructor(model: IAccount) {
     this.id = model.id;
@@ -45,6 +47,7 @@ export default class AccountEntity {
     this.createdAt = model.createdAt ?? "2022-01-01T00:00:00.000Z";
     this.updatedAt = model.updatedAt ?? null;
     this.deletedAt = model.deletedAt ?? null;
+    this.transactions = model.transactions ?? [];
   }
 
   getCurrentValuesAsJSON(): IAccount {

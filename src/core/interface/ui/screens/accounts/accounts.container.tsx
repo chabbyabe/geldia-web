@@ -31,7 +31,6 @@ export const AccountsContainer: React.FC<IAccountsContainerViewModel> = (props) 
   const transactionTypes = useAppSelector(state => state.transactionState.options.transactionTypes);
   const categories = useAppSelector(state => state.categoryState.userCategories);
   const selectedCategory = useAppSelector(state => state.categoryState.currentCategory);
-  const recentTransactions = useAppSelector(state => state.dashboardState.recentTransactions);
 
   const categoryOptions: ICategorySimple[] = useMemo(
     () => (categories?? []).flatMap((category) => {
@@ -113,7 +112,6 @@ export const AccountsContainer: React.FC<IAccountsContainerViewModel> = (props) 
     selectedAccount={selectedAccount}
     handleActionMenu={controller.setCurrentAccount.bind(controller)}
     currentUser={currentUser}
-    recentTransactions={recentTransactions}
     categoryOptions={categoryOptions}
     categories={categories}
     selectedCategory={selectedCategory}
