@@ -98,16 +98,16 @@ const YearOverviewView: React.FC<IYearOverviewView> = (props) => {
   const series = useMemo<BarSeriesOption[]>(
     () => [
       {
-        name: `${incomeName} (Net)`,
-        type: "bar",
-        data: incomeNetData,
-        itemStyle: { color: theme.palette.primary.main },
-      },
-      {
         name: `${incomeName} (Gross)`,
         type: "bar",
         data: incomeGrossData,
         itemStyle: { color: theme.palette.success.main },
+      },
+      {
+        name: `${incomeName} (Net)`,
+        type: "bar",
+        data: incomeNetData,
+        itemStyle: { color: theme.palette.primary.main },
       },
       {
         name: expensesName,
