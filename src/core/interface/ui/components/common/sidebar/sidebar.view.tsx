@@ -2,6 +2,7 @@ import React from 'react';
 import Toolbar from '@mui/material/Toolbar';
 import List from '@mui/material/List';
 import Divider from '@mui/material/Divider';
+import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import { styled } from '@mui/material/styles';
@@ -22,6 +23,8 @@ import {
   Storefront as StorefrontIcon,
   Place as PlaceIcon,
   ManageAccounts as ManageAccountsIcon,
+  ExpandLess as ExpandLessIcon,
+  ExpandMore as ExpandMoreIcon,
 } from "@mui/icons-material";
 
 export interface ISidebarViewModel {
@@ -63,13 +66,22 @@ const primaryMenuList = (currentPage: string) : ISidebarItem[] => [
     icon: <AssessmentIcon />,
     navigatePath: PAGES.REPORTS.path,
   },
-  {
-    name: PAGES.LOGS.label,
-    isCurrentPage: currentPage === PAGES.LOGS.label,
-    icon: <HistoryIcon />,
-    navigatePath: PAGES.LOGS.path,
-  },
 ];
+
+const logsMenuList = (currentPage: string): ISidebarItem[] => [
+  {
+    name: PAGES.LOGS_TRANSACTIONS.label,
+    isCurrentPage: currentPage === PAGES.LOGS_TRANSACTIONS.label,
+    icon: <ReceiptLongIcon fontSize="small" />,
+    navigatePath: PAGES.LOGS_TRANSACTIONS.path,
+  },
+  {
+    name: PAGES.LOGS_ACCOUNTS.label,
+    isCurrentPage: currentPage === PAGES.LOGS_ACCOUNTS.label,
+    icon: <AccountBalanceWalletIcon fontSize="small" />,
+    navigatePath: PAGES.LOGS_ACCOUNTS.path,
+  },
+]
 
 const settingsMenuList = (currentPage: string): ISidebarItem[] => [
   {
@@ -133,7 +145,16 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 export const SidebarView: React.FC<ISidebarViewModel> = (props) => {
+  const isLogsCurrentPage =
+    props.currentPage === PAGES.LOGS_TRANSACTIONS.label ||
+    props.currentPage === PAGES.LOGS_ACCOUNTS.label
+  const [logsOpen, setLogsOpen] = React.useState(isLogsCurrentPage)
 
+  React.useEffect(() => {
+    if (isLogsCurrentPage) {
+      setLogsOpen(true)
+    }
+  }, [isLogsCurrentPage])
 
   return (
     <Drawer variant="permanent" open={props.sidebarOpen}>
@@ -168,6 +189,31 @@ export const SidebarView: React.FC<ISidebarViewModel> = (props) => {
             </ListItemButton>
           </React.Fragment>
         ))}
+        <React.Fragment key={PAGES.LOGS.label}>
+          <ListItemButton
+            selected={isLogsCurrentPage}
+            onClick={() => setLogsOpen((previousValue) => !previousValue)}
+          >
+            <ListItemIcon><HistoryIcon /></ListItemIcon>
+            <ListItemText primary={PAGES.LOGS.label} />
+            {logsOpen ? <ExpandLessIcon /> : <ExpandMoreIcon />}
+          </ListItemButton>
+          <Collapse in={logsOpen} timeout="auto" unmountOnExit={false}>
+            <List component="div" disablePadding>
+              {logsMenuList(props.currentPage).map((element: ISidebarItem) => (
+                <ListItemButton
+                  key={element.name}
+                  sx={{ pl: 4 }}
+                  selected={element.isCurrentPage}
+                  onClick={() => props.navigateTo(element.navigatePath)}
+                >
+                  <ListItemIcon>{element.icon}</ListItemIcon>
+                  <ListItemText primary={element.name.replace("Logs: ", "")} />
+                </ListItemButton>
+              ))}
+            </List>
+          </Collapse>
+        </React.Fragment>
         <Divider sx={{ my: 1 }} />
         <ListSubheader inset>Settings</ListSubheader>
         {settingsMenuList(props.currentPage).map((element: ISidebarItem) => (

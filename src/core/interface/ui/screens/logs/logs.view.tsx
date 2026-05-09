@@ -14,7 +14,10 @@ interface ILogsViewModel {
 
 const LogsView: React.FC<ILogsViewModel> = (props) => {
   return (
-    <BaseLayoutContainer currentPage={PAGES.LOGS.label}>
+    <BaseLayoutContainer
+      currentPage={PAGES.LOGS_TRANSACTIONS.label}
+      sidebarCurrentPage={PAGES.LOGS_TRANSACTIONS.label}
+    >
       <LogsTransactionContainer
         logs={props.logs}
         pagination={props.pagination}

@@ -15,6 +15,7 @@ import { AccountTransactionsContainer } from '@screens/account-transactions/acco
 import { TransactionsContainer } from '@screens/transactions/transactions.container'
 import { ReportsContainer } from '@screens/reports/reports.container'
 import { LogsContainer } from '@screens/logs/logs.container'
+import { LogsAccountsContainer } from '@screens/logs-accounts/logs-accounts.container'
 import { LandingContainer } from '@screens/landing/landing.container'
 import { CategoriesContainer } from '@screens/categories/categories.container'
 import { TagsContainer } from '@screens/tags/tags.container'
@@ -53,7 +54,9 @@ export const Navigator = () => {
         <Route path={PAGES.ACCOUNT_TRANSACTIONS.path} element={<AlreadyLoggedInRoute element={<AccountTransactionsContainer />} />} />
         <Route path={PAGES.ACCOUNTS.path} element={<AlreadyLoggedInRoute element={<AccountsContainer />} />} />
         <Route path={PAGES.REPORTS.path} element={<AlreadyLoggedInRoute element={<ReportsContainer />} />} />
-        <Route path={PAGES.LOGS.path} element={<AlreadyLoggedInRoute element={<LogsContainer />} />} />
+        <Route path={PAGES.LOGS.path} element={<Navigate to={PAGES.LOGS_TRANSACTIONS.path} replace />} />
+        <Route path={PAGES.LOGS_TRANSACTIONS.path} element={<AlreadyLoggedInRoute element={<LogsContainer />} />} />
+        <Route path={PAGES.LOGS_ACCOUNTS.path} element={<AlreadyLoggedInRoute element={<LogsAccountsContainer />} />} />
         <Route path={PAGES.CATEGORIES.path} element={<AlreadyLoggedInRoute element={<CategoriesContainer />} />} />
         <Route path={PAGES.TAGS.path} element={<AlreadyLoggedInRoute element={<TagsContainer />} />} />
         <Route path={PAGES.STORES.path} element={<AlreadyLoggedInRoute element={<StoresContainer />} />} />

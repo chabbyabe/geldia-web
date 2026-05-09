@@ -344,7 +344,7 @@ const LogsTransactionView: React.FC<ILogsTransactionViewModel> = (props) => {
         pagination={props.pagination}
         tableColumns={tableColumns()}
         handlePagination={props.handlePagination}
-        buttonName={PAGES.LOGS.label}
+        buttonName={PAGES.LOGS_TRANSACTIONS.label}
         handleFormModal={() => undefined}
         hideAddButton={true}
         disableColumnSelector={true}
