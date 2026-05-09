@@ -5,6 +5,7 @@ import {
   CATEGORY_URL,
   COMPANY_URL,
   LOGIN_URL,
+  LOGS_ACCOUNT_URL,
   LOGS_TRANSACTION_URL,
   LOGOUT_URL,
   PLACE_URL,
@@ -69,6 +70,7 @@ const MOCK_URLS = {
   },
   LOGS: {
     BASE: LOGS_TRANSACTION_URL,
+    ACCOUNT: LOGS_ACCOUNT_URL,
   },
 }
 
@@ -128,6 +130,7 @@ export const mockAPIResponses = (
     mock.onPatch(MOCK_URLS.TRANSACTION.DETAIL).reply(400, getGeneralErrorResponse(baseDataRes))
     mock.onDelete(MOCK_URLS.TRANSACTION.DETAIL).reply(400, getGeneralErrorResponse(baseDataRes))
     mock.onGet(MOCK_URLS.LOGS.BASE).reply(400, getGeneralErrorResponse(baseDataRes))
+    mock.onGet(MOCK_URLS.LOGS.ACCOUNT).reply(400, getGeneralErrorResponse(baseDataRes))
   } else {
     // User Registration
     mock.onPost(MOCK_URLS.REGISTER).reply(201, formatUserCreateIntoResponse(baseDataRes))
@@ -214,6 +217,7 @@ export const mockAPIResponses = (
     })
     mock.onDelete(MOCK_URLS.TRANSACTION.DETAIL).reply(204)
     mock.onGet(MOCK_URLS.LOGS.BASE).reply(200, formatRetrieveLogsIntoResponse())
+    mock.onGet(MOCK_URLS.LOGS.ACCOUNT).reply(200, formatRetrieveAccountLogsIntoResponse())
   }
 }
 
@@ -386,6 +390,86 @@ const formatRetrieveLogsIntoResponse = () => {
         new_data: null,
         notes: null,
         created_at: "2026-03-27 01:18 PM"
+      }
+    ]
+  }
+}
+
+const formatRetrieveAccountLogsIntoResponse = () => {
+  return {
+    count: 1,
+    total_pages: 1,
+    current_page_number: 1,
+    next: null,
+    previous: null,
+    results: [
+      {
+        id: 1,
+        account: {
+          id: 5,
+          name: "15520562",
+          icon: "Savings",
+          color: "#006CD1",
+          balance: "70.00",
+          is_default: false,
+          is_savings: true,
+          user_id: 1,
+          categories: [
+            {
+              id: 19,
+              name: "Savings",
+              color: "#F5A524",
+              icon: "Savings",
+              notes: "",
+              transaction_type: {
+                id: 1,
+                name: "Income",
+                icon: "Savings",
+                color: "#006CD1"
+              },
+              parent_category: null
+            }
+          ]
+        },
+        action: "updated",
+        performed_by: {
+          id: 1,
+          first_name: "Abegail",
+          last_name: "Isidro",
+          username: "grenalyn.klimp@gmail.com"
+        },
+        old_data: {
+          id: 5,
+          icon: null,
+          name: "15520562",
+          color: "#006CD1",
+          notes: "",
+          balance: "70.00",
+          user_id: 1,
+          is_shared: false,
+          is_default: false,
+          is_savings: true,
+          category_ids: [19],
+          count_in_assets: false,
+          shared_user_ids: []
+        },
+        new_data: {
+          id: 5,
+          icon: "Savings",
+          name: "15520562",
+          color: "#006CD1",
+          notes: "This is my savings",
+          balance: "70.00",
+          user_id: 1,
+          is_shared: false,
+          is_default: false,
+          is_savings: true,
+          category_ids: [19],
+          count_in_assets: false,
+          shared_user_ids: []
+        },
+        note: null,
+        created_at: "2026-05-07 05:35 PM"
       }
     ]
   }
