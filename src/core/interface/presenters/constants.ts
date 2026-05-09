@@ -67,6 +67,14 @@ export const PAGES = {
     label: 'Logs',
     path: '/logs',
   },
+  LOGS_TRANSACTIONS: {
+    label: 'Logs: Transactions',
+    path: '/logs/transactions',
+  },
+  LOGS_ACCOUNTS: {
+    label: 'Logs: Accounts',
+    path: '/logs/accounts',
+  },
   SETTINGS: {
     label: 'Personal Settings',
     path: '/settings',
