@@ -21,7 +21,8 @@ export const STORE_URL = `/ledger/stores/`
 export const PLACE_URL = `/ledger/places/`
 export const DASHBOARD_URL = `/ledger/dashboard/`
 export const REPORT_URL = `/ledger/reports/`
-export const LOGS_TRANSACTION_URL = `/ledger/logs/transactions/`
+export const LOGS_TRANSACTION_URL = `/ledger/logs/transaction-logs/`
+export const LOGS_ACCOUNT_URL = `/ledger/logs/account-logs/`
 export const USER_SETTINGS_URL = `/users/settings/`
 export const COMPANY_URL = `${USER_SETTINGS_URL}companies/`
 
@@ -52,7 +53,8 @@ export const API_URL = {
     base: PLACE_URL
   },
   LOGS: {
-    transactions: LOGS_TRANSACTION_URL
+    transactions: LOGS_TRANSACTION_URL,
+    accounts: LOGS_ACCOUNT_URL
   }
 }
 

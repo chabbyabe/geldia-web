@@ -276,6 +276,10 @@ export interface ILogAccountModel extends IBaseAPIModel {
   user_id?: number
 }
 
+export interface ILogAccountReferenceModel extends ILogAccountModel {
+  categories: ICategorySimpleModel[]
+}
+
 export interface ILogTransactionTypeModel extends IBaseAPIModel {
   name: string
   icon: string
@@ -327,5 +331,30 @@ export interface ITransactionLogModel extends IBaseAPIModel {
   old_data: ILogTransactionDataModel | null
   new_data: ILogTransactionDataModel | null
   notes: string | null
+  created_at: string
+}
+
+export interface IAccountLogSnapshotModel extends IBaseAPIModel {
+  icon: string | null
+  name: string
+  color: string | null
+  notes: string | null
+  balance: string
+  user_id: number
+  is_shared: boolean
+  is_default: boolean
+  is_savings: boolean
+  category_ids: number[]
+  count_in_assets: boolean
+  shared_user_ids: number[]
+}
+
+export interface IAccountLogModel extends IBaseAPIModel {
+  account: ILogAccountReferenceModel | null
+  action: "create" | "updated" | "deleted"
+  performed_by: ILogUserModel | null
+  old_data: IAccountLogSnapshotModel | null
+  new_data: IAccountLogSnapshotModel | null
+  note: string | null
   created_at: string
 }
