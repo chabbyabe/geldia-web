@@ -1,0 +1,7 @@
+services:
+  geldia-app:
+    build: .
+    container_name: geldia-app-container
+    ports:
+      - "6556:80"
+    restart: unless-stopped
