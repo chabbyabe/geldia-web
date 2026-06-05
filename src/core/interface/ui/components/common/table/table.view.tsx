@@ -131,8 +131,8 @@ export const CustomTableView = <T extends RowWithId, P extends any>(props: ICust
   const [searchText, setSearchText] = useState('');
   const [sortModel, setSortModel] = useState<GridSortModel>([]);
   const [filterModel, setFilterModel] = useState<GridFilterModel>({ items: [] });
-  const [filterDate, setFilterDate] = useState<string>(DATE_RANGES.MONTH);
-  const [startDate, setStartDate] = useState<Dayjs | null>(dayjs().startOf("month"));
+  const [filterDate, setFilterDate] = useState<string>(DATE_RANGES.YEAR);
+  const [startDate, setStartDate] = useState<Dayjs | null>(dayjs().startOf("year"));
   const [endDate, setEndDate] = useState<Dayjs | null>(dayjs());
   const gridRootRef = React.useRef<HTMLDivElement>(null);
 

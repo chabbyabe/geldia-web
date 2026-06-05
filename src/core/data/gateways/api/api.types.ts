@@ -172,7 +172,7 @@ export interface ITransactionModel extends IBaseAPIModel, ITimestampsModel {
   gross_amount: number
   debit_month_year: string
   external_transaction_id: number
-  pair_transaction: IAccountSimpleModel
+  pair_account: IAccountSimpleModel
   is_recurring: boolean
   is_refunded: boolean
   refunded_at: string
@@ -239,11 +239,22 @@ export interface IIncomeReportModel {
   compare_data: IIncomeReportDataModel[] | null
 }
 
+export interface IExpenseReportCategoryModel {
+  name: string
+  color: string | null
+  amount: string | number
+}
+
+export interface IExpenseReportParentCategoryModel {
+  categories: Record<string, string | number | IExpenseReportCategoryModel>
+  total: string | number
+}
+
 export interface IExpenseReportMonthDataModel {
   month: number
   date: string
-  categories: Record<string, string>
-  total: string
+  parent_categories: Record<string, IExpenseReportParentCategoryModel>
+  total: string | number
 }
 
 export interface IExpenseReportDataModel {
@@ -299,7 +310,7 @@ export interface ILogTransactionDataModel extends IBaseAPIModel {
   category: ILogCategoryModel | null
   place: ILogReferenceModel | null
   account: ILogAccountModel | null
-  pair_transaction: unknown | null
+  pair_account: unknown | null
   transaction_type: ILogTransactionTypeModel | null
   tags: ILogTagModel[]
   updated_at: string

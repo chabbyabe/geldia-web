@@ -47,7 +47,7 @@ export interface ILogTransactionData {
   category: ILogCategory | null
   place: ILogSimpleReference | null
   account: ILogAccount | null
-  pairTransaction: ILogAccount | null
+  pairAccount: ILogAccount | null
   transactionType: ILogTransactionType | null
   tags: ILogTag[]
   updatedAt: string

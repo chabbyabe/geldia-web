@@ -40,7 +40,7 @@ export interface ITransaction extends IBaseAPIModel, IBaseDataModelEntity {
   grossAmount: number | null
   debitMonthYear: string | null
   externalTransactionId: number | null
-  pairTransaction: IAccountSimple | null
+  pairAccount: IAccountSimple | null
   isRecurring: boolean
   isRefunded: boolean
   refundedAt: string | null
@@ -73,7 +73,7 @@ export default class TransactionEntity {
   grossAmount: number | null
   debitMonthYear: string | null
   externalTransactionId: number | null
-  pairTransaction: IAccountSimple | null
+  pairAccount: IAccountSimple | null
   isRecurring: boolean
   isRefunded: boolean
   refundedAt: string | null
@@ -98,7 +98,7 @@ export default class TransactionEntity {
     this.grossAmount = model.grossAmount
     this.debitMonthYear = model.debitMonthYear
     this.externalTransactionId = model.externalTransactionId
-    this.pairTransaction = model.pairTransaction
+    this.pairAccount = model.pairAccount
     this.isRecurring = model.isRecurring ?? false
     this.isRefunded = model.isRefunded ?? false
     this.refundedAt = model.refundedAt

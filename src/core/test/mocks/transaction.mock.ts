@@ -28,7 +28,7 @@ export const createMockTransactionForm = (
     grossAmount: 1000,
     debitMonthYear: '2026-03',
     externalTransactionId: null,
-    pairTransaction: null,
+    pairAccount: null,
     isRecurring: false,
     isRefunded: false,
     refundedAt: null,

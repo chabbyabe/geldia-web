@@ -25,7 +25,7 @@ const initialState: IDashboardState = {
   yearOverview: [],
   filters: {
     categoryOverview: {
-      filterBy: DATE_RANGES.MONTH,
+      filterBy: DATE_RANGES.YEAR,
       startDate: null,
       endDate: null
     },

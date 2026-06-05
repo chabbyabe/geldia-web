@@ -56,7 +56,6 @@ export default class TransactionsController {
 
   async retrieveTransactions(params: ITransactionSearchParams) {
     await this.retrieveTransactionsUseCase.execute(params)
-    // this._refreshDashboardData()
   }
 
   removeCurrentTransaction() {
@@ -84,7 +83,6 @@ export default class TransactionsController {
 
   async importTransactions(file: File, accountId: number) {
     const result = await this.importTransactionsUseCase.execute(file, accountId)
-    // await this._refreshDashboardData()
     return result
   }
 
@@ -93,7 +91,7 @@ export default class TransactionsController {
       this.retrieveAccountUseCase.execute(),
       this.retrieveSummaryOverviewUseCase.execute(),
       this.retrieveYearOverviewUseCase.execute({ year: new Date().getFullYear().toString() }),
-      this.retrieveCategoryOverviewUseCase.execute({ startDate: null, endDate: null, filterBy: DATE_RANGES.MONTH })
+      this.retrieveCategoryOverviewUseCase.execute({ startDate: null, endDate: null, filterBy: DATE_RANGES.YEAR })
     ])
   }
 }

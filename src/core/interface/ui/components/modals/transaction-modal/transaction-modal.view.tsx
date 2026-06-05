@@ -108,7 +108,7 @@ const validationSchema = (accounts: IAccountSimple[], isCreate: boolean) =>
       otherwise: (schema) => schema.notRequired(),
     }),
 
-    pairTransaction: Yup.number().when("transactionType", {
+    pairAccount: Yup.number().when("transactionType", {
       is: (transactionType: number) =>
         transactionType === TRANSACTION_TYPE.TRANSFER.id,
       then: (schema) =>
@@ -156,7 +156,7 @@ const getInitialValues = (transaction: ITransaction | null, defaultAccount: IAcc
   grossAmount: transaction?.grossAmount ?? null,
   debitMonthYear: dayjs(transaction?.debitMonthYear).format("YYYY-MM") ?? "",
   externalTransactionId: transaction?.externalTransactionId ?? null,
-  pairTransaction: transaction?.pairTransaction?.id ?? null,
+  pairAccount: transaction?.pairAccount?.id ?? null,
   isRecurring: transaction?.isRecurring ?? false,
   isRefunded: transaction?.isRefunded ?? false,
   refundedAt: transaction?.refundedAt ?? null,
@@ -238,13 +238,13 @@ const TransactionModalView: React.FC<ITransactionModalView> = (props) => {
           sanitizedValues.debitMonthYear = null;
         } else if (sanitizedValues.transactionType === TRANSACTION_TYPE.INCOME.id) {
           sanitizedValues.amount = null;
-          sanitizedValues.pairTransaction = null;
+          sanitizedValues.pairAccount = null;
         } else {
           // Expenses
           sanitizedValues.netAmount = null;
           sanitizedValues.grossAmount = null;
           sanitizedValues.debitMonthYear = null;
-          sanitizedValues.pairTransaction = null;
+          sanitizedValues.pairAccount = null;
         }
         await props.handleFormSubmit(sanitizedValues);
 
@@ -452,8 +452,8 @@ const TransactionModalView: React.FC<ITransactionModalView> = (props) => {
                       fullWidth
                       disabled={!isCreate}
                       error={
-                        formik.touched.pairTransaction &&
-                        Boolean(formik.errors.pairTransaction)
+                        formik.touched.pairAccount &&
+                        Boolean(formik.errors.pairAccount)
                       }
                     >
                       <InputLabel id="paired-account-label">
@@ -463,9 +463,9 @@ const TransactionModalView: React.FC<ITransactionModalView> = (props) => {
                       <Select
                         disabled={!isCreate}
                         labelId="paired-account-label"
-                        id="pairTransaction"
-                        name="pairTransaction"
-                        value={formik.values.pairTransaction ?? ""}
+                        id="pairAccount"
+                        name="pairAccount"
+                        value={formik.values.pairAccount ?? ""}
                         label="Paired Account"
                         onChange={formik.handleChange}
                         onBlur={formik.handleBlur}
@@ -489,10 +489,10 @@ const TransactionModalView: React.FC<ITransactionModalView> = (props) => {
                         ))}
                       </Select>
 
-                      {formik.touched.pairTransaction &&
-                        formik.errors.pairTransaction && (
+                      {formik.touched.pairAccount &&
+                        formik.errors.pairAccount && (
                           <FormHelperText color="error">
-                            {formik.errors.pairTransaction}
+                            {formik.errors.pairAccount}
                           </FormHelperText>
                         )}
                     </FormControl>

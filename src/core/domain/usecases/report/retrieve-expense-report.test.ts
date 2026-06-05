@@ -35,8 +35,9 @@ describe('Test RetrieveExpenseReportUseCase', () => {
     expect(result?.compareYear).toBe('2025')
     expect(result?.baseData).toHaveLength(12)
     expect(result?.baseData[1].date).toBe('Feb')
-    expect(result?.baseData[1].categories['New Category']).toBe('€27,500.00')
-    expect(result?.baseData[2].total).toBe('€119,886.00')
+    expect(result?.baseData[1].parentCategories["Monthly Payables"].categories["Health Insurance"].amount).toBe(1491.43)
+    expect(result?.baseData[2].parentCategories.House.total).toBe(1257.96)
+    expect(result?.baseData[2].total).toBe(2826.64)
   })
 
   test('Execute with error', async () => {

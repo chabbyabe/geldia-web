@@ -35,7 +35,7 @@ export const AccountTransactionsContainer: React.FC = () => {
     transactionsController.removeCurrentTransaction();
   }, [accountsController, parsedAccountId, navigate, transactionsController]);
 
-  const getAccountFilterModel = useCallback((filterModel?: string) => {
+  const getTransactionFilters = useCallback((filterModel?: string) => {
     let parsedFilterModel: GridFilterModel = { items: [] };
 
     if (filterModel) {
@@ -47,16 +47,11 @@ export const AccountTransactionsContainer: React.FC = () => {
     }
 
     const items = (parsedFilterModel.items ?? []).filter((item) => item.field !== 'account__id');
-
+    debugger;
     return JSON.stringify({
       ...parsedFilterModel,
       items: [
         ...items,
-        {
-          field: 'account__id',
-          operator: '=',
-          value: parsedAccountId
-        }
       ]
     });
   }, [parsedAccountId]);
@@ -65,9 +60,10 @@ export const AccountTransactionsContainer: React.FC = () => {
     await transactionsController.retrieveTransactions({
       ...params,
       page: params.page ?? 1,
-      filterModel: getAccountFilterModel(params.filterModel)
+      accountId: parsedAccountId,
+      filterModel: getTransactionFilters(params.filterModel)
     });
-  }, [getAccountFilterModel, transactionsController]);
+  }, [getTransactionFilters, transactionsController]);
 
   const handleDelete = useCallback(async (transactionId: number) => {
     await transactionsController.deleteTransaction(transactionId);

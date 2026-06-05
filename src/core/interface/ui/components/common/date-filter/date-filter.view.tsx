@@ -30,8 +30,8 @@ export interface IDateFilterView<T = any, P extends IDateFilterParams = IDateFil
 
 const DateFilterView = <T, P extends IDateFilterParams>(props: IDateFilterView<T, P>) => {
 
-  const [filterDate, setFilterDate] = useState(props.filterParams.filterBy ?? DATE_RANGES.MONTH);
-  const [startDate, setStartDate] = useState<Dayjs | null>(toDayjs(props.filterParams.startDate) ?? dayjs().startOf("month"));
+  const [filterDate, setFilterDate] = useState(props.filterParams.filterBy ?? DATE_RANGES.YEAR);
+  const [startDate, setStartDate] = useState<Dayjs | null>(toDayjs(props.filterParams.startDate) ?? dayjs().startOf("year"));
   const [endDate, setEndDate] = useState<Dayjs | null>(toDayjs(props.filterParams.endDate) ?? dayjs());
   const [loading, setLoading] = useState(false);
 

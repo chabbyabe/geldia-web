@@ -7,7 +7,7 @@ import AddIcon from "@mui/icons-material/Add";
 import { SummaryCardContainer } from '@interface/ui/components/dashboard/summary-card/summary-card.container';
 import { TransactionCardContainer } from '@interface/ui/components/dashboard/transaction-card/transaction-card.container';
 import { TransactionModalContainer } from '@interface/ui/components/modals/transaction-modal/transaction-modal.container';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { CategoryOverviewContainer } from '@interface/ui/components/dashboard/category-overview/category-overview.container';
 import { YearOverviewContainer } from '@interface/ui/components/dashboard/year-overview/year-overview.container';
 
@@ -19,6 +19,15 @@ export interface IDashboardViewModel {
 
 const DashboardView: React.FC<IDashboardViewModel> = (props) => {
   const [openTransactionModal, setOpenTransactionModal] = useState(false);
+  const [overviewRefreshKey, setOverviewRefreshKey] = useState(0);
+
+  const refreshOverview = () => {
+    setOverviewRefreshKey(prev => prev + 1);
+  };
+
+  useEffect(() => {
+    refreshOverview();
+  }, []);
 
   return (
     <BaseLayoutContainer currentPage={PAGES.DASHBOARD.label}>
@@ -28,7 +37,7 @@ const DashboardView: React.FC<IDashboardViewModel> = (props) => {
         </Grid>
         <Grid container mt={3} flexGrow={1} spacing={4}>
           <Grid flex={3} sx={{ sm: 12, md: 9, minWidth: 350, maxWidth: 1400, width: "100%", minHeight: "800px" }}>
-            <CategoryOverviewContainer />
+            <CategoryOverviewContainer refreshKey={overviewRefreshKey}  />
           </Grid>
           <Grid flex={2} sx={{ sm: 12, maxWidth: 400, minWidth: 350 }} flexWrap="wrap">
             <Stack
@@ -47,7 +56,7 @@ const DashboardView: React.FC<IDashboardViewModel> = (props) => {
           </Grid>
         </Grid>
         <Grid container mt={1} >
-          <YearOverviewContainer />
+          <YearOverviewContainer refreshKey={overviewRefreshKey} />
         </Grid>
       </Container>
       <>

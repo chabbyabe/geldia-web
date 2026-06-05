@@ -125,7 +125,7 @@ const tableColumns = (
 
                     <Stack direction="column" justifyContent="start">
                       <Typography variant="body2" color="text.secondary">Transferred To</Typography>
-                      <Typography variant="body2">{row.pairTransaction?.name ?? "-"}</Typography>
+                      <Typography variant="body2">{row.pairAccount?.name ?? "-"}</Typography>
                     </Stack>
                     {row.account?.isDefault &&
                       <Circle color={"primary"} fontSize='small' sx={{ alignItems: "right", mt: 1 }} />}

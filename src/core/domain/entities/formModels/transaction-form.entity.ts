@@ -13,7 +13,7 @@ export interface IFormTransaction {
   grossAmount: number | null
   debitMonthYear: string | null
   externalTransactionId: number | null
-  pairTransaction: number | null
+  pairAccount: number | null
   isRecurring: boolean | false
   isRefunded: boolean | false
   refundedAt: string | null

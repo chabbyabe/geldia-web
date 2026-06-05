@@ -1,5 +1,7 @@
 export interface ICompanyReport {
   name: string
+  categoryName: string
+  categoryColor: string
   grossAmount: number
   netAmount: number
 }
@@ -35,6 +37,8 @@ export default class IncomeReportEntity {
       netAmount: Number(month.netAmount ?? 0),
       companies: month.companies.map((company) => ({
         name: company.name,
+        categoryName: company.categoryName,
+        categoryColor: company.categoryColor,
         grossAmount: Number(company.grossAmount ?? 0),
         netAmount: Number(company.netAmount ?? 0)
       }))
@@ -46,6 +50,8 @@ export default class IncomeReportEntity {
       netAmount: Number(month.netAmount ?? 0),
       companies: month.companies.map((company) => ({
         name: company.name,
+        categoryName: company.categoryName,
+        categoryColor: company.categoryColor,
         grossAmount: Number(company.grossAmount ?? 0),
         netAmount: Number(company.netAmount ?? 0)
       }))

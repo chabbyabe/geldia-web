@@ -29,11 +29,11 @@ interface ILogRow {
   account: string
   accountBalance: number
   accountBalanceLabel: string
-  pairTransaction: string
-  pairTransactionBalance: number
-  pairTransactionBalanceLabel: string
-  previousPairTransactionBalance: number
-  previousPairTransactionBalanceLabel: string
+  pairAccount: string
+  pairAccountBalance: number
+  pairAccountBalanceLabel: string
+  previousPairAccountBalance: number
+  previousPairAccountBalanceLabel: string
   store: string
   place: string
   amount: number
@@ -153,18 +153,18 @@ const tableColumns = (): GridColDef<ILogRow>[] => [
       </Box>
   },
   {
-    field: `${jsonOrderField}pair_transaction__name`,
+    field: `${jsonOrderField}pair_account__name`,
     headerName: "Account To",
     minWidth: 180,
     flex: 1,
     filterOperators: stringOperators,
     renderCell: (params: GridRenderCellParams<ILogRow>) =>
-      <Box sx={{ lineHeight: 1, my: 1 }}>{params.row.pairTransaction}
+      <Box sx={{ lineHeight: 1, my: 1 }}>{params.row.pairAccount}
         {params.row.transactionType === TRANSACTION_TYPE.TRANSFER.name &&
           <Stack direction="row">
-            <Typography color="text.secondary" variant="body2">{params.row.previousPairTransactionBalanceLabel}</Typography>
+            <Typography color="text.secondary" variant="body2">{params.row.previousPairAccountBalanceLabel}</Typography>
             <ChevronRight fontSize="small" />
-            <Typography fontWeight="bold" variant="body2">{params.row.pairTransactionBalanceLabel}</Typography>
+            <Typography fontWeight="bold" variant="body2">{params.row.pairAccountBalanceLabel}</Typography>
           </Stack>
         }
       </Box>
@@ -295,9 +295,9 @@ const LogsTransactionView: React.FC<ILogsTransactionViewModel> = (props) => {
       const grossAmount = parseAmount(logTransaction?.grossAmount)
       const netAmount = parseAmount(logTransaction?.netAmount)
       const accountBalance = parseAmount(logTransaction?.account?.balance)
-      const pairTransactionBalance = parseAmount(logTransaction?.pairTransaction?.balance)
+      const pairAccountBalance = parseAmount(logTransaction?.pairAccount?.balance)
       const previousBalance = parseAmount(logTransaction?.previousBalance)
-      const previousPairTransactionBalance = parseAmount(logTransaction?.pairPreviousBalance)
+      const previousPairAccountBalance = parseAmount(logTransaction?.pairPreviousBalance)
 
       return {
         id: item.id,
@@ -313,12 +313,12 @@ const LogsTransactionView: React.FC<ILogsTransactionViewModel> = (props) => {
         account: logTransaction?.account?.name ?? "",
         accountBalance: accountBalance ?? 0,
         accountBalanceLabel: formatCurrency(accountBalance),
-        pairTransaction: logTransaction?.transactionType?.name ?
-          (logTransaction?.pairTransaction?.name ?? "") : "",
-        pairTransactionBalance: pairTransactionBalance ?? 0,
-        pairTransactionBalanceLabel: formatCurrency(pairTransactionBalance),
-        previousPairTransactionBalance: previousPairTransactionBalance ?? 0,
-        previousPairTransactionBalanceLabel: formatCurrency(previousPairTransactionBalance),
+        pairAccount: logTransaction?.transactionType?.name ?
+          (logTransaction?.pairAccount?.name ?? "") : "",
+        pairAccountBalance: pairAccountBalance ?? 0,
+        pairAccountBalanceLabel: formatCurrency(pairAccountBalance),
+        previousPairAccountBalance: previousPairAccountBalance ?? 0,
+        previousPairAccountBalanceLabel: formatCurrency(previousPairAccountBalance),
         place: logTransaction?.place?.name ?? "",
         amount,
         amountLabel: formatCurrency(amount),

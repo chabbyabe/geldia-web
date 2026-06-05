@@ -1,6 +1,16 @@
 import { objectToCamel } from 'ts-case-convert';
-import { IExpenseReportDataModel, IIncomeReportModel } from '@data/gateways/api/api.types';
-import ExpenseReportEntity, { IExpenseReportData } from '@domain/entities/report/expense-report.entity';
+import {
+  IExpenseReportCategoryModel,
+  IExpenseReportDataModel,
+  IExpenseReportMonthDataModel,
+  IIncomeReportModel
+} from '@data/gateways/api/api.types';
+import ExpenseReportEntity, {
+  IExpenseReportCategory,
+  IExpenseReportData,
+  IExpenseReportMonthData,
+  IExpenseReportParentCategory
+} from '@domain/entities/report/expense-report.entity';
 import { IIncomeReport } from '@domain/entities/report/income-report.entity';
 
 export const mapIncomeReportAttributes = (initialModel: IIncomeReportModel): IIncomeReport => {
@@ -12,23 +22,58 @@ export const mapIncomeReportAttributes = (initialModel: IIncomeReportModel): IIn
   };
 };
 
+const mapExpenseReportCategory = (
+  categoryName: string,
+  value: string | number | IExpenseReportCategoryModel
+): IExpenseReportCategory => {
+  if (typeof value === 'object' && value !== null) {
+    return {
+      name: value.name ?? categoryName,
+      color: value.color ?? null,
+      amount: Number(value.amount ?? 0)
+    }
+  }
+
+  return {
+    name: categoryName,
+    color: null,
+    amount: Number(value ?? 0)
+  }
+}
+
+const mapExpenseReportParentCategories = (
+  parentCategories: IExpenseReportMonthDataModel['parent_categories']
+): Record<string, IExpenseReportParentCategory> => {
+  return Object.fromEntries(
+    Object.entries(parentCategories ?? {}).map(([parentCategory, categoryData]) => [
+      parentCategory,
+      {
+        categories: Object.fromEntries(
+          Object.entries(categoryData.categories ?? {}).map(([categoryName, value]) => [
+            categoryName,
+            mapExpenseReportCategory(categoryName, value)
+          ])
+        ),
+        total: Number(categoryData.total ?? 0)
+      }
+    ])
+  )
+}
+
+const mapExpenseReportMonth = (model: IExpenseReportMonthDataModel): IExpenseReportMonthData => ({
+  month: model.month,
+  date: model.date,
+  parentCategories: mapExpenseReportParentCategories(model.parent_categories),
+  total: Number(model.total ?? 0)
+})
+
 export const mapExpenseReportAttributes = (initialModel: IExpenseReportDataModel): IExpenseReportData => {
   const data = new ExpenseReportEntity({
     selectedYear: String(initialModel.selected_year),
     compareYear: initialModel.compare_year !== null ? String(initialModel.compare_year) : null,
-    baseData: initialModel.base_data.map((model) => ({
-      month: model.month,
-      date: model.date,
-      categories: model.categories ?? {},
-      total: model.total
-    })),
+    baseData: initialModel.base_data.map(mapExpenseReportMonth),
     compareData: initialModel.compare_data
-      ? initialModel.compare_data.map((model) => ({
-          month: model.month,
-          date: model.date,
-          categories: model.categories ?? {},
-          total: model.total
-        }))
+      ? initialModel.compare_data.map(mapExpenseReportMonth)
       : null,
   })
 

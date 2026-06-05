@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useEffect, useMemo } from "react";
 import CategoryOverviewView from "./category-overview.view";
 import { useAppSelector } from "@interface/presenters/store/hooks";
 import CategoryOverviewController from "./category-overview.controller";
 
 interface ICategoryOverviewContainer {
   children?: React.ReactNode;
+  refreshKey?: number
 }
 
 export const CategoryOverviewContainer: React.FC<ICategoryOverviewContainer> = (props) => {
@@ -15,7 +16,11 @@ export const CategoryOverviewContainer: React.FC<ICategoryOverviewContainer> = (
     })
   );
   
-  const controller = new CategoryOverviewController()
+  const controller = useMemo(() => new CategoryOverviewController(), []);
+
+  useEffect(() => {
+    controller.retrieveCategoryOverview(categoryOverviewFilterParams);
+  }, [props.refreshKey]);
 
   return <CategoryOverviewView
     data={categoryOverview}

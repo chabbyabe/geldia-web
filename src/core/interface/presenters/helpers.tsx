@@ -170,3 +170,5 @@ export const  truncateText = (text: string, maxLength: number): string => {
     ? text.slice(0, maxLength) + "..."
     : text;
 }
+
+export const absoluteValue = (num: number): number => Math.abs(num);
